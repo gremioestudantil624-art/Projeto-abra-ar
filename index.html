@@ -20,93 +20,603 @@
       --sidebar-largura: 280px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background-color: var(--bg-claro); color: var(--texto-escuro); min-height: 100vh; display: flex; flex-direction: column; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
 
-    .welcome-overlay { position: fixed; inset: 0; background: var(--degrade-abracar); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
-    .welcome-card { background: var(--branco); padding: 40px 30px; border-radius: 20px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-    .welcome-card .logo-svg { width: 70px; height: 70px; margin-bottom: 15px; }
-    .welcome-card h1 { font-size: 1.8rem; color: var(--roxo-escuro); }
-    .welcome-card p { color: #64748b; font-size: 0.95rem; margin: 8px 0 20px 0; }
-    .welcome-options { display: flex; flex-direction: column; gap: 15px; text-align: left; }
-    .form-control { width: 100%; padding: 12px 15px; border: 1px solid var(--cinza-borda); border-radius: 10px; font-size: 0.95rem; outline: none; }
-    .form-control:focus { border-color: var(--roxo-principal); }
+    body {
+      background-color: var(--bg-claro);
+      color: var(--texto-escuro);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-    .app-container { display: none; flex: 1; min-height: 100vh; }
-    .app-container.active { display: flex; }
-    .mobile-header { display: none; background: var(--degrade-abracar); color: var(--branco); padding: 12px 20px; justify-content: space-between; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
-    .menu-toggle { background: none; border: none; color: var(--branco); font-size: 1.6rem; cursor: pointer; }
+    /* WELCOME OVERLAY */
+    .welcome-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--degrade-abracar);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 20px;
+    }
 
-    .sidebar { width: var(--sidebar-largura); background: var(--degrade-abracar); color: var(--branco); padding: 20px 15px; display: flex; flex-direction: column; transition: all 0.3s ease; z-index: 1001; position: fixed; top: 0; bottom: 0; left: 0; overflow-y: auto; }
-    .sidebar.collapsed { width: 80px; }
-    .sidebar.collapsed .brand-text, .sidebar.collapsed .link-text, .sidebar.collapsed .sidebar-divider-text { display: none; }
-    .brand-header { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); margin-bottom: 15px; }
-    .brand-svg { width: 42px; height: 42px; flex-shrink: 0; }
-    .toggle-collapse-btn { background: rgba(255, 255, 255, 0.15); border: none; color: var(--branco); padding: 6px; border-radius: 6px; cursor: pointer; margin-left: auto; }
+    .welcome-card {
+      background: var(--branco);
+      padding: 40px 30px;
+      border-radius: 20px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
 
-    .nav-links { list-style: none; display: flex; flex-direction: column; gap: 4px; }
-    .nav-links a { color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 10px 14px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-size: 0.92rem; }
-    .nav-links a:hover, .nav-links a.active { background: rgba(255, 255, 255, 0.22); color: var(--branco); font-weight: 600; }
-    .sidebar-divider { margin: 15px 0 8px 0; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2); }
-    .sidebar-divider-text { font-size: 0.75rem; text-transform: uppercase; opacity: 0.7; padding-left: 10px; }
+    .welcome-card .logo-svg {
+      width: 70px;
+      height: 70px;
+      margin-bottom: 15px;
+    }
 
-    .main-wrapper { flex: 1; margin-left: var(--sidebar-largura); transition: margin-left 0.3s ease; display: flex; flex-direction: column; }
-    .main-wrapper.expanded { margin-left: 80px; }
-    .main-content { padding: 35px; max-width: 1100px; width: 100%; margin: 0 auto; }
-    
-    .section-page { display: none; }
-    .section-page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .welcome-card h1 {
+      font-size: 1.8rem;
+      color: var(--roxo-escuro);
+    }
 
-    .user-bar { background: var(--branco); padding: 12px 25px; border-bottom: 1px solid var(--cinza-borda); display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem; }
-    .badge-turma { background: var(--cinza-suave); padding: 4px 12px; border-radius: 20px; font-weight: 600; color: var(--roxo-escuro); border: 1px solid var(--cinza-borda); }
+    .welcome-card p {
+      color: #64748b;
+      font-size: 0.95rem;
+      margin: 8px 0 25px 0;
+    }
 
-    .page-title { font-size: 1.6rem; color: var(--texto-escuro); margin-bottom: 6px; }
-    .page-subtitle { color: #64748b; margin-bottom: 25px; font-size: 0.95rem; }
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 25px; }
-    .card { background: var(--branco); padding: 22px; border-radius: 14px; border: 1px solid var(--cinza-borda); box-shadow: 0 4px 12px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between; }
-    .card h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--texto-escuro); }
-    .card p { font-size: 0.9rem; color: #64748b; line-height: 1.5; margin-bottom: 15px; }
+    .welcome-options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      text-align: left;
+    }
 
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 8px; border: none; background: var(--degrade-abracar); color: var(--branco); font-weight: 600; font-size: 0.9rem; cursor: pointer; text-decoration: none; }
-    .btn-secondary { background: var(--cinza-suave); color: var(--texto-escuro); border: 1px solid var(--cinza-borda); }
-    .btn-wsp { background: #25d366; color: #fff; font-weight: bold; }
-    .btn-wsp:hover { background: #1ebc57; }
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--cinza-borda);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+    }
 
-    /* Estilos do WhatsApp por Equipe */
-    .wsp-group-title { font-size: 1.2rem; color: var(--roxo-escuro); margin: 25px 0 12px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--cinza-suave); padding-bottom: 5px; }
-    .membro-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px; }
-    .membro-card { background: var(--branco); border: 1px solid var(--cinza-borda); border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-    .membro-info strong { display: block; font-size: 0.95rem; color: var(--texto-escuro); }
-    .membro-info span { font-size: 0.82rem; color: #64748b; }
+    .form-control:focus {
+      border-color: var(--roxo-principal);
+    }
 
-    .chat-select-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-    .chat-target-card { background: var(--branco); border: 2px solid var(--cinza-borda); border-radius: 12px; padding: 18px; cursor: pointer; text-align: center; transition: all 0.2s ease; }
-    .chat-target-card.selected { border-color: var(--roxo-principal); background: #fbf7ff; }
-    .chat-window { background: var(--branco); border-radius: 14px; border: 1px solid var(--cinza-borda); height: 420px; display: flex; flex-direction: column; }
-    .chat-header-info { padding: 15px 20px; border-bottom: 1px solid var(--cinza-borda); background: var(--cinza-suave); border-radius: 14px 14px 0 0; display: flex; justify-content: space-between; align-items: center; }
-    .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-    .chat-input-area { padding: 15px; border-top: 1px solid var(--cinza-borda); display: flex; gap: 10px; }
-    .chat-msg-row { display: flex; align-items: center; gap: 8px; width: 100%; }
+    /* ESTRUTURA DO APP */
+    .app-container {
+      display: none;
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    .app-container.active {
+      display: flex;
+    }
+
+    .mobile-header {
+      display: none;
+      background: var(--degrade-abracar);
+      color: var(--branco);
+      padding: 12px 20px;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: var(--branco);
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      width: var(--sidebar-largura);
+      background: var(--degrade-abracar);
+      color: var(--branco);
+      padding: 20px 15px;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1001;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar.collapsed {
+      width: 80px;
+    }
+
+    .sidebar.collapsed .brand-text,
+    .sidebar.collapsed .link-text,
+    .sidebar.collapsed .sidebar-divider-text {
+      display: none;
+    }
+
+    .sidebar.collapsed .nav-links a {
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 15px;
+    }
+
+    .brand-svg {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .brand-text h2 {
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      line-height: 1.1;
+    }
+
+    .brand-text small {
+      font-size: 0.7rem;
+      opacity: 0.85;
+      font-weight: 300;
+    }
+
+    .toggle-collapse-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: var(--branco);
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.92rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      background: rgba(255, 255, 255, 0.22);
+      color: var(--branco);
+      font-weight: 600;
+    }
+
+    .nav-icon {
+      font-size: 1.1rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    .sidebar-divider {
+      margin: 15px 0 8px 0;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar-divider-text {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      opacity: 0.7;
+      letter-spacing: 0.5px;
+      padding-left: 10px;
+      margin-bottom: 5px;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      margin-left: var(--sidebar-largura);
+      transition: margin-left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .main-wrapper.expanded {
+      margin-left: 80px;
+    }
+
+    .main-content {
+      padding: 35px;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .section-page {
+      display: none;
+    }
+
+    .section-page.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-bar {
+      background: var(--branco);
+      padding: 12px 25px;
+      border-bottom: 1px solid var(--cinza-borda);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+    }
+
+    .badge-turma {
+      background: var(--cinza-suave);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      color: var(--roxo-escuro);
+      border: 1px solid var(--cinza-borda);
+    }
+
+    /* CARDS & UI */
+    .page-title {
+      font-size: 1.6rem;
+      color: var(--texto-escuro);
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      color: #64748b;
+      margin-bottom: 25px;
+      font-size: 0.95rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: var(--branco);
+      padding: 22px;
+      border-radius: 14px;
+      border: 1px solid var(--cinza-borda);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: var(--texto-escuro);
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: #64748b;
+      line-height: 1.4;
+      margin-bottom: 15px;
+    }
+
+    .card-destaque {
+      background: var(--degrade-abracar);
+      color: var(--branco);
+      border: none;
+    }
+
+    .card-destaque h3, .card-destaque p {
+      color: var(--branco);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      background: var(--degrade-abracar);
+      color: var(--branco);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:hover { opacity: 0.92; }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      background: var(--cinza-suave);
+      color: var(--texto-escuro);
+      border: 1px solid var(--cinza-borda);
+    }
+
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+      font-weight: bold;
+    }
+    .btn-whatsapp:hover { background: #1ebd56; }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: 4px;
+    }
+
+    .form-container {
+      background: var(--branco);
+      padding: 25px;
+      border-radius: 14px;
+      border: 1px solid var(--cinza-borda);
+      max-width: 700px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* CHAT */
+    .chat-select-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .chat-target-card {
+      background: var(--branco);
+      border: 2px solid var(--cinza-borda);
+      border-radius: 12px;
+      padding: 18px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .chat-target-card:hover, .chat-target-card.selected {
+      border-color: var(--roxo-principal);
+      background: #fbf7ff;
+    }
+
+    .chat-window {
+      background: var(--branco);
+      border-radius: 14px;
+      border: 1px solid var(--cinza-borda);
+      height: 420px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header-info {
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--cinza-borda);
+      background: var(--cinza-suave);
+      border-radius: 14px 14px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-input-area {
+      padding: 15px;
+      border-top: 1px solid var(--cinza-borda);
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-msg-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
     .chat-msg-row.sent { justify-content: flex-end; }
     .chat-msg-row.received { justify-content: flex-start; }
-    .chat-msg-bubble { padding: 10px 14px; border-radius: 12px; max-width: 75%; font-size: 0.9rem; color: #ffffff !important; word-break: break-word; }
-    .chat-msg-row.sent .chat-msg-bubble { background: linear-gradient(135deg, #2ecc71, #1abc9c); }
-    .chat-msg-row.received .chat-msg-bubble { background: linear-gradient(135deg, #8e44ad, #6c3483); }
 
-    #bem-estar .respiracao-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 20px; background: var(--branco); border-radius: 16px; border: 1px solid var(--cinza-borda); text-align: center; }
-    #bem-estar .bolha-pulmao { width: 130px; height: 130px; border-radius: 50%; background: var(--degrade-abracar); margin: 20px 0; transition: transform 4s ease-in-out; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: bold; font-size: 1rem; }
-    #bem-estar .bolha-pulmao.inspirar { transform: scale(1.5); }
-    #bem-estar .bolha-pulmao.expirar { transform: scale(1); }
+    .chat-msg-bubble {
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 75%;
+      font-size: 0.9rem;
+      color: #ffffff !important;
+      word-break: break-word;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    }
 
-    .aviso-item { padding: 12px 0; border-bottom: 1px solid var(--cinza-borda); display: flex; justify-content: space-between; align-items: center; }
-    .chart-container { position: relative; max-width: 450px; margin: 0 auto 20px auto; }
+    .chat-msg-row.sent .chat-msg-bubble {
+      background: linear-gradient(135deg, #2ecc71, #1abc9c);
+      border-bottom-right-radius: 2px;
+    }
 
+    .chat-msg-row.received .chat-msg-bubble {
+      background: linear-gradient(135deg, #8e44ad, #6c3483);
+      border-bottom-left-radius: 2px;
+    }
+
+    .btn-delete-msg {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .btn-delete-msg:hover { color: #ef4444; background: #fee2e2; }
+
+    /* BEM-ESTAR MULTI-ATIVIDADES */
+    .respiracao-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: var(--branco);
+      border-radius: 16px;
+      border: 1px solid var(--cinza-borda);
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .bolha-pulmao {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: var(--degrade-abracar);
+      margin: 25px 0;
+      box-shadow: 0 0 30px rgba(46, 204, 113, 0.25);
+      transition: transform 4s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+
+    .bolha-pulmao.inspirar { transform: scale(1.6); }
+    .bolha-pulmao.expirar { transform: scale(1); }
+
+    .humor-selector {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .humor-btn {
+      background: var(--cinza-suave);
+      border: 1px solid var(--cinza-borda);
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: transform 0.2s;
+    }
+    .humor-btn:hover { transform: scale(1.1); }
+
+    .aviso-item {
+      padding: 15px 0;
+      border-bottom: 1px solid var(--cinza-borda);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .aviso-item:last-child { border-bottom: none; }
+
+    /* TABELA E LISTAS */
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .table-custom th, .table-custom td {
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--cinza-borda);
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .table-custom th {
+      background: var(--cinza-suave);
+      color: var(--roxo-escuro);
+    }
+
+    /* RESPONSIVIDADE */
     @media (max-width: 850px) {
       .mobile-header { display: flex; }
-      .sidebar { transform: translateX(-100%); top: 55px; width: 260px !important; }
+      .sidebar {
+        transform: translateX(-100%);
+        top: 55px;
+        width: 260px !important;
+      }
       .sidebar.open { transform: translateX(0); }
-      .main-wrapper { margin-left: 0 !important; padding-top: 55px; }
+      .sidebar-overlay.open { display: block; }
+      .main-wrapper {
+        margin-left: 0 !important;
+        padding-top: 55px;
+      }
+      .main-content { padding: 20px 15px; }
+      .toggle-collapse-btn { display: none; }
     }
   </style>
 </head>
@@ -121,7 +631,7 @@
     </symbol>
   </svg>
 
-  <!-- overlay inicial -->
+  <!-- TELA DE ENTRADA -->
   <div class="welcome-overlay" id="welcome-overlay">
     <div class="welcome-card">
       <svg class="logo-svg" style="color: var(--roxo-principal);"><use href="#brasao-abracar"/></svg>
@@ -138,12 +648,12 @@
         </div>
 
         <div id="campo-estudante">
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label for="nome-usuario">Seu Nome Completo:</label>
-            <input type="text" id="nome-usuario" class="form-control" placeholder="Digite seu nome completo">
+          <div class="form-group">
+            <label for="student-name">Seu Nome (Identificação Interna):</label>
+            <input type="text" id="student-name" class="form-control" placeholder="Digite seu nome completo">
           </div>
           <div class="form-group">
-            <label for="turma-select">Sua Turma:</label>
+            <label for="turma-select">Selecione sua Turma:</label>
             <select id="turma-select" class="form-control">
               <option value="">-- Selecione --</option>
               <option value="6º Ano A">6º Ano A</option>
@@ -158,11 +668,9 @@
           </div>
         </div>
 
-        <div id="campo-admin" style="display: none;">
-          <div class="form-group">
-            <label for="senha-acesso">Senha de Acesso Restrito:</label>
-            <input type="password" id="senha-acesso" class="form-control" placeholder="Digite sua senha de acesso">
-          </div>
+        <div id="campo-admin" class="form-group" style="display: none;">
+          <label for="senha-acesso">Senha de Acesso Restrito:</label>
+          <input type="password" id="senha-acesso" class="form-control" placeholder="Digite sua senha de acesso">
         </div>
 
         <button class="btn" style="width: 100%; margin-top: 10px;" onclick="confirmarEntrada()">Entrar no Sistema</button>
@@ -170,6 +678,7 @@
     </div>
   </div>
 
+  <!-- CONTAINER PRINCIPAL -->
   <div class="app-container" id="app-container">
 
     <div class="mobile-header">
@@ -181,6 +690,8 @@
       <div>🔔</div>
     </div>
 
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
     <aside class="sidebar" id="sidebar">
       <div class="brand-header">
         <svg class="brand-svg" style="fill: none; stroke: currentColor;"><use href="#brasao-abracar"/></svg>
@@ -188,13 +699,12 @@
           <h2>ABRAÇAR</h2>
           <small>Escuta & Acolhimento</small>
         </div>
-        <button class="toggle-collapse-btn" onclick="toggleSidebarCollapse()">◀</button>
+        <button class="toggle-collapse-btn" onclick="toggleSidebarCollapse()" title="Recolher/Expandir">◀</button>
       </div>
 
       <ul class="nav-links">
         <li><a href="#" class="active" onclick="navegar('inicio', this)"><span class="nav-icon">🏠</span><span class="link-text">Início</span></a></li>
-        <li><a href="#" onclick="navegar('conversar', this)"><span class="nav-icon">💬</span><span class="link-text">Conversar (Anônimo)</span></a></li>
-        <li><a href="#" onclick="navegar('whatsapp-equipe', this)"><span class="nav-icon">📱</span><span class="link-text">WhatsApp da Equipe</span></a></li>
+        <li><a href="#" onclick="navegar('conversar', this)"><span class="nav-icon">💬</span><span class="link-text">Conversar</span></a></li>
         <li><a href="#" onclick="navegar('relatar', this)"><span class="nav-icon">🚨</span><span class="link-text">Relatar Situação</span></a></li>
         <li><a href="#" onclick="navegar('bem-estar', this)"><span class="nav-icon">🧠</span><span class="link-text">Meu Bem-estar</span></a></li>
         <li><a href="#" onclick="navegar('bullying', this)"><span class="nav-icon">🛡️</span><span class="link-text">Bullying & Cyber</span></a></li>
@@ -202,219 +712,319 @@
         <div class="sidebar-divider"><div class="sidebar-divider-text">Comunidade</div></div>
 
         <li><a href="#" onclick="navegar('gremio', this)"><span class="nav-icon">🎓</span><span class="link-text">Grêmio Estudantil</span></a></li>
-        <li><a href="#" onclick="navegar('líderes', this)"><span class="nav-icon">👥</span><span class="link-text">Líderes de Turma</span></a></li>
-        <li><a href="#" onclick="navegar('conteudos', this)"><span class="nav-icon">📚</span><span class="link-text">Conteúdos</span></a></li>
+        <li><a href="#" onclick="navegar('lideres', this)"><span class="nav-icon">👥</span><span class="link-text">Líderes de Turma</span></a></li>
+        <li><a href="#" onclick="navegar('conteudos', this)"><span class="nav-icon">📚</span><span class="link-text">Conteúdos & Guias</span></a></li>
         <li><a href="#" onclick="navegar('canais-apoio', this)"><span class="nav-icon">📞</span><span class="link-text">Canais de Apoio</span></a></li>
-        <li><a href="#" onclick="navegar('sobre', this)"><span class="nav-icon">ℹ️</span><span class="link-text">Sobre o Projeto</span></a></li>
+        <li><a href="#" onclick="navegar('sobre', this)"><span class="nav-icon">ℹ️</span><span class="link-text">Projeto Abraçar</span></a></li>
 
         <div class="sidebar-divider" id="divider-admin" style="display: none;"><div class="sidebar-divider-text">Gestão</div></div>
-        <li id="menu-admin-item" style="display: none;"><a href="#" onclick="navegar('admin-panel', this)"><span class="nav-icon">🔒</span><span class="link-text">Painel do Administrador</span></a></li>
+        <li id="menu-admin-item" style="display: none;"><a href="#" onclick="navegar('admin-panel', this)"><span class="nav-icon">🔒</span><span class="link-text">Área da Escola</span></a></li>
       </ul>
     </aside>
 
     <div class="main-wrapper" id="main-wrapper">
+      
       <header class="user-bar">
         <div>
-          <span>Usuário Logado: </span><span class="badge-turma" id="display-user-turma">Estudante</span>
-          <span id="badge-anonimo-status" style="margin-left: 10px; font-size: 0.8rem; color: #16a34a; font-weight: bold;">🔒 Chat Anônimo Ativo</span>
+          <span>Identificação: </span>
+          <span class="badge-turma" id="display-user-turma">Estudante</span>
         </div>
         <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="trocarPerfil()">Sair / Trocar</button>
       </header>
 
-      <main class="main-content">
+      <main class="main-content"><!-- INÍCIO -->
+        <section id="sec-inicio" class="section-page active">
+          <h1 class="page-title">Bem-vindo(a) ao Projeto Abraçar</h1>
+          <p class="page-subtitle">Um espaço seguro de escuta, acolhimento e promoção da cultura de paz na nossa escola.</p>
 
-        <!-- secao inicio -->
-        <section id="inicio" class="section-page active">
-          <h1 class="page-title">🤗 Bem-vindo ao Projeto Abraçar</h1>
-          <p class="page-subtitle">Um espaço seguro para escuta, acolhimento e fortalecimento da comunidade escolar.</p>
           <div class="card-grid">
-            <div class="card"><h3>💬 Chat Anônimo Privado</h3><p>Converse diretamente com os representantes sem expor seu nome real durante a conversa.</p><button class="btn" onclick="navegarDireto('conversar')">Abrir Meu Chat</button></div>
-            <div class="card"><h3>📱 Falar via WhatsApp</h3><p>Contate diretamente um integrante da Coordenação, Grêmio ou Líderes.</p><button class="btn btn-wsp" onclick="navegarDireto('whatsapp-equipe')">Ver Contatos</button></div>
-            <div class="card"><h3>🚨 Relatar Situação</h3><p>Comunique episódios de desrespeito ou preocupações de forma confidencial.</p><button class="btn" onclick="navegarDireto('relatar')">Enviar Relato</button></div>
+            <div class="card card-destaque">
+              <h3>Precisa conversar?</h3>
+              <p>Conecte-se de forma reservada com o Grêmio Estudantil ou com os Líderes da sua Turma.</p>
+
+              <button class="btn btn-secondary" onclick="navegarDirect('conversar')">Iniciar Conversa</button>
+            </div>
+
+            <div class="card">
+              <h3>Registrar um Relato</h3>
+              <p>Sofreu ou presenciou alguma situação chata ou injusta? Envie um registro para a gestão escolar.</p>
+
+              <button class="btn" onclick="navegarDirect('relatar')">Relatar Agora</button>
+            </div>
+
+            <div class="card">
+              <h3>Pausa & Bem-Estar</h3>
+              <p>Tire alguns minutos para praticar um exercício simples de respiração e registrar como está se sentindo hoje.</p>
+
+              <button class="btn btn-secondary" onclick="navegarDirect('bem-estar')">Acessar Espaço</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 20px;">
+            <h3>Mural de Comunicados</h3>
+            <div id="mural-avisos">
+              <div class="aviso-item">
+                <div>
+                  <strong>Oficina de Mediação de Conflitos</strong><br>
+                  <small style="color: #64748b;">Próxima quarta-feira no auditório principal durante o intervalo.</small>
+                </div>
+                <span class="badge-turma">Geral</span>
+              </div>
+              <div class="aviso-item">
+                <div>
+                  <strong>Campanha Permanente Anti-Bullying</strong><br>
+                  <small style="color: #64748b;">Gentileza gera gentileza. Respeito é a base do nosso ambiente escolar.</small>
+                </div>
+                <span class="badge-turma">Cultura de Paz</span>
+              </div>
+            </div>
           </div>
         </section>
 
-        <!-- secao conversar -->
-        <section id="conversar" class="section-page">
-          <h1 class="page-title">💬 Chat Privado & Anônimo</h1>
-          <p class="page-subtitle">Você é identificado apenas por um código anônimo durante a conversa no chat.</p>
-
-          <div id="admin-user-selector" style="display:none; margin-bottom: 15px; background: #fff; padding: 15px; border-radius: 10px; border: 1px solid var(--cinza-borda);">
-            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Selecione uma conversa para responder:</label>
-            <select id="admin-select-user-chat" class="form-control" onchange="adminInspecionarChatUsuario(this.value)">
-              <option value="">-- Selecione um Aluno Anônimo --</option>
-            </select>
-          </div>
+        <!-- CONVERSAR -->
+        <section id="sec-conversar" class="section-page">
+          <h1 class="page-title">Canal de Conversa</h1>
+          <p class="page-subtitle">Escolha com quem deseja dialogar. As mensagens são enviadas de forma segura.</p>
 
           <div class="chat-select-grid">
-            <div class="chat-target-card selected" onclick="selecionarDestinatario(this, 'Grêmio Estudantil')">
-              <div style="font-size: 1.5rem;">🎓</div><strong>Grêmio Estudantil</strong>
+            <div class="chat-target-card selected" id="target-gremio" onclick="selecionarDestinoChat('gremio')">
+              <div style="font-size: 2rem;">🎓</div>
+              <strong>Grêmio Estudantil</strong>
+              <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Representantes dos estudantes</p>
             </div>
-            <div class="chat-target-card" onclick="selecionarDestinatario(this, 'Líder de Turma')">
-              <div style="font-size: 1.5rem;">👥</div><strong>Líder de Turma</strong>
-            </div>
-            <div class="chat-target-card" onclick="selecionarDestinatario(this, 'Coordenação')">
-              <div style="font-size: 1.5rem;">🏫</div><strong>Coordenação</strong>
+            <div class="chat-target-card" id="target-lideres" onclick="selecionarDestinoChat('lideres')">
+              <div style="font-size: 2rem;">👥</div>
+              <strong>Líderes de Turma</strong>
+              <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Seus colegas da sala</p>
             </div>
           </div>
 
           <div class="chat-window">
             <div class="chat-header-info">
-              <div><span>Conversando com: </span><strong id="chat-destinatario-nome">Grêmio Estudantil</strong></div>
-              <span style="font-size: 0.8rem; background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 20px; font-weight: bold;" id="status-identificador-chat">🔒 Seu ID: Anônimo</span>
+              <div>
+                <strong id="chat-destinatario-titulo">Grêmio Estudantil</strong>
+                <div style="font-size: 0.75rem; color: #64748b;" id="chat-destinatario-sub">Canal direto de escuta empática</div>
+              </div>
+              <span class="badge-turma" id="chat-identificacao-remetente">Estudante</span>
             </div>
-            <div class="chat-messages" id="chat-messages"></div>
+
+            <div class="chat-messages" id="chat-messages-container">
+              <!-- Mensagens renderizadas via JS -->
+            </div>
+
             <div class="chat-input-area">
-              <input type="text" id="input-chat" class="form-control" placeholder="Escreva sua mensagem anônima aqui..." onkeypress="if(event.key==='Enter') enviarMensagemDireta()">
-              <button class="btn" onclick="enviarMensagemDireta()">Enviar</button>
+              <input type="text" id="chat-input-text" class="form-control" placeholder="Digite sua mensagem aqui..." onkeypress="tratarEnterChat(event)">
+              <button class="btn" onclick="enviarMensagemChat()">Enviar</button>
             </div>
           </div>
         </section>
 
-        <!-- secao whatsapp da equipe (com lista de membros por setor) -->
-        <section id="whatsapp-equipe" class="section-page">
-          <h1 class="page-title">📱 Contatos do WhatsApp da Equipe</h1>
-          <p class="page-subtitle">Escolha o integrante específico e fale diretamente no aplicativo.</p>
+        <!-- RELATAR -->
+        <section id="sec-relatar" class="section-page">
+          <h1 class="page-title">Relatar Situação</h1>
+          <p class="page-subtitle">Envie um relato com total confidencialidade para a equipe pedagógica/gestão.</p>
 
-          <div class="wsp-group-title">🎓 Grêmio Estudantil</div>
-          <div class="membro-list" id="lista-wsp-gremio"></div>
-
-          <div class="wsp-group-title">👥 Líderes de Turma</div>
-          <div class="membro-list" id="lista-wsp-lideres"></div>
-
-          <div class="wsp-group-title">🏫 Coordenação & Mediação</div>
-          <div class="membro-list" id="lista-wsp-coordenacao"></div>
-        </section>
-
-        <!-- secao relatar -->
-        <section id="relatar" class="section-page">
-          <h1 class="page-title">🚨 Relato de Situação</h1>
-          <p class="page-subtitle">Comunique ocorridos de forma segura e confidencial.</p>
-          <div class="card">
-            <form onsubmit="registrarRelato(event)">
-              <div class="form-group" style="margin-bottom: 12px;">
-                <label>Tipo de ocorrência:</label>
-                <select id="relato-tipo" class="form-control" required>
-                  <option value="">-- Selecione --</option>
-                  <option value="Bullying / Verbal">Bullying / Verbal</option>
-                  <option value="Cyberbullying">Cyberbullying</option>
-                  <option value="Exclusão">Exclusão / Isolamento</option>
-                  <option value="Conflito em sala">Conflito em sala</option>
+          <div class="form-container">
+            <form id="form-relato" onsubmit="salvarRelato(event)">
+              <div class="form-group">
+                <label for="relato-categoria">Tipo de Ocorrência:</label>
+                <select id="relato-categoria" class="form-control" required>
+                  <option value="">-- Selecione uma opção --</option>
+                  <option value="Bullying Verbal / Psicológico">Bullying Verbal / Psicológico</option>
+                  <option value="Cyberbullying (Online)">Cyberbullying (Online)</option>
+                  <option value="Exclusão / Isolamento">Exclusão / Isolamento Social</option>
+                  <option value="Agressão Física / Intimidação">Agressão Física / Intimidação</option>
+                  <option value="Outros Conflitos">Outros Conflitos na Escola</option>
                 </select>
               </div>
-              <div class="form-group" style="margin-bottom: 12px;">
-                <label>Descrição do ocorrido:</label>
-                <textarea id="relato-descricao" class="form-control" rows="3" placeholder="Conte detalhes sobre o que aconteceu..." required></textarea>
+
+              <div class="form-group">
+                <label for="relato-descricao">Descrição Detalhada:</label>
+                <textarea id="relato-descricao" class="form-control" rows="5" placeholder="Descreva o que aconteceu, quando e onde (se desejar, não precisa dar nomes se não se sentir confortável)..." required></textarea>
               </div>
-              <div class="form-group" style="margin-bottom: 15px;">
-                <label>Local e Data:</label>
-                <input type="text" id="relato-local" class="form-control" placeholder="Ex: Pátio - Ontem no intervalo" required>
+
+              <div class="form-group">
+                <label for="relato-anonimo">Opção de Identificação:</label>
+                <select id="relato-anonimo" class="form-control">
+                  <option value="identificado">Enviar identificado com minha turma atual</option>
+                  <option value="anonimo">Enviar de forma totalmente anônima</option>
+                </select>
               </div>
-              <button type="submit" class="btn">Enviar Relato</button>
+
+              <button type="submit" class="btn" style="width: 100%;">Enviar Relato à Gestão</button>
             </form>
           </div>
         </section>
 
-        <!-- secao bem-estar -->
-        <section id="bem-estar" class="section-page">
-          <h1 class="page-title">🧠 Meu Bem-estar</h1>
-          <p class="page-subtitle">Pausa guiada para respiração e autorregulação.</p>
+        <!-- BEM-ESTAR -->
+        <section id="sec-bem-estar" class="section-page">
+          <h1 class="page-title">Espaço Meu Bem-estar</h1>
+          <p class="page-subtitle">Ferramentas simples de autocuidado, regulação emocional e acompanhamento diário.</p>
+
           <div class="respiracao-box">
-            <h3>Exercício de Respiração Guiada</h3>
-            <p>Inspire e expire acompanhando o movimento do círculo para acalmar a mente.</p>
-            <div class="bolha-pulmao" id="bolha-pulmao">Inspire</div>
-            <button class="btn" onclick="iniciarRespiracao()">Iniciar Respiração</button>
+            <h3>Exercício de Respiração Guiada (4-4-4)</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Inspire o ar devagar, segure e expire no ritmo do indicador.</p>
+            
+            <div class="bolha-pulmao" id="bolha-pulmao">Pausado</div>
+            
+            <div style="display: flex; gap: 10px;">
+              <button class="btn" id="btn-respiracao" onclick="toggleRespiracao()">Iniciar Exercício</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Como você está se sentindo hoje?</h3>
+            <p>Registre seu estado emocional para acompanhar seu diário de bem-estar simples.</p>
+
+            <div class="humor-selector">
+              <button class="humor-btn" onclick="registrarHumor('Muito Bem! 😊')">😊 Muito Bem</button>
+              <button class="humor-btn" onclick="registrarHumor('Calmo(a) 😌')">😌 Calmo(a)</button>
+              <button class="humor-btn" onclick="registrarHumor('Ansioso(a) 😰')">😰 Ansioso(a)</button>
+              <button class="humor-btn" onclick="registrarHumor('Triste 😢')">😢 Triste</button>
+              <button class="humor-btn" onclick="registrarHumor('Chateado(a) 😠')">😠 Chateado(a)</button>
+            </div>
+
+            <div style="margin-top: 20px;">
+              <strong>Seu Histórico Recente:</strong>
+              <ul id="historico-humor" style="list-style: none; margin-top: 10px; font-size: 0.9rem; color: #64748b;">
+                <li>Nenhum registro hoje.</li>
+              </ul>
+            </div>
           </div>
         </section>
 
-        <!-- secao bullying -->
-        <section id="bullying" class="section-page">
-          <h1 class="page-title">🛡️ Bullying & Cyberbullying</h1>
-          <p class="page-subtitle">Informações importantes para identificar, prevenir e agir.</p>
+        <!-- BULLYING & CYBER -->
+        <section id="sec-bullying" class="section-page">
+          <h1 class="page-title">Entendendo o Bullying & Cyberbullying</h1>
+          <p class="page-subtitle">Informação e conscientização para transformar atitudes.</p>
+
           <div class="card-grid">
             <div class="card">
               <h3>O que é Bullying?</h3>
-              <p>Comportamento agressivo, intencional e repetitivo, adotado sem motivação evidente, praticado por um ou mais estudantes contra outro.</p>
+              <p>Atos intencionais e repetidos de violência física ou psicológica, sem motivação evidente, praticados por um indivíduo ou grupo contra outro, causando dor e angústia.</p>
             </div>
+
             <div class="card">
-              <h3>Cyberbullying</h3>
-              <p>Prática de violência sistemática praticada em ambiente virtual (redes sociais, aplicativos de mensagens e jogos online).</p>
+              <h3>O Cyberbullying</h3>
+              <p>Ocorre no ambiente virtual (redes sociais, aplicativos de mensagens, jogos). Inclui exposição de fotos sem autorização, espalhar boatos, perfis falsos e ofensas em chats.</p>
+            </div>
+
+            <div class="card">
+              <h3>Como Agir?</h3>
+              <p>• Não guarde para você: procure um adulto de confiança.<br>• Guarde evidências (prints) em casos virtuais.<br>• Não seja um espectador silencioso: apoie quem precisa.</p>
             </div>
           </div>
         </section>
 
-        <!-- secao gremio -->
-        <section id="gremio" class="section-page">
-          <h1 class="page-title">🎓 Grêmio Estudantil</h1>
-          <p class="page-subtitle">Acompanhe as ações e avisos do Grêmio da sua escola.</p>
+        <!-- GRÊMIO -->
+        <section id="sec-gremio" class="section-page">
+          <h1 class="page-title">Grêmio Estudantil</h1>
+          <p class="page-subtitle">A representação democrática dos estudantes na gestão e melhorias da escola.</p>
+
           <div class="card">
-            <h3>Mural de Avisos do Grêmio</h3>
-            <div class="aviso-item">
-              <div>
-                <strong>Reunião de Acolhimento</strong>
-                <p style="font-size: 0.85rem; color: #64748b;">Próxima quinta-feira no intervalo cultural.</p>
-              </div>
+            <h3>Atuações e Propostas</h3>
+            <p>O Grêmio trabalha promovendo eventos culturais, esportivos, de acolhimento e garantindo que a voz dos alunos seja ouvida pelos professores e direção.</p>
+            
+            <button class="btn" onclick="navegarDirect('conversar')">Enviar Ideia ou Sugestão via Chat</button>
+          </div>
+        </section>
+
+        <!-- LÍDERES DE TURMA -->
+        <section id="sec-lideres" class="section-page">
+          <h1 class="page-title">Líderes de Turma</h1>
+          <p class="page-subtitle">Pontes de diálogo entre estudantes, professores e coordenação pedagógica.</p>
+
+          <div class="card">
+            <h3>Papel dos Líderes</h3>
+            <p>Os representantes de turma ajudam na organização interna da sala, na mediação inicial de pequenos atritos e na articulação de melhorias para a rotina escolar.</p>
+          </div>
+        </section>
+
+        <!-- CONTEÚDOS & GUIAS -->
+        <section id="sec-conteudos" class="section-page">
+          <h1 class="page-title">Conteúdos & Guias Práticos</h1>
+          <p class="page-subtitle">Materiais e dicas rápidas para manter relacionamentos saudáveis na escola.</p>
+
+          <div class="card-grid">
+            <div class="card">
+              <h3>Comunicação Não-Violenta (CNV)</h3>
+              <p>Aprenda a expressar suas necessidades sem culpar ou julgar os outros, facilitando a resolução de conflitos interpessoais.</p>
+            </div>
+
+            <div class="card">
+              <h3>Empatia na Prática</h3>
+              <p>Colocar-se no lugar do outro é o primeiro passo para conter apelidos pejorativos, chacotas e comportamentos excludentes.</p>
             </div>
           </div>
         </section>
 
-        <!-- secao lideres -->
-        <section id="líderes" class="section-page">
-          <h1 class="page-title">👥 Líderes de Turma</h1>
-          <p class="page-subtitle">Representantes focados na integração e mediação de conflitos.</p>
-          <div class="card">
-            <p>Os líderes de turma atuam como pontes entre os alunos, professores e a direção, garantindo que todas as vozes sejam ouvidas.</p>
-          </div>
-        </section>
+        <!-- CANAIS DE APOIO -->
+        <section id="sec-canais-apoio" class="section-page">
+          <h1 class="page-title">Canais Externa de Apoio</h1>
+          <p class="page-subtitle">Serviços públicos e gratuitos disponíveis de ajuda psicossocial e garantias de direitos.</p>
 
-        <!-- secao conteudos -->
-        <section id="conteudos" class="section-page">
-          <h1 class="page-title">📚 Conteúdos & Materiais</h1>
-          <p class="page-subtitle">Guias, leituras e vídeos sobre cultura de paz e saúde emocional.</p>
-          <div class="card">
-            <h3>Guia Prático de Comunicação Não-Violenta (CNV)</h3>
-            <p>Aprenda a expressar suas necessidades com clareza e empatia no ambiente escolar.</p>
-          </div>
-        </section>
-
-        <!-- secao canais de apoio -->
-        <section id="canais-apoio" class="section-page">
-          <h1 class="page-title">📞 Canais de Apoio Externalizados</h1>
-          <p class="page-subtitle">Canais públicos e gratuitos de ajuda emergencial e suporte profissional.</p>
           <div class="card-grid">
             <div class="card">
               <h3>CVV - Centro de Valorização da Vida</h3>
-              <p>Apoio emocional e prevenção do suicídio, atendendo voluntária e gratuitamente.</p>
-              <strong style="color: var(--roxo-escuro); font-size: 1.2rem;">Ligue 188</strong>
+              <p>Apoio emocional e prevenção do suicídio. Atendimento gratuito e sigiloso 24 horas por dia.</p>
+              <a href="tel:188" class="btn">Ligar 188</a>
             </div>
+
             <div class="card">
-              <h3>Disque 100</h3>
-              <p>Disque Direitos Humanos - serviço de denúncia de violações de direitos humanos.</p>
-              <strong style="color: var(--roxo-escuro); font-size: 1.2rem;">Ligue 100</strong>
+              <h3>Disque 100 - Direitos Humanos</h3>
+              <p>Canal público para denúncias de violações de direitos de crianças e adolescentes.</p>
+              <a href="tel:100" class="btn">Ligar 100</a>
+            </div>
+
+            <div class="card">
+              <h3>Pode Falar (UNICEF)</h3>
+              <p>Canal de ajuda virtual em saúde mental voltado especialmente para adolescentes e jovens de 13 a 24 anos.</p>
+              <a href="https://podefalar.org.br" target="_blank" class="btn btn-secondary">Acessar Site</a>
             </div>
           </div>
         </section>
 
-        <!-- secao sobre -->
-        <section id="sobre" class="section-page">
-          <h1 class="page-title">ℹ️ Sobre o Projeto Abraçar</h1>
-          <p class="page-subtitle">Iniciativa voltada ao acolhimento, escuta ativa e fortalecimento do ambiente escolar.</p>
+        <!-- SOBRE -->
+        <section id="sec-sobre" class="section-page">
+          <h1 class="page-title">Sobre o Projeto Abraçar</h1>
+          <p class="page-subtitle">Conheça a missão e a proposta desta iniciativa institucional.</p>
+
           <div class="card">
-            <p>O Projeto Abraçar foi idealizado para ser uma ferramenta segura, onde estudantes e a comunidade escolar encontram apoio, orientação e um ambiente confidencial para falar sobre seu bem-estar e convivência.</p>
+            <h3>Nossa Missão</h3>
+            <p>O Projeto Abraçar foi concebido com a missão de consolidar um ambiente escolar seguro, onde a escuta qualificada, o acolhimento afetivo e a mediação pacífica de conflitos prevaleçam sobre a intolerância e o silenciamento.</p>
           </div>
         </section>
 
-        <!-- secao painel admin -->
-        <section id="admin-panel" class="section-page">
-          <h1 class="page-title">🔒 Painel do Administrador</h1>
-          <p class="page-subtitle">Gestão de relatos, registros e métricas do sistema.</p>
-          <div class="chart-container">
-            <canvas id="meuGrafico"></canvas>
+        <!-- ÁREA DA ESCOLA (ADMIN) -->
+        <section id="sec-admin-panel" class="section-page">
+          <h1 class="page-title">Painel de Gestão Escolar</h1>
+          <p class="page-subtitle">Área restrita à coordenação, direção e comissão de acolhimento.</p>
+
+          <div class="card" style="margin-bottom: 20px;">
+            <h3>Relatos Recebidos</h3>
+            <div style="overflow-x: auto;">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Origem</th>
+                    <th>Categoria</th>
+                    <th>Relato</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela-relatos-corpo">
+                  <!-- Relatos via JS -->
+                </tbody>
+              </table>
+            </div>
           </div>
+
           <div class="card">
-            <h3>Relatos Registrados no Sistema</h3>
-            <div id="lista-relatos-admin" style="margin-top: 15px;">
-              <p style="color: #64748b; font-size: 0.9rem;">Nenhum relato registrado até o momento.</p>
+            <h3>Visualização dos Chats Ativos</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 10px;">Acompanhamento das interações via Grêmio e Líderes para garantir a segurança no ambiente.</p>
+            <div id="admin-chat-overview" style="font-size: 0.9rem; color: #64748b;">
+              Selecione os módulos abaixo para supervisionar as conversas ativas no sistema local.
             </div>
           </div>
         </section>
@@ -424,215 +1034,343 @@
   </div>
 
   <script>
-    let usuarioAtual = { nome: '', turma: '', tipo: 'estudante', idAnonimo: '' };
-    let destinatarioChat = 'Grêmio Estudantil';
-    let relatosSistema = [];
-
-    // Base de Dados de Integrantes para WhatsApp
-    const membrosEquipe = {
-      gremio: [
-        { nome: 'Ana Clara', cargo: 'Presidente do Grêmio', fone: '5511999990001' },
-        { nome: 'Lucas Silva', cargo: 'Diretor de Comunicação', fone: '5511999990002' },
-        { nome: 'Mariana Souza', cargo: 'Acolhimento & Bem-Estar', fone: '5511999990003' }
-      ],
-      lideres: [
-        { nome: 'Gabriel Santos', cargo: 'Líder - 1º Ano EM', fone: '5511988880001' },
-        { nome: 'Beatriz Costa', cargo: 'Líder - 2º Ano EM', fone: '5511988880002' },
-        { nome: 'Matheus Oliveira', cargo: 'Líder - 9º Ano A', fone: '5511988880003' }
-      ],
-      coordenacao: [
-        { nome: 'Profa. Regina', cargo: 'Coordenadora Pedagógica', fone: '5511977770001' },
-        { nome: 'Prof. Roberto', cargo: 'Mediador Escolar', fone: '5511977770002' }
-      ]
+    /* ESTADO DA APLICAÇÃO (LOCALSTORAGE) */
+    let usuarioAtual = {
+      tipo: 'estudante',
+      nome: 'Estudante',
+      turma: '6º Ano A'
     };
+
+    let destinoChatAtual = 'gremio';
+    let intervaloRespiracao = null;
+
+    // Inicialização ao carregar página
+    window.addEventListener('DOMContentLoaded', () => {
+      carregarDadosIniciais();
+      renderizarMensagensChat();
+    });
 
     function alternarCamposAcesso() {
       const tipo = document.getElementById('tipo-acesso').value;
+      const campoEstudante = document.getElementById('campo-estudante');
+      const campoAdmin = document.getElementById('campo-admin');
+
       if (tipo === 'admin') {
-        document.getElementById('campo-estudante').style.display = 'none';
-        document.getElementById('campo-admin').style.display = 'block';
+        campoEstudante.style.display = 'none';
+        campoAdmin.style.display = 'block';
       } else {
-        document.getElementById('campo-estudante').style.display = 'block';
-        document.getElementById('campo-admin').style.display = 'none';
+        campoEstudante.style.display = 'block';
+        campoAdmin.style.display = 'none';
       }
     }
 
     function confirmarEntrada() {
       const tipo = document.getElementById('tipo-acesso').value;
+
       if (tipo === 'admin') {
         const senha = document.getElementById('senha-acesso').value;
-        if (senha === 'admin123') { // Senha demonstrativa
-          usuarioAtual = { nome: 'Administrador', turma: 'Gestão', tipo: 'admin', idAnonimo: 'ADMIN' };
-          document.getElementById('divider-admin').style.display = 'block';
-          document.getElementById('menu-admin-item').style.display = 'block';
-          document.getElementById('admin-user-selector').style.display = 'block';
-          iniciarSistema();
+        if (senha === '1234' || senha === 'admin') {
+          usuarioAtual = { tipo: 'admin', nome: 'Gestão Escolar', turma: 'Administração' };
+          ativarModoAdmin(true);
         } else {
-          alert('Senha incorreta! Use: admin123');
-        }
-      } else {
-        const nome = document.getElementById('nome-usuario').value.trim();
-        const turma = document.getElementById('turma-select').value;
-        if (!nome || !turma) {
-          alert('Por favor, preencha seu nome e turma.');
+          alert('Senha incorreta! (Tente "1234")');
           return;
         }
-        usuarioAtual = { nome, turma, tipo: 'estudante', idAnonimo: `Aluno #${Math.floor(1000 + Math.random() * 9000)}` };
-        iniciarSistema();
+      } else {
+        const nome = document.getElementById('student-name').value.trim();
+        const turma = document.getElementById('turma-select').value;
+
+        if (!nome || !turma) {
+          alert('Por favor, informe seu nome e selecione sua turma.');
+          return;
+        }
+
+        usuarioAtual = { tipo: 'estudante', nome: nome, turma: turma };
+        ativarModoAdmin(false);
+      }
+
+      document.getElementById('display-user-turma').innerText = `${usuarioAtual.nome} (${usuarioAtual.turma})`;
+      document.getElementById('welcome-overlay').style.display = 'none';
+      document.getElementById('app-container').classList.add('active');
+    }
+
+    function ativarModoAdmin(isAdmin) {
+      const itemAdmin = document.getElementById('menu-admin-item');
+      const dividerAdmin = document.getElementById('divider-admin');
+
+      if (isAdmin) {
+        itemAdmin.style.display = 'block';
+        dividerAdmin.style.display = 'block';
+        carregarTabelaRelatosAdmin();
+      } else {
+        itemAdmin.style.display = 'none';
+        dividerAdmin.style.display = 'none';
       }
     }
 
-    function iniciarSistema() {
-      document.getElementById('welcome-overlay').style.display = 'none';
-      document.getElementById('app-container').classList.add('active');
-      document.getElementById('display-user-turma').innerText = `${usuarioAtual.nome} (${usuarioAtual.turma})`;
-      document.getElementById('status-identificador-chat').innerText = `🔒 Seu ID: ${usuarioAtual.idAnonimo}`;
-      
-      carregarIntegrantesWhatsapp();
-      renderizarGrafico();
-    }
-
     function trocarPerfil() {
-      location.reload();
+      document.getElementById('app-container').classList.remove('active');
+      document.getElementById('welcome-overlay').style.display = 'flex';
     }
 
-    function navegar(idSecao, el) {
+    /* NAVEGAÇÃO INTERNA */
+    function navegar(secaoId, elementoLink) {
       document.querySelectorAll('.section-page').forEach(sec => sec.classList.remove('active'));
       document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
-      document.getElementById(idSecao).classList.add('active');
-      if (el) el.classList.add('active');
+
+      const alvo = document.getElementById(`sec-${secaoId}`);
+      if (alvo) alvo.classList.add('active');
+
+      if (elementoLink) elementoLink.classList.add('active');
+
+      // Fechar sidebar mobile ao navegar
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebar-overlay').classList.remove('open');
     }
 
-    function navegarDireto(idSecao) {
-      navegar(idSecao, null);
-    }
-
-    function toggleMobileSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
+    function navegarDirect(secaoId) {
+      const link = document.querySelector(`.nav-links a[onclick*="'${secaoId}'"]`);
+      navegar(secaoId, link);
     }
 
     function toggleSidebarCollapse() {
       const sidebar = document.getElementById('sidebar');
       const mainWrapper = document.getElementById('main-wrapper');
+      const btn = document.querySelector('.toggle-collapse-btn');
+
       sidebar.classList.toggle('collapsed');
       mainWrapper.classList.toggle('expanded');
+
+      if (sidebar.classList.contains('collapsed')) {
+        btn.innerHTML = '▶';
+      } else {
+        btn.innerHTML = '◀';
+      }
     }
 
-    function selecionarDestinatario(card, destinatario) {
-      document.querySelectorAll('.chat-target-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      destinatarioChat = destinatario;
-      document.getElementById('chat-destinatario-nome').innerText = destinatario;
+    function toggleMobileSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebar-overlay').classList.toggle('open');
     }
 
-    function enviarMensagemDireta() {
-      const input = document.getElementById('input-chat');
+    /* CHAT DE ESCUTA */
+    function selecionarDestinoChat(destino) {
+      destinoChatAtual = destino;
+      
+      document.getElementById('target-gremio').classList.remove('selected');
+      document.getElementById('target-lideres').classList.remove('selected');
+      document.getElementById(`target-${destino}`).classList.add('selected');
+
+      const titulo = document.getElementById('chat-destinatario-titulo');
+      const sub = document.getElementById('chat-destinatario-sub');
+
+      if (destino === 'gremio') {
+        titulo.innerText = 'Grêmio Estudantil';
+        sub.innerText = 'Canal direto de escuta empática com os representantes';
+      } else {
+        titulo.innerText = 'Líderes de Turma';
+        sub.innerText = 'Espaço de diálogo com os líderes da sua classe';
+      }
+
+      renderizarMensagensChat();
+    }
+
+    function obterMensagensLocais() {
+      return JSON.parse(localStorage.getItem('abracar_chat_msgs') || '[]');
+    }
+
+    function salvarMensagemLocal(msg) {
+      const msgs = obterMensagensLocais();
+      msgs.push(msg);
+      localStorage.setItem('abracar_chat_msgs', JSON.stringify(msgs));
+    }
+
+    function enviarMensagemChat() {
+      const input = document.getElementById('chat-input-text');
       const texto = input.value.trim();
+
       if (!texto) return;
 
-      const chatContainer = document.getElementById('chat-messages');
-      
-      // Mensagem do Aluno
-      const msgRowSent = document.createElement('div');
-      msgRowSent.className = 'chat-msg-row sent';
-      msgRowSent.innerHTML = `<div class="chat-msg-bubble">${texto}</div>`;
-      chatContainer.appendChild(msgRowSent);
-
-      input.value = '';
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-
-      // Resposta simulada da equipe após 1 segundo
-      setTimeout(() => {
-        const msgRowRec = document.createElement('div');
-        msgRowRec.className = 'chat-msg-row received';
-        msgRowRec.innerHTML = `<div class="chat-msg-bubble">Olá! Recebemos sua mensagem enviada para ${destinatarioChat}. Estamos aqui para te ouvir.</div>`;
-        chatContainer.appendChild(msgRowRec);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }, 1000);
-    }
-
-    function registrarRelato(e) {
-      e.preventDefault();
-      const tipo = document.getElementById('relato-tipo').value;
-      const desc = document.getElementById('relato-descricao').value;
-      const local = document.getElementById('relato-local').value;
-
-      relatosSistema.push({ tipo, desc, local, data: new Date().toLocaleDateString() });
-      alert('Relato enviado com sucesso e com total sigilo!');
-      e.target.reset();
-      atualizarListaRelatosAdmin();
-    }
-
-    function atualizarListaRelatosAdmin() {
-      const container = document.getElementById('lista-relatos-admin');
-      if (relatosSistema.length === 0) {
-        container.innerHTML = '<p style="color: #64748b; font-size: 0.9rem;">Nenhum relato registrado até o momento.</p>';
-        return;
-      }
-      container.innerHTML = relatosSistema.map(r => `
-        <div style="padding: 12px; border-bottom: 1px solid var(--cinza-borda);">
-          <strong>[${r.tipo}]</strong> - <small style="color: #64748b;">${r.local} em ${r.data}</small><br>
-          <p style="margin-top: 5px; font-size: 0.9rem;">${r.desc}</p>
-        </div>
-      `).join('');
-    }
-
-    // Renderiza a lista detalhada de números no WhatsApp
-    function carregarIntegrantesWhatsapp() {
-      const renderGrupo = (membros, elementId) => {
-        const el = document.getElementById(elementId);
-        el.innerHTML = membros.map(m => `
-          <div class="membro-card">
-            <div class="membro-info">
-              <strong>${m.nome}</strong>
-              <span>${m.cargo}</span>
-            </div>
-            <a class="btn btn-wsp" href="https://wa.me/${m.fone}" target="_blank">
-              WhatsApp
-            </a>
-          </div>
-        `).join('');
+      const novaMsg = {
+        id: Date.now(),
+        remetente: usuaroAtual.nome,
+        turma: usuarioAtual.turma,
+        destino: destinoChatAtual,
+        texto: texto,
+        dataHora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
-      renderGrupo(membrosEquipe.gremio, 'lista-wsp-gremio');
-      renderGrupo(membrosEquipe.lideres, 'lista-wsp-lideres');
-      renderGrupo(membrosEquipe.coordenacao, 'lista-wsp-coordenacao');
+      salvarMensagemLocal(novaMsg);
+      input.value = '';
+      renderizarMensagensChat();
     }
 
-    function iniciarRespiracao() {
+    function tratarEnterChat(event) {
+      if (event.key === 'Enter') {
+        enviarMensagemChat();
+      }
+    }
+
+    function deletarMensagem(id) {
+      let msgs = obterMensagensLocais();
+      msgs = msgs.filter(m => m.id !== id);
+      localStorage.setItem('abracar_chat_msgs', JSON.stringify(msgs));
+      renderizarMensagensChat();
+    }
+
+    function renderizarMensagensChat() {
+      const container = document.getElementById('chat-messages-container');
+      container.innerHTML = '';
+
+      const msgs = obterMensagensLocais().filter(m => m.destino === destinoChatAtual);
+
+      if (msgs.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 0.85rem; margin-top: 20px;">Nenhuma mensagem registrada neste canal ainda. Comece a conversa!</div>`;
+        return;
+      }
+
+      msgs.forEach(m => {
+        const souEu = m.remetente === usuarioAtual.nome;
+        const row = document.createElement('div');
+        row.className = `chat-msg-row ${souEu ? 'sent' : 'received'}`;
+
+        row.innerHTML = `
+          <div class="chat-msg-bubble">
+            <div style="font-size: 0.7rem; opacity: 0.85; margin-bottom: 2px;">
+              ${m.remetente} (${m.turma}) • ${m.dataHora}
+            </div>
+            <div>${m.texto}</div>
+          </div>
+          ${souEu ? `<button class="btn-delete-msg" title="Excluir" onclick="deletarMensagem(${m.id})">🗑️</button>` : ''}
+        `;
+
+        container.appendChild(row);
+      });
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    /* RELATOS */
+    function salvarRelato(event) {
+      event.preventDefault();
+
+      const categoria = document.getElementById('relato-categoria').value;
+      const descricao = document.getElementById('relato-descricao').value.trim();
+      const tipoAnonimo = document.getElementById('relato-anonimo').value;
+
+      const novoRelato = {
+        id: Date.now(),
+        data: new Date().toLocaleDateString('pt-BR'),
+        origem: tipoAnonimo === 'anonimo' ? 'Anônimo' : `${usuarioAtual.nome} (${usuarioAtual.turma})`,
+        categoria: categoria,
+        descricao: descricao
+      };
+
+      const relatos = JSON.parse(localStorage.getItem('abracar_relatos') || '[]');
+      relatos.push(novoRelato);
+      localStorage.setItem('abracar_relatos', JSON.stringify(relatos));
+
+      alert('Seu relato foi enviado com sucesso e com total sigilo!');
+      document.getElementById('form-relato').reset();
+
+      if (usuarioAtual.tipo === 'admin') carregarTabelaRelatosAdmin();
+    }
+
+    function carregarTabelaRelatosAdmin() {
+      const corpo = document.getElementById('tabela-relatos-corpo');
+      if (!corpo) return;
+
+      corpo.innerHTML = '';
+      const relatos = JSON.parse(localStorage.getItem('abracar_relatos') || '[]');
+
+      if (relatos.length === 0) {
+        corpo.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Nenhum relato recebido até o momento.</td></tr>`;
+        return;
+      }
+
+      relatos.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.data}</td>
+          <td><strong>${r.origem}</strong></td>
+          <td><span class="badge-turma">${r.categoria}</span></td>
+          <td style="max-width: 300px; word-break: break-word;">${r.descricao}</td>
+          <td><button class="btn-danger" onclick="excluirRelatoAdmin(${r.id})">Excluir</button></td>
+        `;
+        corpo.appendChild(tr);
+      });
+    }
+
+    function excluirRelatoAdmin(id) {
+      let relatos = JSON.parse(localStorage.getItem('abracar_relatos') || '[]');
+      relatos = relatos.filter(r => r.id !== id);
+      localStorage.setItem('abracar_relatos', JSON.stringify(relatos));
+      carregarTabelaRelatosAdmin();
+    }
+
+    /* BEM-ESTAR & RESPIRAÇÃO */
+    function toggleRespiracao() {
       const bolha = document.getElementById('bolha-pulmao');
-      bolha.classList.add('inspirar');
+      const btn = document.getElementById('btn-respiracao');
+
+      if (intervaloRespiracao) {
+        clearInterval(intervaloRespiracao);
+        intervaloRespiracao = null;
+        bolha.classList.remove('inspirar', 'expirar');
+        bolha.innerText = 'Pausado';
+        btn.innerText = 'Iniciar Exercício';
+      } else {
+        btn.innerText = 'Parar Exercício';
+        executarCicloRespiratorio();
+        intervaloRespiracao = setInterval(executarCicloRespiratorio, 8000);
+      }
+    }
+
+    function executarCicloRespiratorio() {
+      const bolha = document.getElementById('bolha-pulmao');
       bolha.innerText = 'Inspire...';
+      bolha.classList.add('inspirar');
+      bolha.classList.remove('expirar');
+
       setTimeout(() => {
-        bolha.classList.remove('inspirar');
-        bolha.classList.add('expirar');
-        bolha.innerText = 'Expire...';
-        setTimeout(() => {
-          bolha.classList.remove('expirar');
-          bolha.innerText = 'Inspire';
-        }, 4000);
+        if (intervaloRespiracao) {
+          bolha.innerText = 'Expire...';
+          bolha.classList.remove('inspirar');
+          bolha.classList.add('expirar');
+        }
       }, 4000);
     }
 
-    function renderizarGrafico() {
-      const ctx = document.getElementById('meuGrafico');
-      if (!ctx) return;
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Bullying/Verbal', 'Cyberbullying', 'Exclusão', 'Conflitos'],
-          datasets: [{
-            data: [12, 5, 8, 3],
-            backgroundColor: ['#2ecc71', '#8e44ad', '#1abc9c', '#e74c3c']
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'bottom' }
-          }
-        }
-      });
+    function registrarHumor(humor) {
+      const historico = JSON.parse(localStorage.getItem('abracar_humor') || '[]');
+      const registro = {
+        data: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        estado: humor
+      };
+
+      historico.unshift(registro);
+      if (historico.length > 5) historico.pop();
+
+      localStorage.setItem('abracar_humor', JSON.stringify(historico));
+      carregarHistoricoHumor();
+    }
+
+    function carregarHistoricoHumor() {
+      const container = document.getElementById('historico-humor');
+      if (!container) return;
+
+      const historico = JSON.parse(localStorage.getItem('abracar_humor') || '[]');
+
+      if (historico.length === 0) {
+        container.innerHTML = `<li>Nenhum registro recente.</li>`;
+        return;
+      }
+
+      container.innerHTML = historico.map(h => `<li>• Hoje às ${h.data}: <strong>${h.estado}</strong></li>`).join('');
+    }
+
+    function carregarDadosIniciais() {
+      carregarHistoricoHumor();
     }
   </script>
 </body>
