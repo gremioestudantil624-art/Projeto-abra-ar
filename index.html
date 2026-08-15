@@ -24,10 +24,10 @@
     body { background-color: var(--bg-claro); color: var(--texto-escuro); min-height: 100vh; display: flex; flex-direction: column; }
 
     .welcome-overlay { position: fixed; inset: 0; background: var(--degrade-abracar); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
-    .welcome-card { background: var(--branco); padding: 40px 30px; border-radius: 20px; max-width: 460px; width: 100%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    .welcome-card { background: var(--branco); padding: 40px 30px; border-radius: 20px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
     .welcome-card .logo-svg { width: 70px; height: 70px; margin-bottom: 15px; }
     .welcome-card h1 { font-size: 1.8rem; color: var(--roxo-escuro); }
-    .welcome-card p { color: #64748b; font-size: 0.95rem; margin: 8px 0 25px 0; }
+    .welcome-card p { color: #64748b; font-size: 0.95rem; margin: 8px 0 20px 0; }
     .welcome-options { display: flex; flex-direction: column; gap: 15px; text-align: left; }
     .form-control { width: 100%; padding: 12px 15px; border: 1px solid var(--cinza-borda); border-radius: 10px; font-size: 0.95rem; outline: none; }
     .form-control:focus { border-color: var(--roxo-principal); }
@@ -65,15 +65,14 @@
     .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 25px; }
     .card { background: var(--branco); padding: 22px; border-radius: 14px; border: 1px solid var(--cinza-borda); box-shadow: 0 4px 12px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between; }
     .card h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--texto-escuro); }
-    .card p { font-size: 0.9rem; color: #64748b; line-height: 1.4; margin-bottom: 15px; }
-    .card-destaque { background: var(--degrade-abracar); color: var(--branco); border: none; }
-    .card-destaque h3, .card-destaque p { color: var(--branco); }
+    .card p { font-size: 0.9rem; color: #64748b; line-height: 1.5; margin-bottom: 15px; }
 
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 8px; border: none; background: var(--degrade-abracar); color: var(--branco); font-weight: 600; font-size: 0.9rem; cursor: pointer; text-decoration: none; }
     .btn-secondary { background: var(--cinza-suave); color: var(--texto-escuro); border: 1px solid var(--cinza-borda); }
     .btn-danger { background: #e74c3c; color: #fff; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; border: none; cursor: pointer; }
+    .btn-wsp { background: #25d366; color: #fff; }
 
-    .chat-select-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .chat-select-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
     .chat-target-card { background: var(--branco); border: 2px solid var(--cinza-borda); border-radius: 12px; padding: 18px; cursor: pointer; text-align: center; }
     .chat-target-card.selected { border-color: var(--roxo-principal); background: #fbf7ff; }
     .chat-window { background: var(--branco); border-radius: 14px; border: 1px solid var(--cinza-borda); height: 420px; display: flex; flex-direction: column; }
@@ -87,12 +86,13 @@
     .chat-msg-row.sent .chat-msg-bubble { background: linear-gradient(135deg, #2ecc71, #1abc9c); }
     .chat-msg-row.received .chat-msg-bubble { background: linear-gradient(135deg, #8e44ad, #6c3483); }
 
-    .respiracao-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; background: var(--branco); border-radius: 16px; border: 1px solid var(--cinza-borda); text-align: center; margin-bottom: 25px; }
-    .bolha-pulmao { width: 140px; height: 140px; border-radius: 50%; background: var(--degrade-abracar); margin: 25px 0; transition: transform 4s ease-in-out; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: bold; font-size: 1rem; }
-    .bolha-pulmao.inspirar { transform: scale(1.6); }
+    .respiracao-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 20px; background: var(--branco); border-radius: 16px; border: 1px solid var(--cinza-borda); text-align: center; }
+    .bolha-pulmao { width: 130px; height: 130px; border-radius: 50%; background: var(--degrade-abracar); margin: 20px 0; transition: transform 4s ease-in-out; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: bold; font-size: 1rem; }
+    .bolha-pulmao.inspirar { transform: scale(1.5); }
     .bolha-pulmao.expirar { transform: scale(1); }
 
     .aviso-item { padding: 12px 0; border-bottom: 1px solid var(--cinza-borda); display: flex; justify-content: space-between; align-items: center; }
+    .chart-container { position: relative; max-width: 450px; margin: 0 auto 20px auto; }
 
     @media (max-width: 850px) {
       .mobile-header { display: flex; }
@@ -128,24 +128,32 @@
           </select>
         </div>
 
-        <div id="campo-estudante" class="form-group">
-          <label for="turma-select">Selecione sua Turma:</label>
-          <select id="turma-select" class="form-control">
-            <option value="">-- Selecione --</option>
-            <option value="6º Ano A">6º Ano A</option>
-            <option value="6º Ano B">6º Ano B</option>
-            <option value="7º Ano A">7º Ano A</option>
-            <option value="8º Ano A">8º Ano A</option>
-            <option value="9º Ano A">9º Ano A</option>
-            <option value="1º Ano EM">1º Ano Ensino Médio</option>
-            <option value="2º Ano EM">2º Ano Ensino Médio</option>
-            <option value="3º Ano EM">3º Ano Ensino Médio</option>
-          </select>
+        <div id="campo-estudante">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="nome-usuario">Seu Nome Completo (Identificação):</label>
+            <input type="text" id="nome-usuario" class="form-control" placeholder="Digite seu nome completo">
+          </div>
+          <div class="form-group">
+            <label for="turma-select">Sua Turma:</label>
+            <select id="turma-select" class="form-control">
+              <option value="">-- Selecione --</option>
+              <option value="6º Ano A">6º Ano A</option>
+              <option value="6º Ano B">6º Ano B</option>
+              <option value="7º Ano A">7º Ano A</option>
+              <option value="8º Ano A">8º Ano A</option>
+              <option value="9º Ano A">9º Ano A</option>
+              <option value="1º Ano EM">1º Ano Ensino Médio</option>
+              <option value="2º Ano EM">2º Ano Ensino Médio</option>
+              <option value="3º Ano EM">3º Ano Ensino Médio</option>
+            </select>
+          </div>
         </div>
 
-        <div id="campo-admin" class="form-group" style="display: none;">
-          <label for="senha-acesso">Senha de Acesso Restrito:</label>
-          <input type="password" id="senha-acesso" class="form-control" placeholder="Digite sua senha de acesso">
+        <div id="campo-admin" style="display: none;">
+          <div class="form-group">
+            <label for="senha-acesso">Senha de Acesso Restrito:</label>
+            <input type="password" id="senha-acesso" class="form-control" placeholder="Digite sua senha de acesso">
+          </div>
         </div>
 
         <button class="btn" style="width: 100%; margin-top: 10px;" onclick="confirmarEntrada()">Entrar no Sistema</button>
@@ -176,7 +184,8 @@
 
       <ul class="nav-links">
         <li><a href="#" class="active" onclick="navegar('inicio', this)"><span class="nav-icon">🏠</span><span class="link-text">Início</span></a></li>
-        <li><a href="#" onclick="navegar('conversar', this)"><span class="nav-icon">💬</span><span class="link-text">Conversar</span></a></li>
+        <li><a href="#" onclick="navegar('conversar', this)"><span class="nav-icon">💬</span><span class="link-text">Conversar (Anônimo)</span></a></li>
+        <li><a href="#" onclick="navegar('whatsapp-equipe', this)"><span class="nav-icon">📱</span><span class="link-text">WhatsApp da Equipe</span></a></li>
         <li><a href="#" onclick="navegar('relatar', this)"><span class="nav-icon">🚨</span><span class="link-text">Relatar Situação</span></a></li>
         <li><a href="#" onclick="navegar('bem-estar', this)"><span class="nav-icon">🧠</span><span class="link-text">Meu Bem-estar</span></a></li>
         <li><a href="#" onclick="navegar('bullying', this)"><span class="nav-icon">🛡️</span><span class="link-text">Bullying & Cyber</span></a></li>
@@ -187,48 +196,42 @@
         <li><a href="#" onclick="navegar('líderes', this)"><span class="nav-icon">👥</span><span class="link-text">Líderes de Turma</span></a></li>
         <li><a href="#" onclick="navegar('conteudos', this)"><span class="nav-icon">📚</span><span class="link-text">Conteúdos</span></a></li>
         <li><a href="#" onclick="navegar('canais-apoio', this)"><span class="nav-icon">📞</span><span class="link-text">Canais de Apoio</span></a></li>
-        <li><a href="#" onclick="navegar('sobre', this)"><span class="nav-icon">ℹ️</span><span class="link-text">Projeto Abraçar</span></a></li>
+        <li><a href="#" onclick="navegar('sobre', this)"><span class="nav-icon">ℹ️</span><span class="link-text">Sobre o Projetos</span></a></li>
 
         <div class="sidebar-divider" id="divider-admin" style="display: none;"><div class="sidebar-divider-text">Gestão</div></div>
-        <li id="menu-admin-item" style="display: none;"><a href="#" onclick="navegar('admin-panel', this)"><span class="nav-icon">🔒</span><span class="link-text">Área da Escola</span></a></li>
+        <li id="menu-admin-item" style="display: none;"><a href="#" onclick="navegar('admin-panel', this)"><span class="nav-icon">🔒</span><span class="link-text">Painel do Administrador</span></a></li>
       </ul>
     </aside>
 
     <div class="main-wrapper" id="main-wrapper">
       <header class="user-bar">
-        <div><span>Identificação: </span><span class="badge-turma" id="display-user-turma">Estudante</span></div>
+        <div>
+          <span>Usuário: </span><span class="badge-turma" id="display-user-turma">Estudante</span>
+          <span style="margin-left: 10px; font-size: 0.8rem; color: #16a34a; font-weight: bold;">🔒 Chat Anônimo Ativo</span>
+        </div>
         <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="trocarPerfil()">Sair / Trocar</button>
       </header>
 
       <main class="main-content">
 
-        <!-- INÍCIO -->
         <section id="inicio" class="section-page active">
           <h1 class="page-title">🤗 Bem-vindo ao Projeto Abraçar</h1>
           <p class="page-subtitle">Um espaço seguro para escuta, acolhimento e fortalecimento da comunidade escolar.</p>
           <div class="card-grid">
-            <div class="card"><h3>💬 Conversar Privado</h3><p>Canal exclusivo e restrito da sua turma com o Grêmio ou Coordenação.</p><button class="btn" onclick="navegarDireto('conversar')">Acessar Chat</button></div>
-            <div class="card"><h3>🚨 Relatar Situação</h3><p>Comunique episódios de desrespeito ou preocupações de forma anônima.</p><button class="btn" onclick="navegarDireto('relatar')">Enviar Relato</button></div>
-            <div class="card"><h3>🧠 Meu Bem-estar</h3><p>Exercícios de respiração, técnica 5-4-3-2-1 e diário pessoal.</p><button class="btn" onclick="navegarDireto('bem-estar')">Iniciar Atividades</button></div>
+            <div class="card"><h3>💬 Chat Anônimo Privado</h3><p>Converse diretamente e individualmente com os representantes. Ninguém mais tem acesso.</p><button class="btn" onclick="navegarDireto('conversar')">Abrir Meu Chat</button></div>
+            <div class="card"><h3>📱 Falar via WhatsApp</h3><p>Contate diretamente um integrante da Coordenação, Grêmio ou Líderes.</p><button class="btn btn-wsp" onclick="navegarDireto('whatsapp-equipe')">Ver Contatos</button></div>
+            <div class="card"><h3>🚨 Relatar Situação</h3><p>Comunique episódios de desrespeito ou preocupações de forma confidencial.</p><button class="btn" onclick="navegarDireto('relatar')">Enviar Relato</button></div>
           </div>
         </section>
 
-        <!-- CHAT PRIVADO POR TURMA -->
         <section id="conversar" class="section-page">
-          <h1 class="page-title">💬 Canal de Conversa Privado</h1>
-          <p class="page-subtitle">Mensagens privadas e exclusivas entre a sua turma e o destinatário selecionado.</p>
+          <h1 class="page-title">💬 Chat Privado & Anônimo</h1>
+          <p class="page-subtitle">Suas mensagens são 100% individuais e exclusivas entre você e o destinatário.</p>
 
-          <div id="admin-turma-selector" style="display:none; margin-bottom: 15px;">
-            <label style="font-weight: bold;">Visualizar como Administração para a Turma:</label>
-            <select id="admin-select-turma-chat" class="form-control" onchange="alterarTurmaAdminChat(this.value)">
-              <option value="6º Ano A">6º Ano A</option>
-              <option value="6º Ano B">6º Ano B</option>
-              <option value="7º Ano A">7º Ano A</option>
-              <option value="8º Ano A">8º Ano A</option>
-              <option value="9º Ano A">9º Ano A</option>
-              <option value="1º Ano EM">1º Ano Ensino Médio</option>
-              <option value="2º Ano EM">2º Ano Ensino Médio</option>
-              <option value="3º Ano EM">3º Ano Ensino Médio</option>
+          <div id="admin-user-selector" style="display:none; margin-bottom: 15px; background: #fff; padding: 15px; border-radius: 10px; border: 1px solid var(--cinza-borda);">
+            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Selecione uma conversa de usuário para responder:</label>
+            <select id="admin-select-user-chat" class="form-control" onchange="adminInspecionarChatUsuario(this.value)">
+              <option value="">-- Carregando Usuários Ativos --</option>
             </select>
           </div>
 
@@ -246,38 +249,43 @@
 
           <div class="chat-window">
             <div class="chat-header-info">
-              <div><span>Canal da Turma (<span id="chat-turma-atual-label">--</span>) com: </span><strong id="chat-destinatario-nome">Grêmio Estudantil</strong></div>
-              <span style="font-size: 0.8rem; background: #e2e8f0; padding: 2px 8px; border-radius: 4px;">🔒 Canal Privado</span>
+              <div><span>Conversando com: </span><strong id="chat-destinatario-nome">Grêmio Estudantil</strong></div>
+              <span style="font-size: 0.8rem; background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 20px; font-weight: bold;">🔒 Chat Anônimo Privado</span>
             </div>
             <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input-area">
-              <input type="text" id="input-chat" class="form-control" placeholder="Escreva sua mensagem privada aqui...">
+              <input type="text" id="input-chat" class="form-control" placeholder="Escreva sua mensagem anônima aqui...">
               <button class="btn" onclick="enviarMensagemDireta()">Enviar</button>
             </div>
           </div>
         </section>
 
-        <!-- RELATAR SITUAÇÃO -->
+        <section id="whatsapp-equipe" class="section-page">
+          <h1 class="page-title">📱 Contatos do WhatsApp da Equipe</h1>
+          <p class="page-subtitle">Escolha o cargo e fale diretamente com o responsável pelo WhatsApp.</p>
+          <div class="card-grid" id="lista-whatsapp-cards"></div>
+        </section>
+
         <section id="relatar" class="section-page">
           <h1 class="page-title">🚨 Relato de Situação</h1>
-          <p class="page-subtitle">Comunique ocorrências de forma segura e totalmente confidencial.</p>
-          <div class="form-container">
+          <p class="page-subtitle">Comunique ocorrências de forma segura e confidencial.</p>
+          <div class="card">
             <form onsubmit="registrarRelato(event)">
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom: 12px;">
                 <label>Tipo de ocorrência:</label>
                 <select id="relato-tipo" class="form-control" required>
                   <option value="">-- Selecione --</option>
                   <option value="Bullying / Verbal">Bullying / Verbal</option>
                   <option value="Cyberbullying">Cyberbullying</option>
                   <option value="Exclusão">Exclusão / Isolamento</option>
-                  <option value="Conflito">Conflito em sala</option>
+                  <option value="Conflito em sala">Conflito em sala</option>
                 </select>
               </div>
-              <div class="form-group">
-                <label>Descrição do corrido:</label>
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label>Descrição do ocorrido:</label>
                 <textarea id="relato-descricao" class="form-control" rows="3" required></textarea>
               </div>
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom: 15px;">
                 <label>Local e Data:</label>
                 <input type="text" id="relato-local" class="form-control" placeholder="Ex: Pátio - Ontem no intervalo" required>
               </div>
@@ -286,24 +294,20 @@
           </div>
         </section>
 
-        <!-- MEU BEM-ESTAR (EXPANDIDO) -->
-        <section id="bem-estar" class="section-page">
-          <h1 class="page-title">🧠 Espaço de Bem-estar & Regulagem Emocional</h1>
-          <p class="page-subtitle">Ferramentas práticas para reduzir a ansiedade e focar no momento presente.</p>
-
+        <section id="bem-estar" class="section-estar" class="section-page">
+          <h1 class="page-title">🧠 Espaço de Bem-estar</h1>
+          <p class="page-subtitle">Ferramentas para relaxamento e foco no momento presente.</p>
           <div class="card-grid">
             <div class="card">
-              <h3>🫁 Respiração Guiada (Ritmo 4-4)</h3>
+              <h3>🫁 Respiração Guiada</h3>
               <div class="respiracao-box">
                 <div class="bolha-pulmao" id="bolha-animada">PAUSA</div>
                 <button class="btn" id="btn-iniciar-resp" onclick="controlarRespiracao()">Iniciar Exercício</button>
               </div>
             </div>
-
             <div class="card">
               <h3>🧘 Técnica de Ancoragem (5-4-3-2-1)</h3>
-              <p>Reconecte-se com o presente identificando ao seu redor:</p>
-              <ul style="margin-left: 20px; font-size: 0.88rem; line-height: 1.6; color: #475569;">
+              <ul style="margin-left: 20px; font-size: 0.9rem; line-height: 1.8; color: #475569;">
                 <li>👀 <strong>5 coisas</strong> que você pode ver</li>
                 <li>✋ <strong>4 coisas</strong> que pode tocar</li>
                 <li>👂 <strong>3 sons</strong> que pode ouvir</li>
@@ -312,50 +316,85 @@
               </ul>
             </div>
           </div>
-
           <div class="card" style="margin-top: 15px;">
             <h3>📝 Diário de Descarrego Emocional</h3>
-            <p>Escreva o que está sentindo agora para organizar seus pensamentos. Este texto <strong>não fica salvo no servidor</strong> e é apagado ao sair.</p>
-            <textarea class="form-control" rows="4" placeholder="Escreva livremente sobre o seu dia ou preocupações..."></textarea>
+            <p>Escreva o que está sentindo. O texto não é salvo no banco de dados para garantir sua total privacidade.</p>
+            <textarea class="form-control" rows="4" placeholder="Escreva livremente aqui..."></textarea>
           </div>
         </section>
 
         <section id="bullying" class="section-page">
           <h1 class="page-title">🛡️ Combate ao Bullying</h1>
-          <div class="card"><p>Ações preventivas e diretrizes de respeito no ambiente acadêmico e virtual.</p></div>
+          <div class="card"><p>Informações e orientações para identificação e combate ao bullying e cyberbullying na escola.</p></div>
         </section>
 
         <section id="gremio" class="section-page">
           <h1 class="page-title">🎓 Área do Grêmio Estudantil</h1>
           <div class="card">
-            <h3>Mural de Avisos da Escola</h3>
+            <h3>Mural de Avisos</h3>
             <div id="mural-avisos-container"></div>
           </div>
         </section>
 
         <section id="líderes" class="section-page">
           <h1 class="page-title">👥 Líderes de Turma</h1>
-          <div class="card"><p>Acompanhamento e suporte dos seus representantes de sala.</p></div>
+          <div class="card"><p>Acompanhamento e suporte integrados aos representantes da sala de aula.</p></div>
         </section>
 
         <section id="conteudos" class="section-page">
-          <h1 class="page-title">📚 Materiais & Guia</h1>
+          <h1 class="page-title">📚 Conteúdos & Guias</h1>
           <div class="card-grid" id="lista-conteudos"></div>
         </section>
 
         <section id="canais-apoio" class="section-page">
-          <h1 class="page-title">📞 Canais de Apoio</h1>
+          <h1 class="page-title">📞 Canais de Apoio Externos</h1>
           <div class="card-grid" id="lista-canais-apoio"></div>
         </section>
 
         <section id="sobre" class="section-page">
           <h1 class="page-title">ℹ️ Sobre o Projeto Abraçar</h1>
-          <div class="card"><p>Iniciativa focada na convivência harmoniosa, escuta empática e cultura de paz na comunidade escolar.</p></div>
+          <p class="page-subtitle">Conheça a missão, estrutura e objetivos do programa de acolhimento escolar.</p>
+          <div class="card" style="line-height: 1.7; gap: 15px;">
+            <h2>🤗 O que é o Projeto Abraçar?</h2>
+            <p>O <strong>Projeto Abraçar</strong> é uma iniciativa educacional focada na construção de um ambiente escolar acolhedor, seguro e inclusivo. O projeto busca prevenir e combater práticas de bullying, violência verbal, discriminação e isolamento, através do diálogo aberto, da empatia e da cultura da paz.</p>
+            
+            <hr style="border: 0; border-top: 1px solid var(--cinza-borda); margin: 10px 0;">
+
+            <h3>🎯 Nossos Pilares Atendidos:</h3>
+            <ul style="margin-left: 20px; color: #475569;">
+              <li><strong>Escuta Ativa & Confidentialidade:</strong> Canais seguros e anônimos onde os estudantes podem expor suas angústias sem medo de julgamentos.</li>
+              <li><strong>Mediação de Conflitos:</strong> Trabalho conjunto entre Coordenação, Grêmio Estudantil e Líderes para resolver desentendimentos pacificamente.</li>
+              <li><strong>Bem-Estar Emocional:</strong> Recursos didáticos de regulação emocional, controle de ansiedade e saúde mental.</li>
+            </ul>
+
+            <hr style="border: 0; border-top: 1px solid var(--cinza-borda); margin: 10px 0;">
+
+            <h3>🛡️ Compromisso de Privacidade:</h3>
+            <p>Garantimos total anonimato aos estudantes nas interações do chat do sistema, preservando a identidade para que se sintam totalmente seguros para buscar ajuda.</p>
+          </div>
         </section>
 
         <section id="admin-panel" class="section-page">
-          <h1 class="page-title">🔒 Painel de Gestão da Escola</h1>
-          <p class="page-subtitle">Acompanhe estatísticas e gerencie publicações, avisos e relatos do sistema.</p>
+          <h1 class="page-title">🔒 Painel do Administrador</h1>
+          <p class="page-subtitle">Gestão de contatos, avisos, conteúdos e estatísticas do sistema.</p>
+
+          <div class="card" style="margin-bottom: 25px;">
+            <h3>📊 Estatísticas de Mensagens por Destinatário</h3>
+            <p>Acompanhe o volume de conversas direcionadas para cada setor:</p>
+            <div class="chart-container">
+              <canvas id="graficoConversas"></canvas>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 25px;">
+            <h3>📱 Cadastrar Integrante / WhatsApp</h3>
+            <form onsubmit="adminAdicionarWhatsapp(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+              <input type="text" id="admin-wsp-nome" class="form-control" placeholder="Nome do Integrante" required>
+              <input type="text" id="admin-wsp-cargo" class="form-control" placeholder="Cargo (Ex: Grêmio, Líder 1º EM)" required>
+              <input type="text" id="admin-wsp-num" class="form-control" placeholder="WhatsApp (Ex: 5511999999999)" required>
+              <button type="submit" class="btn" style="grid-column: 1 / -1;">Adicionar Contato</button>
+            </form>
+          </div>
 
           <div class="card-grid">
             <div class="card">
@@ -415,10 +454,14 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    let meuGrafico = null;
+
     window.estadoApp = {
       usuarioTipo: 'estudante',
+      nomeCompleto: '',
+      userAnonID: '',
       turma: '',
-      turmaAdminInspecao: '6º Ano A',
+      userInspecaoAdmin: '',
       chatDestinatario: 'Grêmio Estudantil',
       respAtiva: false,
       respTimer: null
@@ -435,19 +478,33 @@
       estadoApp.usuarioTipo = tipo;
 
       if (tipo === 'estudante') {
+        const nome = document.getElementById('nome-usuario').value.trim();
         const turma = document.getElementById('turma-select').value;
-        if (!turma) { alert('Selecione uma turma.'); return; }
+        
+        if (!nome || !turma) { alert('Preencha seu nome e selecione uma turma.'); return; }
+        
+        estadoApp.nomeCompleto = nome;
         estadoApp.turma = turma;
-        document.getElementById('display-user-turma').innerText = `Estudante (${turma})`;
-        document.getElementById('admin-turma-selector').style.display = 'none';
+        
+        // Gerador de ID Anônimo Único baseado no nome
+        let hash = 0;
+        for (let i = 0; i < nome.length; i++) hash = nome.charCodeAt(i) + ((hash << 5) - hash);
+        estadoApp.userAnonID = 'USER_' + Math.abs(hash);
+
+        document.getElementById('display-user-turma').innerText = `${nome} (${turma})`;
+        document.getElementById('admin-user-selector').style.display = 'none';
       } else {
         const senha = document.getElementById('senha-acesso').value;
         if (senha !== 'admin123') { alert('Senha incorreta.'); return; }
+        
         estadoApp.turma = 'Administração';
-        document.getElementById('display-user-turma').innerText = 'Gestão / Grêmio';
+        document.getElementById('display-user-turma').innerText = 'Painel do Administrador';
         document.getElementById('menu-admin-item').style.display = 'block';
         document.getElementById('divider-admin').style.display = 'block';
-        document.getElementById('admin-turma-selector').style.display = 'block';
+        document.getElementById('admin-user-selector').style.display = 'block';
+        
+        carregarListaUsuariosAdmin();
+        inicializarGraficoEstatisticas();
       }
 
       document.getElementById('welcome-overlay').style.display = 'none';
@@ -458,6 +515,7 @@
       ouvirMural();
       ouvirConteudos();
       ouvirCanais();
+      ouvirWhatsapp();
     };
 
     window.trocarPerfil = function() {
@@ -482,18 +540,8 @@
       document.getElementById('main-wrapper').classList.toggle('expanded');
     };
 
-    window.toggleMobileSidebar = function(forcarEstado) {
-      const sidebar = document.getElementById('sidebar');
-      if (typeof forcarEstado === 'boolean') {
-        sidebar.classList.toggle('open', forcarEstado);
-      } else {
-        sidebar.classList.toggle('open');
-      }
-    };
-
-    window.alterarTurmaAdminChat = function(turma) {
-      estadoApp.turmaAdminInspecao = turma;
-      ouvirMensagensChat();
+    window.toggleMobileSidebar = function() {
+      document.getElementById('sidebar').classList.toggle('open');
     };
 
     window.selecionarDestinatario = function(cardEl, nomeTarget) {
@@ -504,13 +552,11 @@
       ouvirMensagensChat();
     };
 
-    // --- CHAT ISOLADO POR TURMA ---
+    // --- CHAT PRIVADO E ANÔNIMO ---
     function obterChaveChat() {
-      const turmaEfetiva = (estadoApp.usuarioTipo === 'admin') ? estadoApp.turmaAdminInspecao : estadoApp.turma;
-      document.getElementById('chat-turma-atual-label').innerText = turmaEfetiva;
-      const tSanitizada = turmaEfetiva.replace(/[^a-zA-Z0-9]/g, "_");
+      const userIDTarget = (estadoApp.usuarioTipo === 'admin') ? estadoApp.userInspecaoAdmin : estadoApp.userAnonID;
       const dSanitizado = estadoApp.chatDestinatario.replace(/[^a-zA-Z0-9]/g, "_");
-      return `chats/${tSanitizada}_${dSanitizado}`;
+      return `chats_anonimos/${userIDTarget}_${dSanitizado}`;
     }
 
     window.enviarMensagemDireta = function() {
@@ -520,10 +566,17 @@
 
       push(ref(db, obterChaveChat()), {
         texto: texto,
-        turma: estadoApp.turma,
-        tipo: estadoApp.usuarioTipo,
+        origem: estadoApp.usuarioTipo,
         timestamp: Date.now()
       });
+
+      if (estadoApp.usuarioTipo === 'estudante') {
+        push(ref(db, `usuarios_chat_ativos/${estadoApp.userAnonID}`), {
+          nome: estadoApp.nomeCompleto,
+          turma: estadoApp.turma
+        });
+      }
+
       input.value = '';
     };
 
@@ -537,7 +590,7 @@
           Object.keys(data).forEach(key => {
             const msg = data[key];
             const row = document.createElement('div');
-            const ehMeu = (msg.tipo === estadoApp.usuarioTipo);
+            const ehMeu = (msg.origem === estadoApp.usuarioTipo);
             row.className = `chat-msg-row ${ehMeu ? 'sent' : 'received'}`;
 
             const bubble = document.createElement('div');
@@ -561,19 +614,119 @@
           });
           chatBox.scrollTop = chatBox.scrollHeight;
         } else {
-          chatBox.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">Nenhuma mensagem neste canal privado.</p>';
+          chatBox.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">Nenhuma mensagem neste chat individual.</p>';
         }
       });
     }
 
-    // --- RELATOS E GESTÃO ---
+    function carregarListaUsuariosAdmin() {
+      onValue(ref(db, 'usuarios_chat_ativos'), (snapshot) => {
+        const select = document.getElementById('admin-select-user-chat');
+        select.innerHTML = '<option value="">-- Selecione um Usuário Ativo --</option>';
+        const data = snapshot.val();
+        if (data) {
+          const usuariosUnicos = {};
+          Object.keys(data).forEach(uid => {
+            const keys = Object.keys(data[uid]);
+            const ult = data[uid][keys[keys.length - 1]];
+            usuariosUnicos[uid] = `${ult.nome} (${ult.turma}) - [${uid}]`;
+          });
+          
+          Object.keys(usuariosUnicos).forEach(uid => {
+            const opt = document.createElement('option');
+            opt.value = uid;
+            opt.innerText = usuariosUnicos[uid];
+            select.appendChild(opt);
+          });
+        }
+      });
+    }
+
+    window.adminInspecionarChatUsuario = function(userID) {
+      estadoApp.userInspecaoAdmin = userID;
+      ouvirMensagensChat();
+    };
+
+    // --- WHATSAPP EQUIPE ---
+    window.adminAdicionarWhatsapp = function(e) {
+      e.preventDefault();
+      push(ref(db, 'equipe_whatsapp'), {
+        nome: document.getElementById('admin-wsp-nome').value,
+        cargo: document.getElementById('admin-wsp-cargo').value,
+        numero: document.getElementById('admin-wsp-num').value.replace(/\D/g, '')
+      });
+      e.target.reset();
+    };
+
+    function ouvirWhatsapp() {
+      onValue(ref(db, 'equipe_whatsapp'), (snapshot) => {
+        const container = document.getElementById('lista-whatsapp-cards');
+        container.innerHTML = '';
+        const data = snapshot.val();
+        if (data) {
+          Object.keys(data).forEach(key => {
+            const item = data[key];
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+              <h3>👤 ${item.nome}</h3>
+              <p><strong>Cargo:</strong> ${item.cargo}</p>
+              <a href="https://wa.me/${item.numero}" target="_blank" class="btn btn-wsp" style="width: 100%;">💬 Abrir no WhatsApp</a>
+            `;
+            if (estadoApp.usuarioTipo === 'admin') {
+              const btnDel = document.createElement('button');
+              btnDel.className = 'btn-danger';
+              btnDel.style.marginTop = '10px';
+              btnDel.innerText = '🗑️ Excluir Contato';
+              btnDel.onclick = () => remove(ref(db, `equipe_whatsapp/${key}`));
+              card.appendChild(btnDel);
+            }
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = '<p>Nenhum contato cadastrado pela administração ainda.</p>';
+        }
+      });
+    }
+
+    // --- GRÁFICO DE ESTATÍSTICAS ---
+    function inicializarGraficoEstatisticas() {
+      onValue(ref(db, 'chats_anonimos'), (snapshot) => {
+        let cntGremio = 0, cntLider = 0, cntCoord = 0;
+        const data = snapshot.val();
+        if (data) {
+          Object.keys(data).forEach(chatKey => {
+            const numMsgs = Object.keys(data[chatKey]).length;
+            if (chatKey.includes('Gr_mio_Estudantil')) cntGremio += numMsgs;
+            else if (chatKey.includes('L_der_de_Turma')) cntLider += numMsgs;
+            else if (chatKey.includes('Coordena_o')) cntCoord += numMsgs;
+          });
+        }
+
+        const ctx = document.getElementById('graficoConversas').getContext('2d');
+        if (meuGrafico) meuGrafico.destroy();
+
+        meuGrafico = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Grêmio Estudantil', 'Líderes de Turma', 'Coordenação'],
+            datasets: [{
+              data: [cntGremio, cntLider, cntCoord],
+              backgroundColor: ['#8e44ad', '#1abc9c', '#2ecc71']
+            }]
+          },
+          options: { responsive: true }
+        });
+      });
+    }
+
+    // --- RELATOS, MURAL E OUTROS ---
     window.registrarRelato = function(e) {
       e.preventDefault();
       push(ref(db, 'relatos'), {
         tipo: document.getElementById('relato-tipo').value,
         descricao: document.getElementById('relato-descricao').value,
         local: document.getElementById('relato-local').value,
-        turmaOrigem: estadoApp.turma,
         timestamp: Date.now()
       }).then(() => {
         alert('Relato enviado com sucesso!');
@@ -594,7 +747,7 @@
             item.style.cssText = "padding: 10px 0; border-bottom: 1px solid #cbd5e1; display:flex; justify-content:space-between; align-items:center;";
             item.innerHTML = `
               <div>
-                <strong>🚨 ${rel.tipo} (${rel.turmaOrigem})</strong>
+                <strong>🚨 ${rel.tipo}</sttrong>
                 <p style="font-size:0.85rem;">${rel.descricao}</p>
                 <small style="color:#64748b;">${rel.local}</small>
               </div>
@@ -606,17 +759,14 @@
             item.appendChild(btnExcluir);
             container.prepend(item);
           });
-        } else { container.innerHTML = '<em>Nenhum relato.</em>'; }
+        } else { container.innerHTML = '<em>Nenhum relato recebido.</em>'; }
       });
     }
 
     window.apagarTodosRelatos = function() {
-      if (confirm('Deseja excluir TODOS os relatos recebidos?')) {
-        remove(ref(db, 'relatos'));
-      }
+      if (confirm('Deseja excluir TODOS os relatos recebidos?')) remove(ref(db, 'relatos'));
     };
 
-    // --- MURAL DA ESCOLA ---
     window.adminAdicionarAviso = function(e) {
       e.preventDefault();
       push(ref(db, 'mural'), { texto: document.getElementById('admin-texto-aviso').value });
@@ -646,7 +796,6 @@
       });
     }
 
-    // --- CONTEÚDOS ---
     window.adminAdicionarConteudo = function(e) {
       e.preventDefault();
       push(ref(db, 'conteudos'), {
@@ -679,7 +828,6 @@
       });
     }
 
-    // --- CANAIS ---
     window.adminAdicionarCanal = function(e) {
       e.preventDefault();
       push(ref(db, 'canais'), {
@@ -712,7 +860,6 @@
       });
     }
 
-    // --- BEM-ESTAR ---
     window.controlarRespiracao = function() {
       const bolha = document.getElementById('bolha-animada');
       const btn = document.getElementById('btn-iniciar-resp');
