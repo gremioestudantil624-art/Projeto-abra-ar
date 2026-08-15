@@ -335,6 +335,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      position: relative;
     }
 
     .card h3 {
@@ -398,10 +399,13 @@
     .btn-danger {
       background: #e74c3c;
       color: white;
-      padding: 4px 8px;
-      font-size: 0.75rem;
-      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
     }
+    .btn-danger:hover { background: #c0392b; }
 
     .form-container {
       background: var(--branco);
@@ -422,7 +426,7 @@
     /* CHAT */
     .chat-select-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
       margin-bottom: 20px;
     }
@@ -512,8 +516,8 @@
       border: none;
       color: #94a3b8;
       cursor: pointer;
-      font-size: 0.85rem;
-      padding: 2px 6px;
+      font-size: 0.95rem;
+      padding: 4px 6px;
       border-radius: 4px;
     }
     .btn-delete-msg:hover { color: #ef4444; background: #fee2e2; }
@@ -600,6 +604,27 @@
       background: var(--cinza-suave);
       color: var(--roxo-escuro);
     }
+
+    /* BOTOES DE EDICAO ADMIN */
+    .admin-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .admin-trash {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #fee2e2;
+      color: #ef4444;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .admin-trash:hover { background: #fca5a5; }
 
     /* RESPONSIVIDADE */
     @media (max-width: 850px) {
@@ -713,370 +738,306 @@
 
         <li><a href="#" onclick="navegar('gremio', this)"><span class="nav-icon">🎓</span><span class="link-text">Grêmio Estudantil</span></a></li>
         <li><a href="#" onclick="navegar('lideres', this)"><span class="nav-icon">👥</span><span class="link-text">Líderes de Turma</span></a></li>
+        <li><a href="#" onclick="navegar('contatos', this)"><span class="nav-icon">📱</span><span class="link-text">WhatsApp Integrantes</span></a></li>
         <li><a href="#" onclick="navegar('conteudos', this)"><span class="nav-icon">📚</span><span class="link-text">Conteúdos & Guias</span></a></li>
         <li><a href="#" onclick="navegar('canais-apoio', this)"><span class="nav-icon">📞</span><span class="link-text">Canais de Apoio</span></a></li>
         <li><a href="#" onclick="navegar('sobre', this)"><span class="nav-icon">ℹ️</span><span class="link-text">Projeto Abraçar</span></a></li>
 
-        <div class="sidebar-divider" id="divider-admin" style="display: none;"><div class="sidebar-divider-text">Gestão</div></div>
-        <li id="menu-admin-item" style="display: none;"><a href="#" onclick="navegar('admin-panel', this)"><span class="nav-icon">🔒</span><span class="link-text">Área da Escola</span></a></li>
+        <div class="sidebar-divider" id="divider-admin" style="display: none<div class="sidebar-divider" id="divider-admin" style="display: none;">
+          <div class="sidebar-divider-text">Administração</div>
+        </div>
+        <li id="menu-admin" style="display: none;">
+          <a href="#" onclick="navegar('admin-painel', this)">
+            <span class="nav-icon">⚙️</span>
+            <span class="link-text">Painel Gestão</span>
+          </a>
+        </li>
       </ul>
     </aside>
 
     <div class="main-wrapper" id="main-wrapper">
-      
       <header class="user-bar">
         <div>
-          <span>Identificação: </span>
-          <span class="badge-turma" id="display-user-turma">Estudante</span>
+          Olá, <strong id="user-display-name">Estudante</strong>
         </div>
-        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="trocarPerfil()">Sair / Trocar</button>
+        <div id="user-display-badge" class="badge-turma">
+          Não identificada
+        </div>
       </header>
 
-      <main class="main-content"><!-- INÍCIO -->
+      <main class="main-content">
+        <!-- SEÇÃO INÍCIO -->
         <section id="sec-inicio" class="section-page active">
-          <h1 class="page-title">Bem-vindo(a) ao Projeto Abraçar</h1>
-          <p class="page-subtitle">Um espaço seguro de escuta, acolhimento e promoção da cultura de paz na nossa escola.</p>
+          <h1 class="page-title">Bem-vindo ao Projeto Abraçar</h1>
+          <p class="page-subtitle">Um espaço seguro para escuta, acolhimento e fortalecimento da comunidade escolar.</p>
 
           <div class="card-grid">
             <div class="card card-destaque">
-              <h3>Precisa conversar?</h3>
-              <p>Conecte-se de forma reservada com o Grêmio Estudantil ou com os Líderes da sua Turma.</p>
-
-              <button class="btn btn-secondary" onclick="navegarDirect('conversar')">Iniciar Conversa</button>
+              <h3>Precisa de suporte agora?</h3>
+              <p>Converse com a equipe de mediação ou envie um relato confidencial sobre qualquer situação.</p>
+              <button class="btn btn-secondary" onclick="navegarPorId('conversar')">Iniciar Conversa</button>
             </div>
-
             <div class="card">
-              <h3>Registrar um Relato</h3>
-              <p>Sofreu ou presenciou alguma situação chata ou injusta? Envie um registro para a gestão escolar.</p>
-
-              <button class="btn" onclick="navegarDirect('relatar')">Relatar Agora</button>
+              <h3>Exercício de Respiração</h3>
+              <p>Tire alguns instantes para desacelerar e focar no seu bem-estar emocional.</p>
+              <button class="btn" onclick="navegarPorId('bem-estar')">Praticar Agora</button>
             </div>
-
             <div class="card">
-              <h3>Pausa & Bem-Estar</h3>
-              <p>Tire alguns minutos para praticar um exercício simples de respiração e registrar como está se sentindo hoje.</p>
-
-              <button class="btn btn-secondary" onclick="navegarDirect('bem-estar')">Acessar Espaço</button>
-            </div>
-          </div>
-
-          <div class="card" style="margin-top: 20px;">
-            <h3>Mural de Comunicados</h3>
-            <div id="mural-avisos">
-              <div class="aviso-item">
-                <div>
-                  <strong>Oficina de Mediação de Conflitos</strong><br>
-                  <small style="color: #64748b;">Próxima quarta-feira no auditório principal durante o intervalo.</small>
-                </div>
-                <span class="badge-turma">Geral</span>
-              </div>
-              <div class="aviso-item">
-                <div>
-                  <strong>Campanha Permanente Anti-Bullying</strong><br>
-                  <small style="color: #64748b;">Gentileza gera gentileza. Respeito é a base do nosso ambiente escolar.</small>
-                </div>
-                <span class="badge-turma">Cultura de Paz</span>
-              </div>
+              <h3>Canais de Apoio Externos</h3>
+              <p>Contatos diretos do CVV, SaferNet e serviços essenciais de emergência.</p>
+              <button class="btn btn-secondary" onclick="navegarPorId('canais-apoio')">Ver Telefones</button>
             </div>
           </div>
         </section>
 
-        <!-- CONVERSAR -->
+        <!-- SEÇÃO CONVERSAR -->
         <section id="sec-conversar" class="section-page">
-          <h1 class="page-title">Canal de Conversa</h1>
-          <p class="page-subtitle">Escolha com quem deseja dialogar. As mensagens são enviadas de forma segura.</p>
+          <h1 class="page-title">Canal de Escuta</h1>
+          <p class="page-subtitle">Escolha um canal para enviar sua mensagem de forma segura.</p>
 
           <div class="chat-select-grid">
-            <div class="chat-target-card selected" id="target-gremio" onclick="selecionarDestinoChat('gremio')">
-              <div style="font-size: 2rem;">🎓</div>
-              <strong>Grêmio Estudantil</strong>
-              <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Representantes dos estudantes</p>
+            <div class="chat-target-card selected" onclick="selecionarDestinatario('Geral', this)">
+              👥 <strong>Acolhimento Geral</strong>
             </div>
-            <div class="chat-target-card" id="target-lideres" onclick="selecionarDestinoChat('lideres')">
-              <div style="font-size: 2rem;">👥</div>
-              <strong>Líderes de Turma</strong>
-              <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Seus colegas da sala</p>
+            <div class="chat-target-card" onclick="selecionarDestinatario('Psicopedagogia', this)">
+              🧠 <strong>Psicopedagogia</strong>
+            </div>
+            <div class="chat-target-card" onclick="selecionarDestinatario('Grêmio', this)">
+              🎓 <strong>Grêmio Estudantil</strong>
             </div>
           </div>
 
           <div class="chat-window">
             <div class="chat-header-info">
-              <div>
-                <strong id="chat-destinatario-titulo">Grêmio Estudantil</strong>
-                <div style="font-size: 0.75rem; color: #64748b;" id="chat-destinatario-sub">Canal direto de escuta empática</div>
+              <span>Conversando com: <strong id="chat-destinatario-nome">Acolhimento Geral</strong></span>
+              <small>Mensagens criptografadas localmente</small>
+            </div>
+            <div class="chat-messages" id="chat-messages-list">
+              <div class="chat-msg-row received">
+                <div class="chat-msg-bubble">Olá! Como podemos te ajudar hoje? Fique à vontade para escrever.</div>
               </div>
-              <span class="badge-turma" id="chat-identificacao-remetente">Estudante</span>
             </div>
-
-            <div class="chat-messages" id="chat-messages-container">
-              <!-- Mensagens renderizadas via JS -->
-            </div>
-
             <div class="chat-input-area">
-              <input type="text" id="chat-input-text" class="form-control" placeholder="Digite sua mensagem aqui..." onkeypress="tratarEnterChat(event)">
+              <input type="text" id="chat-input-text" class="form-control" placeholder="Digite sua mensagem...">
               <button class="btn" onclick="enviarMensagemChat()">Enviar</button>
             </div>
           </div>
         </section>
 
-        <!-- RELATAR -->
+        <!-- SEÇÃO RELATAR SITUAÇÃO -->
         <section id="sec-relatar" class="section-page">
-          <h1 class="page-title">Relatar Situação</h1>
-          <p class="page-subtitle">Envie um relato com total confidencialidade para a equipe pedagógica/gestão.</p>
+          <h1 class="page-title">Relatar uma Situação</h1>
+          <p class="page-subtitle">Informe conflitos, ocorrências ou atos de injustiça para mediação escolar.</p>
 
           <div class="form-container">
-            <form id="form-relato" onsubmit="salvarRelato(event)">
+            <form onsubmit="salvarRelato(event)">
               <div class="form-group">
-                <label for="relato-categoria">Tipo de Ocorrência:</label>
-                <select id="relato-categoria" class="form-control" required>
-                  <option value="">-- Selecione uma opção --</option>
-                  <option value="Bullying Verbal / Psicológico">Bullying Verbal / Psicológico</option>
-                  <option value="Cyberbullying (Online)">Cyberbullying (Online)</option>
-                  <option value="Exclusão / Isolamento">Exclusão / Isolamento Social</option>
-                  <option value="Agressão Física / Intimidação">Agressão Física / Intimidação</option>
-                  <option value="Outros Conflitos">Outros Conflitos na Escola</option>
+                <label for="relato-tipo">Tipo de Ocorrência:</label>
+                <select id="relato-tipo" class="form-control" required>
+                  <option value="">-- Selecione --</option>
+                  <option value="Bullying / Cyberbullying">Bullying ou Cyberbullying</option>
+                  <option value="Conflito entre colegas">Conflito entre colegas</option>
+                  <option value="Exclusão Social">Exclusão Social</option>
+                  <option value="Outro">Outro assunto</option>
                 </select>
               </div>
-
               <div class="form-group">
-                <label for="relato-descricao">Descrição Detalhada:</label>
-                <textarea id="relato-descricao" class="form-control" rows="5" placeholder="Descreva o que aconteceu, quando e onde (se desejar, não precisa dar nomes se não se sentir confortável)..." required></textarea>
+                <label for="relato-texto">Descreva o ocorrido:</label>
+                <textarea id="relato-texto" class="form-control" rows="5" placeholder="Forneça o máximo de detalhes possível..." required></textarea>
               </div>
-
-              <div class="form-group">
-                <label for="relato-anonimo">Opção de Identificação:</label>
-                <select id="relato-anonimo" class="form-control">
-                  <option value="identificado">Enviar identificado com minha turma atual</option>
-                  <option value="anonimo">Enviar de forma totalmente anônima</option>
-                </select>
-              </div>
-
-              <button type="submit" class="btn" style="width: 100%;">Enviar Relato à Gestão</button>
+              <button type="submit" class="btn">Enviar Relato</button>
             </form>
           </div>
         </section>
 
-        <!-- BEM-ESTAR -->
+        <!-- SEÇÃO BEM-ESTAR -->
         <section id="sec-bem-estar" class="section-page">
-          <h1 class="page-title">Espaço Meu Bem-estar</h1>
-          <p class="page-subtitle">Ferramentas simples de autocuidado, regulação emocional e acompanhamento diário.</p>
+          <h1 class="page-title">Meu Bem-estar</h1>
+          <p class="page-subtitle">Técnicas de regulação emocional e registro de humor.</p>
 
           <div class="respiracao-box">
-            <h3>Exercício de Respiração Guiada (4-4-4)</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Inspire o ar devagar, segure e expire no ritmo do indicador.</p>
-            
-            <div class="bolha-pulmao" id="bolha-pulmao">Pausado</div>
-            
-            <div style="display: flex; gap: 10px;">
-              <button class="btn" id="btn-respiracao" onclick="toggleRespiracao()">Iniciar Exercício</button>
-            </div>
+            <h3>Técnica de Respiração Guiada</h3>
+            <div class="bolha-pulmao" id="bolha-pulmao">Inspire</div>
+            <button class="btn" id="btn-respiracao" onclick="toggleRespiracao()">Iniciar Exercício</button>
           </div>
 
-          <div class="card">
+          <div class="form-container" style="max-width: 100%;">
             <h3>Como você está se sentindo hoje?</h3>
-            <p>Registre seu estado emocional para acompanhar seu diário de bem-estar simples.</p>
-
             <div class="humor-selector">
-              <button class="humor-btn" onclick="registrarHumor('Muito Bem! 😊')">😊 Muito Bem</button>
-              <button class="humor-btn" onclick="registrarHumor('Calmo(a) 😌')">😌 Calmo(a)</button>
-              <button class="humor-btn" onclick="registrarHumor('Ansioso(a) 😰')">😰 Ansioso(a)</button>
-              <button class="humor-btn" onclick="registrarHumor('Triste 😢')">😢 Triste</button>
-              <button class="humor-btn" onclick="registrarHumor('Chateado(a) 😠')">😠 Chateado(a)</button>
+              <button class="humor-btn" onclick="registrarHumor('😄 Excelente')">😄</button>
+              <button class="humor-btn" onclick="registrarHumor('🙂 Bem')">🙂</button>
+              <button class="humor-btn" onclick="registrarHumor('😐 Neutro')">😐</button>
+              <button class="humor-btn" onclick="registrarHumor('😟 Ansioso')">😟</button>
+              <button class="humor-btn" onclick="registrarHumor('😢 Triste')">😢</button>
             </div>
-
-            <div style="margin-top: 20px;">
-              <strong>Seu Histórico Recente:</strong>
-              <ul id="historico-humor" style="list-style: none; margin-top: 10px; font-size: 0.9rem; color: #64748b;">
-                <li>Nenhum registro hoje.</li>
-              </ul>
-            </div>
+            <p id="humor-feedback" style="margin-top: 15px; font-weight: 600; text-align: center; color: var(--roxo-escuro);"></p>
           </div>
         </section>
 
-        <!-- BULLYING & CYBER -->
+        <!-- SEÇÃO BULLYING -->
         <section id="sec-bullying" class="section-page">
-          <h1 class="page-title">Entendendo o Bullying & Cyberbullying</h1>
-          <p class="page-subtitle">Informação e conscientização para transformar atitudes.</p>
+          <h1 class="page-title">Bullying & Cyberbullying</h1>
+          <p class="page-subtitle">Informações para prevenção, identificação e combate.</p>
 
           <div class="card-grid">
             <div class="card">
               <h3>O que é Bullying?</h3>
-              <p>Atos intencionais e repetidos de violência física ou psicológica, sem motivação evidente, praticados por um indivíduo ou grupo contra outro, causando dor e angústia.</p>
+              <p>Atos intencionais e repetidos de violência física ou psicológica exercidos por indivíduos ou grupos.</p>
             </div>
-
             <div class="card">
-              <h3>O Cyberbullying</h3>
-              <p>Ocorre no ambiente virtual (redes sociais, aplicativos de mensagens, jogos). Inclui exposição de fotos sem autorização, espalhar boatos, perfis falsos e ofensas em chats.</p>
+              <h3>Cyberbullying</h3>
+              <p>A prática do bullying em redes sociais, aplicativos de mensagens e ambientes virtuais.</p>
             </div>
-
             <div class="card">
               <h3>Como Agir?</h3>
-              <p>• Não guarde para você: procure um adulto de confiança.<br>• Guarde evidências (prints) em casos virtuais.<br>• Não seja um espectador silencioso: apoie quem precisa.</p>
+              <p>Não se cale. Guarde evidências (prints) e busque auxílio com a gestão ou responsáveis.</p>
             </div>
           </div>
         </section>
 
-        <!-- GRÊMIO -->
+        <!-- SEÇÃO GRÊMIO -->
         <section id="sec-gremio" class="section-page">
           <h1 class="page-title">Grêmio Estudantil</h1>
-          <p class="page-subtitle">A representação democrática dos estudantes na gestão e melhorias da escola.</p>
+          <p class="page-subtitle">Acompanhe as propostas e comunicados da representação discente.</p>
 
-          <div class="card">
-            <h3>Atuações e Propostas</h3>
-            <p>O Grêmio trabalha promovendo eventos culturais, esportivos, de acolhimento e garantindo que a voz dos alunos seja ouvida pelos professores e direção.</p>
-            
-            <button class="btn" onclick="navegarDirect('conversar')">Enviar Ideia ou Sugestão via Chat</button>
+          <div class="form-container" style="max-width: 100%;">
+            <div class="aviso-item">
+              <div>
+                <strong>Reunião Aberta sobre Convivência</strong>
+                <p style="color: #64748b; font-size: 0.85rem;">Sexta-feira no auditório durante o intervalo.</p>
+              </div>
+              <span class="badge-turma">Aviso</span>
+            </div>
           </div>
         </section>
 
-        <!-- LÍDERES DE TURMA -->
+        <!-- SEÇÃO LÍDERES -->
         <section id="sec-lideres" class="section-page">
           <h1 class="page-title">Líderes de Turma</h1>
-          <p class="page-subtitle">Pontes de diálogo entre estudantes, professores e coordenação pedagógica.</p>
+          <p class="page-subtitle">Representantes focados na mediação e diálogo de cada sala.</p>
 
-          <div class="card">
-            <h3>Papel dos Líderes</h3>
-            <p>Os representantes de turma ajudam na organização interna da sala, na mediação inicial de pequenos atritos e na articulação de melhorias para a rotina escolar.</p>
-          </div>
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Turma</th>
+                <th>Líder</th>
+                <th>Vice-Líder</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>6º Ano A</td>
+                <td>Ana Silva</td>
+                <td>Pedro Santos</td>
+              </tr>
+              <tr>
+                <td>7º Ano A</td>
+                <td>Lucas Oliveira</td>
+                <td>Mariana Costa</td>
+              </tr>
+              <tr>
+                <td>1º Ano EM</td>
+                <td>Beatriz Souza</td>
+                <td>Gabriel Lima</td>
+              </tr>
+            </tbody>
+          </table>
         </section>
 
-        <!-- CONTEÚDOS & GUIAS -->
-        <section id="sec-conteudos" class="section-page">
-          <h1 class="page-title">Conteúdos & Guias Práticos</h1>
-          <p class="page-subtitle">Materiais e dicas rápidas para manter relacionamentos saudáveis na escola.</p>
+        <!-- SEÇÃO CONTATOS WHATSAPP -->
+        <section id="sec-contatos" class="section-page">
+          <h1 class="page-title">Contatos dos Integrantes</h1>
+          <p class="page-subtitle">Canais diretos via WhatsApp para suporte e organização.</p>
 
           <div class="card-grid">
             <div class="card">
-              <h3>Comunicação Não-Violenta (CNV)</h3>
-              <p>Aprenda a expressar suas necessidades sem culpar ou julgar os outros, facilitando a resolução de conflitos interpessoais.</p>
-            </div>
-
-            <div class="card">
-              <h3>Empatia na Prática</h3>
-              <p>Colocar-se no lugar do outro é o primeiro passo para conter apelidos pejorativos, chacotas e comportamentos excludentes.</p>
+              <h3>Mediação Escolar</h3>
+              <p>Atendimento direto com a equipe responsável pelo projeto.</p>
+              <a href="https://wa.me/5500000000000" target="_blank" class="btn btn-whatsapp">Abrir WhatsApp</a>
             </div>
           </div>
         </section>
 
-        <!-- CANAIS DE APOIO -->
+        <!-- SEÇÃO CONTEÚDOS & GUIAS -->
+        <section id="sec-conteudos" class="section-page">
+          <h1 class="page-title">Conteúdos & Guias</h1>
+          <p class="page-subtitle">Materiais educativos sobre saúde mental e empatia.</p>
+
+          <div class="card-grid">
+            <div class="card">
+              <h3>Guia de Comunicação Não-Violenta</h3>
+              <p>Aprenda a expressar necessidades sem gerar conflitos.</p>
+            </div>
+            <div class="card">
+              <h3>Cartilha de Saúde Emocional</h3>
+              <p>Dicas práticas para gerenciar ansiedade em rotinas de estudos.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SEÇÃO CANAIS DE APOIO -->
         <section id="sec-canais-apoio" class="section-page">
-          <h1 class="page-title">Canais Externa de Apoio</h1>
-          <p class="page-subtitle">Serviços públicos e gratuitos disponíveis de ajuda psicossocial e garantias de direitos.</p>
+          <h1 class="page-title">Canais de Apoio Externos</h1>
+          <p class="page-subtitle">Serviços gratuitos e confidenciais disponíveis 24 horas.</p>
 
           <div class="card-grid">
             <div class="card">
               <h3>CVV - Centro de Valorização da Vida</h3>
-              <p>Apoio emocional e prevenção do suicídio. Atendimento gratuito e sigiloso 24 horas por dia.</p>
-              <a href="tel:188" class="btn">Ligar 188</a>
+              <p>Apoio emocional e prevenção do suicídio.</p>
+              <strong>Telefone: 188</strong>
             </div>
-
             <div class="card">
-              <h3>Disque 100 - Direitos Humanos</h3>
-              <p>Canal público para denúncias de violações de direitos de crianças e adolescentes.</p>
-              <a href="tel:100" class="btn">Ligar 100</a>
+              <h3>Pode Falar - SaferNet</h3>
+              <p>Canal de ajuda virtual para adolescentes e jovens.</p>
+              <strong>podefalar.org.br</strong>
             </div>
-
             <div class="card">
-              <h3>Pode Falar (UNICEF)</h3>
-              <p>Canal de ajuda virtual em saúde mental voltado especialmente para adolescentes e jovens de 13 a 24 anos.</p>
-              <a href="https://podefalar.org.br" target="_blank" class="btn btn-secondary">Acessar Site</a>
+              <h3>SAMU / Emergência</h3>
+              <p>Atendimento médico de urgência.</p>
+              <strong>Telefone: 192 / 190</strong>
             </div>
           </div>
         </section>
 
-        <!-- SOBRE -->
+        <!-- SEÇÃO SOBRE -->
         <section id="sec-sobre" class="section-page">
           <h1 class="page-title">Sobre o Projeto Abraçar</h1>
-          <p class="page-subtitle">Conheça a missão e a proposta desta iniciativa institucional.</p>
-
-          <div class="card">
-            <h3>Nossa Missão</h3>
-            <p>O Projeto Abraçar foi concebido com a missão de consolidar um ambiente escolar seguro, onde a escuta qualificada, o acolhimento afetivo e a mediação pacífica de conflitos prevaleçam sobre a intolerância e o silenciamento.</p>
+          <p class="page-subtitle">Iniciativa para a promoção do diálogo e prevenção à violência escolar.</p>
+          <div class="form-container" style="max-width: 100%;">
+            <p>O Projeto Abraçar visa criar pontes entre alunos, professores e gestão escolar, promovendo um ambiente de respeito, escuta ativa e fortalecimento comunitário.</p>
           </div>
         </section>
 
-        <!-- ÁREA DA ESCOLA (ADMIN) -->
-        <section id="sec-admin-panel" class="section-page">
-          <h1 class="page-title">Painel de Gestão Escolar</h1>
-          <p class="page-subtitle">Área restrita à coordenação, direção e comissão de acolhimento.</p>
-
-          <div class="card" style="margin-bottom: 20px;">
+        <!-- PAINEL ADMIN -->
+        <section id="sec-admin-painel" class="section-page">
+          <h1 class="page-title">Painel de Gestão</h1>
+          <p class="page-subtitle">Visualização de relatos e dados do sistema.</p>
+          <div class="form-container" style="max-width: 100%;">
             <h3>Relatos Recebidos</h3>
-            <div style="overflow-x: auto;">
-              <table class="table-custom">
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Origem</th>
-                    <th>Categoria</th>
-                    <th>Relato</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="tabela-relatos-corpo">
-                  <!-- Relatos via JS -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3>Visualização dos Chats Ativos</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 10px;">Acompanhamento das interações via Grêmio e Líderes para garantir a segurança no ambiente.</p>
-            <div id="admin-chat-overview" style="font-size: 0.9rem; color: #64748b;">
-              Selecione os módulos abaixo para supervisionar as conversas ativas no sistema local.
+            <div id="lista-relatos-admin" style="margin-top: 15px;">
+              <p style="color: #64748b;">Nenhum relato registrado no momento.</p>
             </div>
           </div>
         </section>
-
       </main>
     </div>
   </div>
 
   <script>
-    /* ESTADO DA APLICAÇÃO (LOCALSTORAGE) */
-    let usuarioAtual = {
-      tipo: 'estudante',
-      nome: 'Estudante',
-      turma: '6º Ano A'
-    };
-
-    let destinoChatAtual = 'gremio';
+    let usuarioAtual = { nome: '', turma: '', tipo: 'estudante' };
+    let destinatarioChat = 'Geral';
     let intervaloRespiracao = null;
-
-    // Inicialização ao carregar página
-    window.addEventListener('DOMContentLoaded', () => {
-      carregarDadosIniciais();
-      renderizarMensagensChat();
-    });
 
     function alternarCamposAcesso() {
       const tipo = document.getElementById('tipo-acesso').value;
-      const campoEstudante = document.getElementById('campo-estudante');
-      const campoAdmin = document.getElementById('campo-admin');
-
-      if (tipo === 'admin') {
-        campoEstudante.style.display = 'none';
-        campoAdmin.style.display = 'block';
-      } else {
-        campoEstudante.style.display = 'block';
-        campoAdmin.style.display = 'none';
-      }
+      document.getElementById('campo-estudante').style.display = tipo === 'estudante' ? 'block' : 'none';
+      document.getElementById('campo-admin').style.display = tipo === 'admin' ? 'block' : 'none';
     }
 
     function confirmarEntrada() {
       const tipo = document.getElementById('tipo-acesso').value;
 
-      if (tipo === 'admin') {
-        const senha = document.getElementById('senha-acesso').value;
-        if (senha === '1234' || senha === 'admin') {
-          usuarioAtual = { tipo: 'admin', nome: 'Gestão Escolar', turma: 'Administração' };
-          ativarModoAdmin(true);
-        } else {
-          alert('Senha incorreta! (Tente "1234")');
-          return;
-        }
-      } else {
+      if (tipo === 'estudante') {
         const nome = document.getElementById('student-name').value.trim();
         const turma = document.getElementById('turma-select').value;
 
@@ -1085,67 +1046,47 @@
           return;
         }
 
-        usuarioAtual = { tipo: 'estudante', nome: nome, turma: turma };
-        ativarModoAdmin(false);
+        usuarioAtual = { nome, turma, tipo: 'estudante' };
+      } else {
+        const senha = document.getElementById('senha-acesso').value;
+        if (senha !== 'admin123') { // Senha demonstrativa
+          alert('Senha incorreta.');
+          return;
+        }
+        usuarioAtual = { nome: 'Administrador', turma: 'Gestão', tipo: 'admin' };
+        document.getElementById('divider-admin').style.display = 'block';
+        document.getElementById('menu-admin').style.display = 'block';
       }
 
-      document.getElementById('display-user-turma').innerText = `${usuarioAtual.nome} (${usuarioAtual.turma})`;
       document.getElementById('welcome-overlay').style.display = 'none';
       document.getElementById('app-container').classList.add('active');
+      document.getElementById('user-display-name').innerText = usuarioAtual.nome;
+      document.getElementById('user-display-badge').innerText = usuarioAtual.turma;
     }
 
-    function ativarModoAdmin(isAdmin) {
-      const itemAdmin = document.getElementById('menu-admin-item');
-      const dividerAdmin = document.getElementById('divider-admin');
+    function navegar(idSecao, elemento) {
+      document.querySelectorAll('.section-page').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
 
-      if (isAdmin) {
-        itemAdmin.style.display = 'block';
-        dividerAdmin.style.display = 'block';
-        carregarTabelaRelatosAdmin();
-      } else {
-        itemAdmin.style.display = 'none';
-        dividerAdmin.style.display = 'none';
+      const alvo = document.getElementById(`sec-${idSecao}`);
+      if (alvo) alvo.classList.add('active');
+      if (elemento) elemento.classList.add('active');
+
+      if (window.innerWidth <= 850) {
+        toggleMobileSidebar();
       }
     }
 
-    function trocarPerfil() {
-      document.getElementById('app-container').classList.remove('active');
-      document.getElementById('welcome-overlay').style.display = 'flex';
-    }
-
-    /* NAVEGAÇÃO INTERNA */
-    function navegar(secaoId, elementoLink) {
-      document.querySelectorAll('.section-page').forEach(sec => sec.classList.remove('active'));
-      document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
-
-      const alvo = document.getElementById(`sec-${secaoId}`);
-      if (alvo) alvo.classList.add('active');
-
-      if (elementoLink) elementoLink.classList.add('active');
-
-      // Fechar sidebar mobile ao navegar
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebar-overlay').classList.remove('open');
-    }
-
-    function navegarDirect(secaoId) {
-      const link = document.querySelector(`.nav-links a[onclick*="'${secaoId}'"]`);
-      navegar(secaoId, link);
+    function navegarPorId(idSecao) {
+      const link = document.querySelector(`.nav-links a[onclick*="${idSecao}"]`);
+      navegar(idSecao, link);
     }
 
     function toggleSidebarCollapse() {
       const sidebar = document.getElementById('sidebar');
       const mainWrapper = document.getElementById('main-wrapper');
-      const btn = document.querySelector('.toggle-collapse-btn');
-
       sidebar.classList.toggle('collapsed');
       mainWrapper.classList.toggle('expanded');
-
-      if (sidebar.classList.contains('collapsed')) {
-        btn.innerHTML = '▶';
-      } else {
-        btn.innerHTML = '◀';
-      }
     }
 
     function toggleMobileSidebar() {
@@ -1153,162 +1094,53 @@
       document.getElementById('sidebar-overlay').classList.toggle('open');
     }
 
-    /* CHAT DE ESCUTA */
-    function selecionarDestinoChat(destino) {
-      destinoChatAtual = destino;
-      
-      document.getElementById('target-gremio').classList.remove('selected');
-      document.getElementById('target-lideres').classList.remove('selected');
-      document.getElementById(`target-${destino}`).classList.add('selected');
-
-      const titulo = document.getElementById('chat-destinatario-titulo');
-      const sub = document.getElementById('chat-destinatario-sub');
-
-      if (destino === 'gremio') {
-        titulo.innerText = 'Grêmio Estudantil';
-        sub.innerText = 'Canal direto de escuta empática com os representantes';
-      } else {
-        titulo.innerText = 'Líderes de Turma';
-        sub.innerText = 'Espaço de diálogo com os líderes da sua classe';
-      }
-
-      renderizarMensagensChat();
-    }
-
-    function obterMensagensLocais() {
-      return JSON.parse(localStorage.getItem('abracar_chat_msgs') || '[]');
-    }
-
-    function salvarMensagemLocal(msg) {
-      const msgs = obterMensagensLocais();
-      msgs.push(msg);
-      localStorage.setItem('abracar_chat_msgs', JSON.stringify(msgs));
+    function selecionarDestinatario(nome, card) {
+      destinatarioChat = nome;
+      document.querySelectorAll('.chat-target-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      document.getElementById('chat-destinatario-nome').innerText = nome;
     }
 
     function enviarMensagemChat() {
       const input = document.getElementById('chat-input-text');
-      const texto = input.value.trim();
+      const msg = input.value.trim();
+      if (!msg) return;
 
-      if (!texto) return;
+      const container = document.getElementById('chat-messages-list');
+      const row = document.createElement('div');
+      row.className = 'chat-msg-row sent';
+      row.innerHTML = `<div class="chat-msg-bubble">${msg}</div>`;
+      container.appendChild(row);
 
-      const novaMsg = {
-        id: Date.now(),
-        remetente: usuaroAtual.nome,
-        turma: usuarioAtual.turma,
-        destino: destinoChatAtual,
-        texto: texto,
-        dataHora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      salvarMensagemLocal(novaMsg);
       input.value = '';
-      renderizarMensagensChat();
-    }
-
-    function tratarEnterChat(event) {
-      if (event.key === 'Enter') {
-        enviarMensagemChat();
-      }
-    }
-
-    function deletarMensagem(id) {
-      let msgs = obterMensagensLocais();
-      msgs = msgs.filter(m => m.id !== id);
-      localStorage.setItem('abracar_chat_msgs', JSON.stringify(msgs));
-      renderizarMensagensChat();
-    }
-
-    function renderizarMensagensChat() {
-      const container = document.getElementById('chat-messages-container');
-      container.innerHTML = '';
-
-      const msgs = obterMensagensLocais().filter(m => m.destino === destinoChatAtual);
-
-      if (msgs.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 0.85rem; margin-top: 20px;">Nenhuma mensagem registrada neste canal ainda. Comece a conversa!</div>`;
-        return;
-      }
-
-      msgs.forEach(m => {
-        const souEu = m.remetente === usuarioAtual.nome;
-        const row = document.createElement('div');
-        row.className = `chat-msg-row ${souEu ? 'sent' : 'received'}`;
-
-        row.innerHTML = `
-          <div class="chat-msg-bubble">
-            <div style="font-size: 0.7rem; opacity: 0.85; margin-bottom: 2px;">
-              ${m.remetente} (${m.turma}) • ${m.dataHora}
-            </div>
-            <div>${m.texto}</div>
-          </div>
-          ${souEu ? `<button class="btn-delete-msg" title="Excluir" onclick="deletarMensagem(${m.id})">🗑️</button>` : ''}
-        `;
-
-        container.appendChild(row);
-      });
-
       container.scrollTop = container.scrollHeight;
     }
 
-    /* RELATOS */
-    function salvarRelato(event) {
-      event.preventDefault();
+    function salvarRelato(e) {
+      e.preventDefault();
+      const tipo = document.getElementById('relato-tipo').value;
+      const texto = document.getElementById('relato-texto').value;
 
-      const categoria = document.getElementById('relato-categoria').value;
-      const descricao = document.getElementById('relato-descricao').value.trim();
-      const tipoAnonimo = document.getElementById('relato-anonimo').value;
-
-      const novoRelato = {
-        id: Date.now(),
-        data: new Date().toLocaleDateString('pt-BR'),
-        origem: tipoAnonimo === 'anonimo' ? 'Anônimo' : `${usuarioAtual.nome} (${usuarioAtual.turma})`,
-        categoria: categoria,
-        descricao: descricao
-      };
-
-      const relatos = JSON.parse(localStorage.getItem('abracar_relatos') || '[]');
-      relatos.push(novoRelato);
-      localStorage.setItem('abracar_relatos', JSON.stringify(relatos));
-
-      alert('Seu relato foi enviado com sucesso e com total sigilo!');
-      document.getElementById('form-relato').reset();
-
-      if (usuarioAtual.tipo === 'admin') carregarTabelaRelatosAdmin();
-    }
-
-    function carregarTabelaRelatosAdmin() {
-      const corpo = document.getElementById('tabela-relatos-corpo');
-      if (!corpo) return;
-
-      corpo.innerHTML = '';
-      const relatos = JSON.parse(localStorage.getItem('abracar_relatos') || '[]');
-
-      if (relatos.length === 0) {
-        corpo.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Nenhum relato recebido até o momento.</td></tr>`;
-        return;
+      const lista = document.getElementById('lista-relatos-admin');
+      if (lista.innerHTML.includes('Nenhum relato')) {
+        lista.innerHTML = '';
       }
 
-      relatos.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${r.data}</td>
-          <td><strong>${r.origem}</strong></td>
-          <td><span class="badge-turma">${r.categoria}</span></td>
-          <td style="max-width: 300px; word-break: break-word;">${r.descricao}</td>
-          <td><button class="btn-danger" onclick="excluirRelatoAdmin(${r.id})">Excluir</button></td>
-        `;
-        corpo.appendChild(tr);
-      });
+      const item = document.createElement('div');
+      item.className = 'card';
+      item.style.marginBottom = '10px';
+      item.innerHTML = `
+        <strong>${tipo}</strong> (${usuarioAtual.turma})
+        <p>${texto}</p>
+        <small style="color:#94a3b8;">Enviado por: ${usuarioAtual.nome}</small>
+      `;
+      lista.appendChild(item);
+
+      alert('Relato enviado com sucesso para a equipe responsável.');
+      document.getElementById('relato-texto').value = '';
+      document.getElementById('relato-tipo').value = '';
     }
 
-    function excluirRelatoAdmin(id) {
-      let relatos = JSON.parse(localStorage.getItem('abracar_relatos') || '[]');
-      relatos = relatos.filter(r => r.id !== id);
-      localStorage.setItem('abracar_relatos', JSON.stringify(relatos));
-      carregarTabelaRelatosAdmin();
-    }
-
-    /* BEM-ESTAR & RESPIRAÇÃO */
     function toggleRespiracao() {
       const bolha = document.getElementById('bolha-pulmao');
       const btn = document.getElementById('btn-respiracao');
@@ -1316,61 +1148,30 @@
       if (intervaloRespiracao) {
         clearInterval(intervaloRespiracao);
         intervaloRespiracao = null;
-        bolha.classList.remove('inspirar', 'expirar');
-        bolha.innerText = 'Pausado';
+        bolha.className = 'bolha-pulmao';
+        bolha.innerText = 'Inspire';
         btn.innerText = 'Iniciar Exercício';
       } else {
         btn.innerText = 'Parar Exercício';
-        executarCicloRespiratorio();
-        intervaloRespiracao = setInterval(executarCicloRespiratorio, 8000);
+        let inspirando = true;
+        bolha.classList.add('inspirar');
+        bolha.innerText = 'Inspire';
+
+        intervaloRespiracao = setInterval(() => {
+          inspirando = !inspirando;
+          if (inspirando) {
+            bolha.className = 'bolha-pulmao inspirar';
+            bolha.innerText = 'Inspire';
+          } else {
+            bolha.className = 'bolha-pulmao expirar';
+            bolha.innerText = 'Expire';
+          }
+        }, 4000);
       }
     }
 
-    function executarCicloRespiratorio() {
-      const bolha = document.getElementById('bolha-pulmao');
-      bolha.innerText = 'Inspire...';
-      bolha.classList.add('inspirar');
-      bolha.classList.remove('expirar');
-
-      setTimeout(() => {
-        if (intervaloRespiracao) {
-          bolha.innerText = 'Expire...';
-          bolha.classList.remove('inspirar');
-          bolha.classList.add('expirar');
-        }
-      }, 4000);
-    }
-
-    function registrarHumor(humor) {
-      const historico = JSON.parse(localStorage.getItem('abracar_humor') || '[]');
-      const registro = {
-        data: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        estado: humor
-      };
-
-      historico.unshift(registro);
-      if (historico.length > 5) historico.pop();
-
-      localStorage.setItem('abracar_humor', JSON.stringify(historico));
-      carregarHistoricoHumor();
-    }
-
-    function carregarHistoricoHumor() {
-      const container = document.getElementById('historico-humor');
-      if (!container) return;
-
-      const historico = JSON.parse(localStorage.getItem('abracar_humor') || '[]');
-
-      if (historico.length === 0) {
-        container.innerHTML = `<li>Nenhum registro recente.</li>`;
-        return;
-      }
-
-      container.innerHTML = historico.map(h => `<li>• Hoje às ${h.data}: <strong>${h.estado}</strong></li>`).join('');
-    }
-
-    function carregarDadosIniciais() {
-      carregarHistoricoHumor();
+    function registrarHumor(estado) {
+      document.getElementById('humor-feedback').innerText = `Humor registrado: ${estado}`;
     }
   </script>
 </body>
