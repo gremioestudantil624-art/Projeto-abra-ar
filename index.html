@@ -264,7 +264,6 @@
       z-index: 1000;
     }
 
-    /* Área Principal */
     .main-wrapper {
       flex: 1;
       margin-left: var(--sidebar-largura);
@@ -756,7 +755,8 @@
         </div>
 
         <li id="menu-admin-item" style="display: none;">
-          <a href="#" onclick="navegar('admin-panel', this)"><span class="nav-icon">🔒</span>
+          <a href="#" onclick="navegar('admin-panel', this)">
+            <span class="nav-icon">🔒</span>
             <span class="link-text">Área da Escola</span>
           </a>
         </li>
@@ -869,7 +869,6 @@
             <div class="chat-messages" id="chat-messages">
               <div class="chat-msg-row received">
                 <div class="chat-msg-bubble">Olá! Este é um espaço seguro. Como podemos ajudar você hoje?</div>
-                <button class="btn-delete-msg" onclick="this.parentElement.remove()" title="Apagar">🗑️</button>
               </div>
             </div>
             <div class="chat-input-area">
@@ -887,35 +886,35 @@
             <form onsubmit="registrarRelato(event)">
               <div class="form-group">
                 <label>Tipo de ocorrência:</label>
-                <select class="form-control" required>
+                <select id="relato-tipo" class="form-control" required>
                   <option value="">-- Selecione --</option>
-                  <option>Bullying / Verbal</option>
-                  <option>Cyberbullying / Redes Sociais</option>
-                  <option>Exclusão / Isolamento</option>
-                  <option>Conflito em sala de aula</option>
-                  <option>Outro motivo</option>
+                  <option value="Bullying / Verbal">Bullying / Verbal</option>
+                  <option value="Cyberbullying / Redes Sociais">Cyberbullying / Redes Sociais</option>
+                  <option value="Exclusão / Isolamento">Exclusão / Isolamento</option>
+                  <option value="Conflito em sala de aula">Conflito em sala de aula</option>
+                  <option value="Outro motivo">Outro motivo</option>
                 </select>
               </div>
 
               <div class="form-group">
                 <label>O que aconteceu?</label>
-                <textarea class="form-control" rows="4" placeholder="Descreva os detalhes da situação de forma clara..." required></textarea>
+                <textarea id="relato-descricao" class="form-control" rows="4" placeholder="Descreva os detalhes da situação de forma clara..." required></textarea>
               </div>
 
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div class="form-group">
                   <label>Onde aconteceu?</label>
-                  <input type="text" class="form-control" placeholder="Ex: Pátio, Sala, On-line..." required>
+                  <input type="text" id="relato-local" class="form-control" placeholder="Ex: Pátio, Sala, On-line..." required>
                 </div>
                 <div class="form-group">
                   <label>Quando aconteceu?</label>
-                  <input type="text" class="form-control" placeholder="Ex: Ontem no intervalo" required>
+                  <input type="text" id="relato-data" class="form-control" placeholder="Ex: Ontem no intervalo" required>
                 </div>
               </div>
 
               <div class="form-group">
                 <label>Envolve outras pessoas/turmas? (Opcional)</label>
-                <input type="text" class="form-control" placeholder="Nomes ou turmas envolvidas">
+                <input type="text" id="relato-envolvidos" class="form-control" placeholder="Nomes ou turmas envolvidas">
               </div>
 
               <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
@@ -964,11 +963,13 @@
 
           <div class="card" style="margin-bottom: 20px;">
             <h3>Mural de Avisos & Projetos</h3>
-            <div class="aviso-item">
-              <strong>📢 Torneio Interclasses Integrado:</strong> Inscrições abertas para as equipes na próxima semana.
-            </div>
-            <div class="aviso-item">
-              <strong>💬 Caixinha de Sugestões:</strong> Envie propostas de melhoria para os espaços de convivência no nosso chat.
+            <div id="mural-avisos-container">
+              <div class="aviso-item">
+                <strong>📢 Torneio Interclasses Integrado:</strong> Inscrições abertas para as equipes na próxima semana.
+              </div>
+              <div class="aviso-item">
+                <strong>💬 Caixinha de Sugestões:</strong> Envie propostas de melhoria para os espaços de convivência no nosso chat.
+              </div>
             </div>
           </div>
         </section>
@@ -1070,7 +1071,7 @@
           <div class="card" style="margin-top: 20px;">
             <h3>Registros de Relatos Recebidos</h3>
             <div id="lista-relatos-admin" style="margin-top: 10px; font-size: 0.85rem;">
-              <em>Nenhum relato novo registrado nesta sessão.</em>
+              <em>Carregando relatos do banco de dados...</em>
             </div>
           </div>
         </section>
@@ -1079,8 +1080,26 @@
     </div>
   </div>
 
-  <script>
-    let estadoApp = {
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtB1C4L2gGNfhD0CgbpaC520wi2uGX6LI",
+      authDomain: "projetoabracar-882d3.firebaseapp.com",
+      databaseURL: "https://projetoabracar-882d3-default-rtdb.firebaseio.com",
+      projectId: "projetoabracar-882d3",
+      storageBucket: "projetoabracar-882d3.firebasestorage.app",
+      messagingSenderId: "69624370402",
+      appId: "1:69624370402:web:09eb52613d7485b6bf7abb",
+      measurementId: "G-WCC468V9KE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Estado Geral da Aplicação
+    window.estadoApp = {
       usuarioTipo: 'estudante',
       turma: '',
       chatDestinatario: 'Grêmio Estudantil',
@@ -1089,13 +1108,15 @@
       chartInstance: null
     };
 
-    function alternarCamposAcesso() {
+    // Alternar formulário na página de login
+    window.alternarCamposAcesso = function() {
       const tipo = document.getElementById('tipo-acesso').value;
       document.getElementById('campo-estudante').style.display = (tipo === 'estudante') ? 'block' : 'none';
       document.getElementById('campo-admin').style.display = (tipo === 'admin') ? 'block' : 'none';
-    }
+    };
 
-    function confirmarEntrada() {
+    // Entrar na aplicação
+    window.confirmarEntrada = function() {
       const tipo = document.getElementById('tipo-acesso').value;
       estadoApp.usuarioTipo = tipo;
 
@@ -1123,14 +1144,18 @@
 
       document.getElementById('welcome-overlay').style.display = 'none';
       document.getElementById('app-container').classList.add('active');
-    }
+      
+      // Conectar listeners realtime do Firebase
+      ouvirMensagensChat();
+      ouvirRelatosAdmin();
+    };
 
-    function trocarPerfil() {
+    window.trocarPerfil = function() {
       document.getElementById('welcome-overlay').style.display = 'flex';
       document.getElementById('app-container').classList.remove('active');
-    }
+    };
 
-    function navegar(paginaId, elementoLink) {
+    window.navegar = function(paginaId, elementoLink) {
       document.querySelectorAll('.section-page').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
 
@@ -1145,21 +1170,21 @@
       if (window.innerWidth <= 850) {
         toggleMobileSidebar(false);
       }
-    }
+    };
 
-    function navegarDireto(paginaId) {
+    window.navegarDireto = function(paginaId) {
       const link = document.querySelector(`.nav-links a[onclick*="${paginaId}"]`);
-      navegar(paginaId, link);
-    }
+      window.navegar(paginaId, link);
+    };
 
-    function toggleSidebarCollapse() {
+    window.toggleSidebarCollapse = function() {
       const sidebar = document.getElementById('sidebar');
       const wrapper = document.getElementById('main-wrapper');
       sidebar.classList.toggle('collapsed');
       wrapper.classList.toggle('expanded');
-    }
+    };
 
-    function toggleMobileSidebar(forcarEstado) {
+    window.toggleMobileSidebar = function(forcarEstado) {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebar-overlay');
       
@@ -1170,63 +1195,140 @@
         sidebar.classList.toggle('open');
         overlay.classList.toggle('open');
       }
-    }
+    };
 
-    function selecionarDestinatario(cardEl, nomeTarget) {
+    window.selecionarDestinatario = function(cardEl, nomeTarget) {
       document.querySelectorAll('.chat-target-card').forEach(c => c.classList.remove('selected'));
       cardEl.classList.add('selected');
       
       estadoApp.chatDestinatario = nomeTarget;
       document.getElementById('chat-destinatario-nome').innerText = nomeTarget;
-    }
+      ouvirMensagensChat(); // Recarrega o chat de acordo com o destinatário
+    };
 
-    function enviarMensagemDireta() {
+    // --- ENVIAR MENSAGEM CHAT AO FIREBASE ---
+    window.enviarMensagemDireta = function() {
       const input = document.getElementById('input-chat');
       const texto = input.value.trim();
       if (!texto) return;
 
-      const chatBox = document.getElementById('chat-messages');
+      const destSanitizado = estadoApp.chatDestinatario.replace(/[^a-zA-Z0-9]/g, "_");
+      const chatRef = ref(db, 'chats/' + destSanitizado);
 
-      const row = document.createElement('div');
-      row.className = 'chat-msg-row sent';
+      push(chatRef, {
+        texto: texto,
+        turma: estadoApp.turma,
+        tipo: estadoApp.usuarioTipo,
+        timestamp: Date.now()
+      });
 
-      const btnApagar = document.createElement('button');
-      btnApagar.className = 'btn-delete-msg';
-      btnApagar.innerText = '🗑️';
-      btnApagar.title = 'Apagar mensagem';
-      btnApagar.onclick = () => row.remove();
-
-      const bubble = document.createElement('div');
-      bubble.className = 'chat-msg-bubble';
-      bubble.innerText = texto;
-
-      row.appendChild(btnApagar);
-      row.appendChild(bubble);
-
-      chatBox.appendChild(row);
       input.value = '';
-      chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    // --- ESCUTAR MENSAGENS REALTIME DO FIREBASE ---
+    function ouvirMensagensChat() {
+      const destSanitizado = estadoApp.chatDestinatario.replace(/[^a-zA-Z0-9]/g, "_");
+      const chatRef = ref(db, 'chats/' + destSanitizado);
+
+      onValue(chatRef, (snapshot) => {
+        const chatBox = document.getElementById('chat-messages');
+        chatBox.innerHTML = `
+          <div class="chat-msg-row received">
+            <div class="chat-msg-bubble">Olá! Este é um espaço seguro. Como podemos ajudar você hoje?</div>
+          </div>
+        `;
+
+        const data = snapshot.val();
+        if (data) {
+          Object.keys(data).forEach(key => {
+            const msg = data[key];
+            const row = document.createElement('div');
+            const ehMeu = (msg.turma === estadoApp.turma && msg.tipo === estadoApp.usuarioTipo);
+            row.className = `chat-msg-row ${ehMeu ? 'sent' : 'received'}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-msg-bubble';
+            bubble.innerText = msg.texto;
+
+            const btnApagar = document.createElement('button');
+            btnApagar.className = 'btn-delete-msg';
+            btnApagar.innerText = '🗑️';
+            btnApagar.onclick = () => {
+              remove(ref(db, `chats/${destSanitizado}/${key}`));
+            };
+
+            if (ehMeu) {
+              row.appendChild(btnApagar);
+              row.appendChild(bubble);
+            } else {
+              row.appendChild(bubble);
+              row.appendChild(btnApagar);
+            }
+
+            chatBox.appendChild(row);
+          });
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      });
     }
 
-    function registrarRelato(e) {
+    // --- ENVIAR RELATO AO FIREBASE ---
+    window.registrarRelato = function(e) {
       e.preventDefault();
-      alert('Relato enviado com sucesso! A equipe responsável irá analisar o registro.');
-      
-      const containerRelatos = document.getElementById('lista-relatos-admin');
-      if (containerRelatos.querySelector('em')) {
+
+      const relatosRef = ref(db, 'relatos');
+      push(relatosRef, {
+        tipo: document.getElementById('relato-tipo').value,
+        descricao: document.getElementById('relato-descricao').value,
+        local: document.getElementById('relato-local').value,
+        data: document.getElementById('relato-data').value,
+        envolvidos: document.getElementById('relato-envolvidos').value || 'Não informado',
+        anonimo: document.getElementById('check-anonimo').checked,
+        turmaOrigem: estadoApp.turma,
+        horarioEnvio: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
+      }).then(() => {
+        alert('Relato enviado com sucesso ao sistema da escola!');
+        e.target.reset();
+        window.navegarDireto('inicio');
+      }).catch(err => {
+        alert('Erro ao enviar relato: ' + err.message);
+      });
+    };
+
+    // --- CARREGAR RELATOS REALTIME NO PAINEL ADMIN ---
+    function ouvirRelatosAdmin() {
+      const relatosRef = ref(db, 'relatos');
+      onValue(relatosRef, (snapshot) => {
+        const containerRelatos = document.getElementById('lista-relatos-admin');
         containerRelatos.innerHTML = '';
-      }
 
-      const item = document.createElement('div');
-      item.style.cssText = "padding: 8px 0; border-bottom: 1px solid #e2e8f0;";
-      item.innerHTML = `<strong>Novo Relato Recebido</strong> - ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
-      containerRelatos.appendChild(item);
-
-      e.target.reset();
-      navegarDireto('inicio');
+        const data = snapshot.val();
+        if (data) {
+          Object.keys(data).forEach(key => {
+            const rel = data[key];
+            const item = document.createElement('div');
+            item.style.cssText = "padding: 10px 0; border-bottom: 1px solid #cbd5e1;";
+            item.innerHTML = `
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <strong>🚨 ${rel.tipo}</strong>
+                <small>${rel.horarioEnvio}</small>
+              </div>
+              <p style="margin-bottom: 4px; font-size: 0.85rem; color: #334155;">${rel.descricao}</p>
+              <div style="font-size: 0.75rem; color: #64748b;">
+                <strong>Local:</strong> ${rel.local} | <strong>Data:</strong> ${rel.data} | 
+                <strong>Origem:</strong> ${rel.anonimo ? 'Anônimo' : rel.turmaOrigem}
+              </div>
+            `;
+            containerRelatos.prepend(item);
+          });
+        } else {
+          containerRelatos.innerHTML = '<em>Nenhum relato registrado no banco de dados.</em>';
+        }
+      });
     }
 
-    function controlarRespiracao() {
+    // --- RESPIRAÇÃO GUIADA ---
+    window.controlarRespiracao = function() {
       const bolha = document.getElementById('bolha-animada');
       const btn = document.getElementById('btn-iniciar-resp');
 
@@ -1242,11 +1344,10 @@
         bolha.innerText = "PAUSA";
         btn.innerText = "Iniciar Exercício";
       }
-    }
+    };
 
     function executarCicloResp() {
       const bolha = document.getElementById('bolha-animada');
-
       bolha.innerText = "INSPIRE";
       bolha.className = 'bolha-pulmao inspirar';
 
@@ -1258,36 +1359,37 @@
       }, 4000);
     }
 
-    function adminAdicionarConteudo(e) {
+    // --- ADMIN CADASTRAR CONTEÚDOS ---
+    window.adminAdicionarConteudo = function(e) {
       e.preventDefault();
       const titulo = document.getElementById('admin-titulo-conteudo').value;
       const desc = document.getElementById('admin-desc-conteudo').value;
 
       const lista = document.getElementById('lista-conteudos');
-      const card = document.createElement('div');
+      card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `<h3>${titulo}</h3><p>${desc}</p>`;
       lista.appendChild(card);
 
       e.target.reset();
-      alert('Novo conteúdo publicado na aba "Conteúdos"!');
-    }
+      alert('Novo conteúdo publicado com sucesso!');
+    };
 
-    function adminAdicionarAviso(e) {
+    window.adminAdicionarAviso = function(e) {
       e.preventDefault();
       const texto = document.getElementById('admin-texto-aviso').value;
 
-      const mural = document.querySelector('#gremio .card');
+      const mural = document.getElementById('mural-avisos-container');
       const item = document.createElement('div');
       item.className = 'aviso-item';
       item.innerHTML = `<strong>📌 Novo Aviso:</strong> ${texto}`;
-      mural.appendChild(item);
+      mural.prepend(item);
 
       e.target.reset();
-      alert('Aviso publicado na área do Grêmio!');
-    }
+      alert('Aviso publicado no mural do Grêmio!');
+    };
 
-    function adminAdicionarCanal(e) {
+    window.adminAdicionarCanal = function(e) {
       e.preventDefault();
       const nome = document.getElementById('admin-nome-canal').value;
       const desc = document.getElementById('admin-desc-canal').value;
@@ -1299,8 +1401,8 @@
       lista.appendChild(card);
 
       e.target.reset();
-      alert('Novo canal adicionado à aba "Canais de Apoio"!');
-    }
+      alert('Novo canal adicionado à aba de apoio!');
+    };
 
     function carregarGraficoAdmin() {
       if (estadoApp.chartInstance) return;
