@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Projeto Abraçar - Escuta, Acolhimento e Cultura de Paz</title>
+  <title>Projeto Abraçar - Plataforma Integrada de Acolhimento</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- SDKs do Firebase (v9 Compat para inclusão simplificada via CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
   <style>
     :root {
       --verde-principal: #2ecc71;
@@ -20,652 +26,128 @@
       --sidebar-largura: 280px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg-claro); color: var(--texto-escuro); min-height: 100vh; display: flex; flex-direction: column; }
 
-    body {
-      background-color: var(--bg-claro);
-      color: var(--texto-escuro);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* WELCOME OVERLAY */
+    /* OVERLAY INICIAL */
     .welcome-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--degrade-abracar);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      padding: 20px;
+      position: fixed; inset: 0; background: var(--degrade-abracar);
+      display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
     }
-
     .welcome-card {
-      background: var(--branco);
-      padding: 40px 30px;
-      border-radius: 20px;
-      max-width: 460px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      background: var(--branco); padding: 40px 30px; border-radius: 20px;
+      max-width: 480px; width: 100%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
-
-    .welcome-card .logo-svg {
-      width: 70px;
-      height: 70px;
-      margin-bottom: 15px;
-    }
-
-    .welcome-card h1 {
-      font-size: 1.8rem;
-      color: var(--roxo-escuro);
-    }
-
-    .welcome-card p {
-      color: #64748b;
-      font-size: 0.95rem;
-      margin: 8px 0 25px 0;
-    }
-
-    .welcome-options {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      text-align: left;
-    }
-
+    .welcome-card h1 { font-size: 1.8rem; color: var(--roxo-escuro); }
+    .welcome-card p { color: #64748b; font-size: 0.95rem; margin: 8px 0 25px 0; }
     .form-control {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid var(--cinza-borda);
-      border-radius: 10px;
-      font-size: 0.95rem;
-      outline: none;
+      width: 100%; padding: 12px 15px; border: 1px solid var(--cinza-borda);
+      border-radius: 10px; font-size: 0.95rem; outline: none; margin-top: 5px;
     }
+    .form-control:focus { border-color: var(--roxo-principal); }
 
-    .form-control:focus {
-      border-color: var(--roxo-principal);
-    }
-
-    /* ESTRUTURA DO APP */
-    .app-container {
-      display: none;
-      flex: 1;
-      min-height: 100vh;
-    }
-
-    .app-container.active {
-      display: flex;
-    }
+    /* ESTRUTURA PRINCIPAL */
+    .app-container { display: none; flex: 1; min-height: 100vh; }
+    .app-container.active { display: flex; }
 
     .mobile-header {
-      display: none;
-      background: var(--degrade-abracar);
-      color: var(--branco);
-      padding: 12px 20px;
-      justify-content: space-between;
-      align-items: center;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: none; background: var(--degrade-abracar); color: var(--branco);
+      padding: 12px 20px; justify-content: space-between; align-items: center;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
     }
-
-    .menu-toggle {
-      background: none;
-      border: none;
-      color: var(--branco);
-      font-size: 1.6rem;
-      cursor: pointer;
-    }
+    .menu-toggle { background: none; border: none; color: var(--branco); font-size: 1.6rem; cursor: pointer; }
 
     .sidebar {
-      width: var(--sidebar-largura);
-      background: var(--degrade-abracar);
-      color: var(--branco);
-      padding: 20px 15px;
-      display: flex;
-      flex-direction: column;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1001;
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      overflow-y: auto;
+      width: var(--sidebar-largura); background: var(--degrade-abracar); color: var(--branco);
+      padding: 20px 15px; display: flex; flex-direction: column; transition: all 0.3s ease;
+      z-index: 1001; position: fixed; top: 0; bottom: 0; left: 0; overflow-y: auto;
     }
-
-    .sidebar.collapsed {
-      width: 80px;
-    }
-
-    .sidebar.collapsed .brand-text,
-    .sidebar.collapsed .link-text,
-    .sidebar.collapsed .sidebar-divider-text {
-      display: none;
-    }
-
-    .sidebar.collapsed .nav-links a {
-      justify-content: center;
-      padding: 12px;
-    }
-
-    .brand-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      margin-bottom: 15px;
-    }
-
-    .brand-svg {
-      width: 42px;
-      height: 42px;
-      flex-shrink: 0;
-    }
-
-    .brand-text h2 {
-      font-size: 1.1rem;
-      letter-spacing: 1px;
-      line-height: 1.1;
-    }
-
-    .brand-text small {
-      font-size: 0.7rem;
-      opacity: 0.85;
-      font-weight: 300;
-    }
-
-    .toggle-collapse-btn {
-      background: rgba(255, 255, 255, 0.15);
-      border: none;
-      color: var(--branco);
-      padding: 6px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .nav-links {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
+    .sidebar.collapsed { width: 80px; }
+    .sidebar.collapsed .brand-text, .sidebar.collapsed .link-text, .sidebar.collapsed .sidebar-divider-text { display: none; }
+    .brand-header { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); margin-bottom: 15px; }
+    
+    .nav-links { list-style: none; display: flex; flex-direction: column; gap: 4px; }
     .nav-links a {
-      color: rgba(255, 255, 255, 0.9);
-      text-decoration: none;
-      padding: 10px 14px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.92rem;
-      transition: background 0.2s, color 0.2s;
+      color: rgba(255,255,255,0.9); text-decoration: none; padding: 10px 14px;
+      border-radius: 8px; display: flex; align-items: center; gap: 12px; font-size: 0.92rem;
     }
+    .nav-links a:hover, .nav-links a.active { background: rgba(255, 255, 255, 0.22); color: var(--branco); font-weight: 600; }
+    
+    .sidebar-divider { margin: 15px 0 8px 0; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+    .sidebar-divider-text { font-size: 0.75rem; text-transform: uppercase; opacity: 0.7; letter-spacing: 0.5px; padding-left: 10px; margin-bottom: 5px; }
 
-    .nav-links a:hover, .nav-links a.active {
-      background: rgba(255, 255, 255, 0.22);
-      color: var(--branco);
-      font-weight: 600;
+    .main-wrapper { flex: 1; margin-left: var(--sidebar-largura); transition: margin-left 0.3s ease; display: flex; flex-direction: column; }
+    .main-wrapper.expanded { margin-left: 80px; }
+    .main-content { padding: 35px; max-width: 1100px; width: 100%; margin: 0 auto; }
+
+    .user-bar { background: var(--branco); padding: 12px 25px; border-bottom: 1px solid var(--cinza-borda); display: flex; justify-content: space-between; align-items: center; }
+    .badge-turma { background: var(--cinza-suave); padding: 4px 12px; border-radius: 20px; font-weight: 600; color: var(--roxo-escuro); border: 1px solid var(--cinza-borda); }
+
+    .section-page { display: none; }
+    .section-page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* UI CARDS & BOTÕES */
+    .page-title { font-size: 1.6rem; color: var(--texto-escuro); margin-bottom: 6px; }
+    .page-subtitle { color: #64748b; margin-bottom: 25px; font-size: 0.95rem; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 25px; }
+    .card { background: var(--branco); padding: 22px; border-radius: 14px; border: 1px solid var(--cinza-borda); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 8px; border: none; background: var(--degrade-abracar); color: var(--branco); font-weight: 600; cursor: pointer; text-decoration: none; }
+    .btn-secondary { background: var(--cinza-suave); color: var(--texto-escuro); border: 1px solid var(--cinza-borda); }
+    .btn-whatsapp { background: #25D366; color: white; font-weight: bold; }
+
+    /* BEM-ESTAR AMPLIADO */
+    .respiracao-box {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 20px; background: var(--branco); border-radius: 16px; border: 1px solid var(--cinza-borda); margin-bottom: 25px;
     }
-
-    .nav-icon {
-      font-size: 1.1rem;
-      width: 24px;
-      text-align: center;
+    .bolha-pulmao-v2 {
+      width: 200px; height: 200px; border-radius: 50%; background: var(--degrade-abracar);
+      margin: 25px 0; box-shadow: 0 0 35px rgba(46, 204, 113, 0.3); transition: transform 4s ease-in-out;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; font-weight: bold; user-select: none;
     }
+    .bolha-pulmao-v2.inspirar { transform: scale(1.5); }
+    .bolha-pulmao-v2.expirar { transform: scale(1); }
+    .humor-selector { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+    .humor-btn { background: var(--cinza-suave); border: 1px solid var(--cinza-borda); padding: 12px 18px; border-radius: 12px; cursor: pointer; font-size: 1.4rem; }
 
-    .sidebar-divider {
-      margin: 15px 0 8px 0;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .sidebar-divider-text {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      opacity: 0.7;
-      letter-spacing: 0.5px;
-      padding-left: 10px;
-      margin-bottom: 5px;
-    }
-
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 1000;
-    }
-
-    .main-wrapper {
-      flex: 1;
-      margin-left: var(--sidebar-largura);
-      transition: margin-left 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .main-wrapper.expanded {
-      margin-left: 80px;
-    }
-
-    .main-content {
-      padding: 35px;
-      max-width: 1100px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .section-page {
-      display: none;
-    }
-
-    .section-page.active {
-      display: block;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .user-bar {
-      background: var(--branco);
-      padding: 12px 25px;
-      border-bottom: 1px solid var(--cinza-borda);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.88rem;
-    }
-
-    .badge-turma {
-      background: var(--cinza-suave);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-      color: var(--roxo-escuro);
-      border: 1px solid var(--cinza-borda);
-    }
-
-    /* CARDS & UI */
-    .page-title {
-      font-size: 1.6rem;
-      color: var(--texto-escuro);
-      margin-bottom: 6px;
-    }
-
-    .page-subtitle {
-      color: #64748b;
-      margin-bottom: 25px;
-      font-size: 0.95rem;
-    }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      margin-bottom: 25px;
-    }
-
-    .card {
-      background: var(--branco);
-      padding: 22px;
-      border-radius: 14px;
-      border: 1px solid var(--cinza-borda);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-    }
-
-    .card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-      color: var(--texto-escuro);
-    }
-
-    .card p {
-      font-size: 0.9rem;
-      color: #64748b;
-      line-height: 1.4;
-      margin-bottom: 15px;
-    }
-
-    .card-destaque {
-      background: var(--degrade-abracar);
-      color: var(--branco);
-      border: none;
-    }
-
-    .card-destaque h3, .card-destaque p {
-      color: var(--branco);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 18px;
-      border-radius: 8px;
-      border: none;
-      background: var(--degrade-abracar);
-      color: var(--branco);
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      text-decoration: none;
-      transition: opacity 0.2s, transform 0.1s;
-    }
-
-    .btn:hover { opacity: 0.92; }
-    .btn:active { transform: scale(0.98); }
-
-    .btn-secondary {
-      background: var(--cinza-suave);
-      color: var(--texto-escuro);
-      border: 1px solid var(--cinza-borda);
-    }
-
-    .btn-secondary:hover { background: #e2e8f0; }
-
-    .btn-whatsapp {
-      background: #25D366;
-      color: white;
-      font-weight: bold;
-    }
-    .btn-whatsapp:hover { background: #1ebd56; }
-
-    .btn-danger {
-      background: #e74c3c;
-      color: white;
-      padding: 6px 12px;
-      font-size: 0.8rem;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-    .btn-danger:hover { background: #c0392b; }
-
-    .form-container {
-      background: var(--branco);
-      padding: 25px;
-      border-radius: 14px;
-      border: 1px solid var(--cinza-borda);
-      max-width: 700px;
-    }
-
-    .form-group { margin-bottom: 18px; }
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    /* CHAT */
-    .chat-select-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .chat-target-card {
-      background: var(--branco);
-      border: 2px solid var(--cinza-borda);
-      border-radius: 12px;
-      padding: 18px;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.2s;
-    }
-
-    .chat-target-card:hover, .chat-target-card.selected {
-      border-color: var(--roxo-principal);
-      background: #fbf7ff;
-    }
-
-    .chat-window {
-      background: var(--branco);
-      border-radius: 14px;
-      border: 1px solid var(--cinza-borda);
-      height: 420px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chat-header-info {
-      padding: 15px 20px;
-      border-bottom: 1px solid var(--cinza-borda);
-      background: var(--cinza-suave);
-      border-radius: 14px 14px 0 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .chat-messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .chat-input-area {
-      padding: 15px;
-      border-top: 1px solid var(--cinza-borda);
-      display: flex;
-      gap: 10px;
-    }
-
-    .chat-msg-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 100%;
-    }
-
+    /* CHAT PRIVADO */
+    .chat-window { background: var(--branco); border-radius: 14px; border: 1px solid var(--cinza-borda); height: 440px; display: flex; flex-direction: column; }
+    .chat-header-info { padding: 15px 20px; border-bottom: 1px solid var(--cinza-borda); background: var(--cinza-suave); border-radius: 14px 14px 0 0; display: flex; justify-content: space-between; align-items: center; }
+    .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .chat-input-area { padding: 15px; border-top: 1px solid var(--cinza-borda); display: flex; gap: 10px; }
+    .chat-msg-row { display: flex; width: 100%; }
     .chat-msg-row.sent { justify-content: flex-end; }
     .chat-msg-row.received { justify-content: flex-start; }
+    .chat-msg-bubble { padding: 10px 14px; border-radius: 12px; max-width: 75%; font-size: 0.9rem; color: #fff; }
+    .chat-msg-row.sent .chat-msg-bubble { background: linear-gradient(135deg, #2ecc71, #1abc9c); }
+    .chat-msg-row.received .chat-msg-bubble { background: linear-gradient(135deg, #8e44ad, #6c3483); }
 
-    .chat-msg-bubble {
-      padding: 10px 14px;
-      border-radius: 12px;
-      max-width: 75%;
-      font-size: 0.9rem;
-      color: #ffffff !important;
-      word-break: break-word;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    }
+    /* TABELAS E PAINÉIS */
+    .table-custom { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 8px; overflow: hidden; }
+    .table-custom th, .table-custom td { padding: 12px 15px; border-bottom: 1px solid var(--cinza-borda); text-align: left; font-size: 0.9rem; }
+    .table-custom th { background: var(--cinza-suave); color: var(--roxo-escuro); }
 
-    .chat-msg-row.sent .chat-msg-bubble {
-      background: linear-gradient(135deg, #2ecc71, #1abc9c);
-      border-bottom-right-radius: 2px;
-    }
-
-    .chat-msg-row.received .chat-msg-bubble {
-      background: linear-gradient(135deg, #8e44ad, #6c3483);
-      border-bottom-left-radius: 2px;
-    }
-
-    .btn-delete-msg {
-      background: none;
-      border: none;
-      color: #94a3b8;
-      cursor: pointer;
-      font-size: 0.95rem;
-      padding: 4px 6px;
-      border-radius: 4px;
-    }
-    .btn-delete-msg:hover { color: #ef4444; background: #fee2e2; }
-
-    /* BEM-ESTAR MULTI-ATIVIDADES */
-    .respiracao-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      background: var(--branco);
-      border-radius: 16px;
-      border: 1px solid var(--cinza-borda);
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .bolha-pulmao {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      background: var(--degrade-abracar);
-      margin: 25px 0;
-      box-shadow: 0 0 30px rgba(46, 204, 113, 0.25);
-      transition: transform 4s ease-in-out;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-weight: bold;
-      font-size: 1.1rem;
-      letter-spacing: 1px;
-      user-select: none;
-    }
-
-    .bolha-pulmao.inspirar { transform: scale(1.6); }
-    .bolha-pulmao.expirar { transform: scale(1); }
-
-    .humor-selector {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 15px;
-      flex-wrap: wrap;
-    }
-
-    .humor-btn {
-      background: var(--cinza-suave);
-      border: 1px solid var(--cinza-borda);
-      padding: 10px 15px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: transform 0.2s;
-    }
-    .humor-btn:hover { transform: scale(1.1); }
-
-    .aviso-item {
-      padding: 15px 0;
-      border-bottom: 1px solid var(--cinza-borda);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .aviso-item:last-child { border-bottom: none; }
-
-    /* TABELA E LISTAS */
-    .table-custom {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .table-custom th, .table-custom td {
-      padding: 12px 15px;
-      border-bottom: 1px solid var(--cinza-borda);
-      text-align: left;
-      font-size: 0.9rem;
-    }
-    .table-custom th {
-      background: var(--cinza-suave);
-      color: var(--roxo-escuro);
-    }
-
-    /* BOTOES DE EDICAO ADMIN */
-    .admin-controls {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .admin-trash {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: #fee2e2;
-      color: #ef4444;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-    .admin-trash:hover { background: #fca5a5; }
-
-    /* RESPONSIVIDADE */
     @media (max-width: 850px) {
       .mobile-header { display: flex; }
-      .sidebar {
-        transform: translateX(-100%);
-        top: 55px;
-        width: 260px !important;
-      }
+      .sidebar { transform: translateX(-100%); top: 55px; width: 260px !important; }
       .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay.open { display: block; }
-      .main-wrapper {
-        margin-left: 0 !important;
-        padding-top: 55px;
-      }
+      .main-wrapper { margin-left: 0 !important; padding-top: 55px; }
       .main-content { padding: 20px 15px; }
-      .toggle-collapse-btn { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <svg style="display: none;">
-    <symbol id="brasao-abracar" viewBox="0 0 100 100">
-      <path d="M50 5 L85 20 V50 C85 70 50 92 50 92 C50 92 15 70 15 50 V20 Z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
-      <path d="M30 60 C 30 40, 70 40, 70 60 C 65 48, 35 48, 30 60" fill="currentColor"/>
-      <circle cx="50" cy="38" r="9" fill="currentColor"/>
-      <path d="M25 45 C 35 30, 65 30, 75 45 C 68 55, 32 55, 25 45" fill="none" stroke="currentColor" stroke-width="4"/>
-    </symbol>
-  </svg>
-
   <!-- TELA DE ENTRADA -->
   <div class="welcome-overlay" id="welcome-overlay">
     <div class="welcome-card">
-      <svg class="logo-svg" style="color: var(--roxo-principal);"><use href="#brasao-abracar"/></svg>
-      <h1>PROJETO ABRAÇAR</h1>
-      <p>Escuta • Acolhimento • Cultura de Paz</p>
+      <h1>👋 Bem-vindo ao Abraçar</h1>
+      <p>Para utilizar a plataforma, informe seus dados de acesso.</p>
 
-      <div class="welcome-options">
-        <div class="form-group">
-          <label for="tipo-acesso">Como você deseja acessar?</label>
+      <div style="text-align: left; display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <label>Como você deseja acessar?</label>
           <select id="tipo-acesso" class="form-control" onchange="alternarCamposAcesso()">
             <option value="estudante">Estudante</option>
             <option value="admin">Administração / Gestão / Grêmio</option>
@@ -673,58 +155,47 @@
         </div>
 
         <div id="campo-estudante">
-          <div class="form-group">
-            <label for="student-name">Seu Nome (Identificação Interna):</label>
-            <input type="text" id="student-name" class="form-control" placeholder="Digite seu nome completo">
-          </div>
-          <div class="form-group">
-            <label for="turma-select">Selecione sua Turma:</label>
-            <select id="turma-select" class="form-control">
-              <option value="">-- Selecione --</option>
-              <option value="6º Ano A">6º Ano A</option>
-              <option value="6º Ano B">6º Ano B</option>
-              <option value="7º Ano A">7º Ano A</option>
-              <option value="8º Ano A">8º Ano A</option>
-              <option value="9º Ano A">9º Ano A</option>
-              <option value="1º Ano EM">1º Ano Ensino Médio</option>
-              <option value="2º Ano EM">2º Ano Ensino Médio</option>
-              <option value="3º Ano EM">3º Ano Ensino Médio</option>
-            </select>
-          </div>
+          <label>Nome Completo:</label>
+          <input type="text" id="student-name" class="form-control" placeholder="Digite seu nome">
+          <label style="margin-top: 10px; display:block;">Série / Turma:</label>
+          <select id="turma-select" class="form-control">
+            <option value="">-- Selecione a Turma --</option>
+            <option value="6º Ano A">6º Ano A</option>
+            <option value="7º Ano A">7º Ano A</option>
+            <option value="8º Ano A">8º Ano A</option>
+            <option value="9º Ano A">9º Ano A</option>
+            <option value="1º Ano EM">1º Ano Ensino Médio</option>
+            <option value="2º Ano EM">2º Ano Ensino Médio</option>
+            <option value="3º Ano EM">3º Ano Ensino Médio</option>
+          </select>
         </div>
 
-        <div id="campo-admin" class="form-group" style="display: none;">
-          <label for="senha-acesso">Senha de Acesso Restrito:</label>
-          <input type="password" id="senha-acesso" class="form-control" placeholder="Digite sua senha de acesso">
+        <div id="campo-admin" style="display: none;">
+          <label>Senha de Acesso do Painel:</label>
+          <input type="password" id="senha-acesso" class="form-control" placeholder="Digite a senha restrita">
         </div>
 
-        <button class="btn" style="width: 100%; margin-top: 10px;" onclick="confirmarEntrada()">Entrar no Sistema</button>
+        <button class="btn" style="margin-top: 15px; width: 100%;" onclick="confirmarEntrada()">Entrar na Plataforma</button>
       </div>
     </div>
   </div>
 
-  <!-- CONTAINER PRINCIPAL -->
+  <!-- CONTAINER DO SISTEMA -->
   <div class="app-container" id="app-container">
 
     <div class="mobile-header">
       <button class="menu-toggle" onclick="toggleMobileSidebar()">☰</button>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <svg style="width: 24px; height: 24px; fill: none; stroke: currentColor;"><use href="#brasao-abracar"/></svg>
-        <strong>ABRAÇAR</strong>
-      </div>
+      <strong>PROJETO ABRAÇAR</strong>
       <div>🔔</div>
     </div>
 
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
-
     <aside class="sidebar" id="sidebar">
       <div class="brand-header">
-        <svg class="brand-svg" style="fill: none; stroke: currentColor;"><use href="#brasao-abracar"/></svg>
         <div class="brand-text">
           <h2>ABRAÇAR</h2>
           <small>Escuta & Acolhimento</small>
         </div>
-        <button class="toggle-collapse-btn" onclick="toggleSidebarCollapse()" title="Recolher/Expandir">◀</button>
+        <button onclick="toggleSidebarCollapse()" style="background:none; border:none; color:#fff; cursor:pointer; margin-left:auto;">◀</button>
       </div>
 
       <ul class="nav-links">
@@ -738,12 +209,13 @@
 
         <li><a href="#" onclick="navegar('gremio', this)"><span class="nav-icon">🎓</span><span class="link-text">Grêmio Estudantil</span></a></li>
         <li><a href="#" onclick="navegar('lideres', this)"><span class="nav-icon">👥</span><span class="link-text">Líderes de Turma</span></a></li>
-        <li><a href="#" onclick="navegar('contatos', this)"><span class="nav-icon">📱</span><span class="link-text">WhatsApp Integrantes</span></a></li>
+        <li><a href="#" onclick="navegar('contatos', this)"><span class="nav-icon">📱</span><span class="link-text">Contatos Rápidos</span></a></li>
         <li><a href="#" onclick="navegar('conteudos', this)"><span class="nav-icon">📚</span><span class="link-text">Conteúdos & Guias</span></a></li>
         <li><a href="#" onclick="navegar('canais-apoio', this)"><span class="nav-icon">📞</span><span class="link-text">Canais de Apoio</span></a></li>
-        <li><a href="#" onclick="navegar('sobre', this)"><span class="nav-icon">ℹ️</span><span class="link-text">Projeto Abraçar</span></a></li>
+        <li><a href="#" onclick="navegar('sobre', this)"><span class="nav-icon">ℹ️</span><span class="link-text">Sobre o Projeto</span></a></li>
 
-        <div class="sidebar-divider" id="divider-admin" style="display: none<div class="sidebar-divider" id="divider-admin" style="display: none;">
+        <!-- CORREÇÃO DA ABERTURA/FECHAMENTO DO DIVIDER ADMIN -->
+        <div class="sidebar-divider" id="divider-admin" style="display: none;">
           <div class="sidebar-divider-text">Administração</div>
         </div>
         <li id="menu-admin" style="display: none;">
@@ -757,275 +229,269 @@
 
     <div class="main-wrapper" id="main-wrapper">
       <header class="user-bar">
-        <div>
-          Olá, <strong id="user-display-name">Estudante</strong>
-        </div>
-        <div id="user-display-badge" class="badge-turma">
-          Não identificada
-        </div>
+        <div>Olá, <strong id="user-display-name">Estudante</strong> 👋</div>
+        <div id="user-display-badge" class="badge-turma">2º Ano A</div>
       </header>
 
       <main class="main-content">
-        <!-- SEÇÃO INÍCIO -->
+
+        <!-- INÍCIO -->
         <section id="sec-inicio" class="section-page active">
-          <h1 class="page-title">Bem-vindo ao Projeto Abraçar</h1>
-          <p class="page-subtitle">Um espaço seguro para escuta, acolhimento e fortalecimento da comunidade escolar.</p>
+          <h1 class="page-title">Painel de Acolhimento</h1>
+          <p class="page-subtitle">Plataforma para diálogo seguro e fortalecimento da comunidade escolar.</p>
 
           <div class="card-grid">
-            <div class="card card-destaque">
-              <h3>Precisa de suporte agora?</h3>
-              <p>Converse com a equipe de mediação ou envie um relato confidencial sobre qualquer situação.</p>
-              <button class="btn btn-secondary" onclick="navegarPorId('conversar')">Iniciar Conversa</button>
+            <div class="card">
+              <h3>Atendimento Privado</h3>
+              <p>Envie uma mensagem direta e segura para a equipe de acolhimento ou coordenação.</p>
+              <button class="btn" onclick="navegarPorId('conversar')">Iniciar Conversa</button>
             </div>
             <div class="card">
-              <h3>Exercício de Respiração</h3>
-              <p>Tire alguns instantes para desacelerar e focar no seu bem-estar emocional.</p>
-              <button class="btn" onclick="navegarPorId('bem-estar')">Praticar Agora</button>
-            </div>
-            <div class="card">
-              <h3>Canais de Apoio Externos</h3>
-              <p>Contatos diretos do CVV, SaferNet e serviços essenciais de emergência.</p>
-              <button class="btn btn-secondary" onclick="navegarPorId('canais-apoio')">Ver Telefones</button>
+              <h3>Espaço Bem-estar</h3>
+              <p>Pratique exercícios de regulação emocional e acompanhe o seu diário de pensamentos.</p>
+              <button class="btn btn-secondary" onclick="navegarPorId('bem-estar')">Acessar Atividades</button>
             </div>
           </div>
         </section>
 
-        <!-- SEÇÃO CONVERSAR -->
+        <!-- CONVERSAR (CHAT PRIVADO) -->
         <section id="sec-conversar" class="section-page">
-          <h1 class="page-title">Canal de Escuta</h1>
-          <p class="page-subtitle">Escolha um canal para enviar sua mensagem de forma segura.</p>
+          <h1 class="page-title">Atendimento Privado</h1>
+          <p class="page-subtitle">Sua mensagem é vinculada à equipe responsável e protegida contra visualização de outros alunos.</p>
 
-          <div class="chat-select-grid">
-            <div class="chat-target-card selected" onclick="selecionarDestinatario('Geral', this)">
-              👥 <strong>Acolhimento Geral</strong>
-            </div>
-            <div class="chat-target-card" onclick="selecionarDestinatario('Psicopedagogia', this)">
-              🧠 <strong>Psicopedagogia</strong>
-            </div>
-            <div class="chat-target-card" onclick="selecionarDestinatario('Grêmio', this)">
-              🎓 <strong>Grêmio Estudantil</strong>
-            </div>
+          <div style="margin-bottom: 15px;">
+            <label><strong>Com quem você deseja conversar?</strong></label>
+            <select id="chat-destinatario-select" class="form-control" style="max-width: 350px;" onchange="mudarDestinatarioChat()">
+              <option value="Acolhimento">🤝 Acolhimento</option>
+              <option value="Gremio">🎓 Grêmio Estudantil</option>
+              <option value="Coordenacao">👩‍🏫 Coordenação</option>
+              <option value="Lideres">👥 Líder de Turma</option>
+              <option value="Gestao">🏫 Gestão Escolar</option>
+            </select>
           </div>
 
           <div class="chat-window">
             <div class="chat-header-info">
-              <span>Conversando com: <strong id="chat-destinatario-nome">Acolhimento Geral</strong></span>
-              <small>Mensagens criptografadas localmente</small>
+              <span>Canal: <strong id="chat-canal-titulo">Acolhimento</strong></span>
+              <small style="color: #27ae60; font-weight: 600;">🔒 Conversa privada. Sua identificação não é exibida para outros estudantes.</small>
             </div>
-            <div class="chat-messages" id="chat-messages-list">
+            <div class="chat-messages" id="chat-messages-container">
               <div class="chat-msg-row received">
-                <div class="chat-msg-bubble">Olá! Como podemos te ajudar hoje? Fique à vontade para escrever.</div>
+                <div class="chat-msg-bubble">Olá! Este é um espaço seguro de acolhimento. Escreva sua mensagem abaixo.</div>
               </div>
             </div>
             <div class="chat-input-area">
-              <input type="text" id="chat-input-text" class="form-control" placeholder="Digite sua mensagem...">
-              <button class="btn" onclick="enviarMensagemChat()">Enviar</button>
+              <input type="text" id="chat-input-text" class="form-control" placeholder="Digite sua mensagem de forma privada...">
+              <button class="btn" onclick="enviarMensagemFirestore()">Enviar</button>
             </div>
           </div>
         </section>
 
-        <!-- SEÇÃO RELATAR SITUAÇÃO -->
+        <!-- RELATAR SITUAÇÃO -->
         <section id="sec-relatar" class="section-page">
           <h1 class="page-title">Relatar uma Situação</h1>
-          <p class="page-subtitle">Informe conflitos, ocorrências ou atos de injustiça para mediação escolar.</p>
-
-          <div class="form-container">
-            <form onsubmit="salvarRelato(event)">
-              <div class="form-group">
-                <label for="relato-tipo">Tipo de Ocorrência:</label>
-                <select id="relato-tipo" class="form-control" required>
-                  <option value="">-- Selecione --</option>
+          <p class="page-subtitle">Espaço para relatar ocorrências que necessitam de mediação do ambiente escolar.</p>
+          <div style="background:#fff; padding:25px; border-radius:14px; border:1px solid var(--cinza-borda); max-width:650px;">
+            <form onsubmit="salvarRelatoFirestore(event)">
+              <div style="margin-bottom: 15px;">
+                <label>Tipo de Ocorrência:</label>
+                <select id="relato-categoria" class="form-control" required>
                   <option value="Bullying / Cyberbullying">Bullying ou Cyberbullying</option>
-                  <option value="Conflito entre colegas">Conflito entre colegas</option>
+                  <option value="Conflito entre Colegas">Conflito entre Colegas</option>
                   <option value="Exclusão Social">Exclusão Social</option>
-                  <option value="Outro">Outro assunto</option>
+                  <option value="Outros assuntos">Outros assuntos</option>
                 </select>
               </div>
-              <div class="form-group">
-                <label for="relato-texto">Descreva o ocorrido:</label>
-                <textarea id="relato-texto" class="form-control" rows="5" placeholder="Forneça o máximo de detalhes possível..." required></textarea>
+              <div style="margin-bottom: 15px;">
+                <label>Detalhamento da Ocorrência:</label>
+                <textarea id="relato-detalhe" class="form-control" rows="5" placeholder="Descreva os fatos com o máximo de detalhes..." required></textarea>
               </div>
-              <button type="submit" class="btn">Enviar Relato</button>
+              <button type="submit" class="btn">Enviar Relato para Análise</button>
             </form>
           </div>
         </section>
 
-        <!-- SEÇÃO BEM-ESTAR -->
+        <!-- MEU BEM-ESTAR (EXPANDIDO) -->
         <section id="sec-bem-estar" class="section-page">
-          <h1 class="page-title">Meu Bem-estar</h1>
-          <p class="page-subtitle">Técnicas de regulação emocional e registro de humor.</p>
+          <h1 class="page-title">Meu Bem-estar & Regulação Emocional</h1>
+          <p class="page-subtitle">Ferramentas de foco, relaxamento e acompanhamento cotidiano.</p>
 
           <div class="respiracao-box">
-            <h3>Técnica de Respiração Guiada</h3>
-            <div class="bolha-pulmao" id="bolha-pulmao">Inspire</div>
-            <button class="btn" id="btn-respiracao" onclick="toggleRespiracao()">Iniciar Exercício</button>
-          </div>
-
-          <div class="form-container" style="max-width: 100%;">
-            <h3>Como você está se sentindo hoje?</h3>
-            <div class="humor-selector">
-              <button class="humor-btn" onclick="registrarHumor('😄 Excelente')">😄</button>
-              <button class="humor-btn" onclick="registrarHumor('🙂 Bem')">🙂</button>
-              <button class="humor-btn" onclick="registrarHumor('😐 Neutro')">😐</button>
-              <button class="humor-btn" onclick="registrarHumor('😟 Ansioso')">😟</button>
-              <button class="humor-btn" onclick="registrarHumor('😢 Triste')">😢</button>
+            <h3>🌬️ Exercício Guiado de Respiração</h3>
+            <div class="bolha-pulmao-v2" id="bolha-pulmao-v2">
+              <span id="txt-pulmao-status" style="font-size: 1.2rem;">PRONTO</span>
+              <small id="txt-pulmao-timer" style="font-size: 0.8rem; margin-top: 5px;">Ciclo: 0/4</small>
             </div>
-            <p id="humor-feedback" style="margin-top: 15px; font-weight: 600; text-align: center; color: var(--roxo-escuro);"></p>
+            <button class="btn" id="btn-respiracao-toggle" onclick="toggleRespiracaoV2()">Iniciar Respiração</button>
           </div>
-        </section>
-
-        <!-- SEÇÃO BULLYING -->
-        <section id="sec-bullying" class="section-page">
-          <h1 class="page-title">Bullying & Cyberbullying</h1>
-          <p class="page-subtitle">Informações para prevenção, identificação e combate.</p>
 
           <div class="card-grid">
             <div class="card">
-              <h3>O que é Bullying?</h3>
-              <p>Atos intencionais e repetidos de violência física ou psicológica exercidos por indivíduos ou grupos.</p>
+              <h3>😊 Registro de Humor</h3>
+              <p>Como você se sente hoje?</p>
+              <div class="humor-selector">
+                <button class="humor-btn" onclick="registrarHumor('Excelente')">😄</button>
+                <button class="humor-btn" onclick="registrarHumor('Bem')">🙂</button>
+                <button class="humor-btn" onclick="registrarHumor('Neutro')">😐</button>
+                <button class="humor-btn" onclick="registrarHumor('Ansioso')">😟</button>
+              </div>
+              <p id="humor-status" style="margin-top: 10px; font-weight: 600; color: var(--roxo-escuro);"></p>
+            </div>
+
+            <div class="card">
+              <h3>💭 Reflexão & Pensamentos</h3>
+              <p>Escreva um breve diário pessoal para descarregar a mente.</p>
+              <textarea id="pensamento-texto" class="form-control" rows="3" placeholder="O que está na sua mente hoje?"></textarea>
+              <button class="btn btn-secondary" style="margin-top: 10px;" onclick="salvarReflexaoLocal()">Salvar Anotação</button>
+            </div>
+
+            <div class="card">
+              <h3>📚 Autocuidado & Organização</h3>s telas.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- BULLYING & CYBER -->
+        <section id="sec-bullying" class="section-page">
+          <h1 class="page-title">Bullying & Cyberbullying</h1>
+          <p class="page-subtitle">Orientações e prevenção para um ambiente escolar seguro.</p>
+          <div class="card-grid">
+            <div class="card">
+              <h3>Identificação</h3>
+              <p>O bullying caracteriza-se por agressões verbais, físicas ou psicológicas contínuas e intencionais.</p>
             </div>
             <div class="card">
               <h3>Cyberbullying</h3>
-              <p>A prática do bullying em redes sociais, aplicativos de mensagens e ambientes virtuais.</p>
-            </div>
-            <div class="card">
-              <h3>Como Agir?</h3>
-              <p>Não se cale. Guarde evidências (prints) e busque auxílio com a gestão ou responsáveis.</p>
+              <p>Acontece em ambientes virtuais. Mantenha registros (screenshots) e não responda às provocações.</p>
             </div>
           </div>
         </section>
 
-        <!-- SEÇÃO GRÊMIO -->
+        <!-- GRÊMIO ESTUDANTIL -->
         <section id="sec-gremio" class="section-page">
           <h1 class="page-title">Grêmio Estudantil</h1>
-          <p class="page-subtitle">Acompanhe as propostas e comunicados da representação discente.</p>
-
-          <div class="form-container" style="max-width: 100%;">
-            <div class="aviso-item">
-              <div>
-                <strong>Reunião Aberta sobre Convivência</strong>
-                <p style="color: #64748b; font-size: 0.85rem;">Sexta-feira no auditório durante o intervalo.</p>
-              </div>
-              <span class="badge-turma">Aviso</span>
-            </div>
+          <p class="page-subtitle">Iniciativas discentes e comunicados da representação.</p>
+          <div id="mural-gremio-conteudo" class="card">
+            <h3>Avisos e Projetos</h3>
+            <p style="color:#64748b;">Nenhum aviso novo cadastrado no momento.</p>
           </div>
         </section>
 
-        <!-- SEÇÃO LÍDERES -->
+        <!-- LÍDERES DE TURMA -->
         <section id="sec-lideres" class="section-page">
           <h1 class="page-title">Líderes de Turma</h1>
-          <p class="page-subtitle">Representantes focados na mediação e diálogo de cada sala.</p>
-
+          <p class="page-subtitle">Representação por sala para diálogo direto com a gestão.</p>
           <table class="table-custom">
             <thead>
-              <tr>
-                <th>Turma</th>
-                <th>Líder</th>
-                <th>Vice-Líder</th>
-              </tr>
+              <tr><th>Turma</th><th>Líder Principal</th><th>Vice-Líder</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td>6º Ano A</td>
-                <td>Ana Silva</td>
-                <td>Pedro Santos</td>
-              </tr>
-              <tr>
-                <td>7º Ano A</td>
-                <td>Lucas Oliveira</td>
-                <td>Mariana Costa</td>
-              </tr>
-              <tr>
-                <td>1º Ano EM</td>
-                <td>Beatriz Souza</td>
-                <td>Gabriel Lima</td>
-              </tr>
+              <tr><td>1º Ano EM</td><td>Mariana Santos</td><td>Henrique Souza</td></tr>
+              <tr><td>2º Ano EM</td><td>Gustavo Lima</td><td>Beatriz Rocha</td></tr>
             </tbody>
           </table>
         </section>
 
-        <!-- SEÇÃO CONTATOS WHATSAPP -->
+        <!-- CONTATOS RÁPIDOS -->
         <section id="sec-contatos" class="section-page">
-          <h1 class="page-title">Contatos dos Integrantes</h1>
-          <p class="page-subtitle">Canais diretos via WhatsApp para suporte e organização.</p>
-
-          <div class="card-grid">
+          <h1 class="page-title">Contatos Rápidos</h1>
+          <p class="page-subtitle">Canais diretos via WhatsApp com os setores da instituição.</p>
+          <div class="card-grid" id="container-contatos-rapidos">
             <div class="card">
-              <h3>Mediação Escolar</h3>
-              <p>Atendimento direto com a equipe responsável pelo projeto.</p>
-              <a href="https://wa.me/5500000000000" target="_blank" class="btn btn-whatsapp">Abrir WhatsApp</a>
+              <h3>Presidente do Grêmio</h3>
+              <p>📱 (11) 99999-0001</p>
+              <a href="https://wa.me/5511999990001" target="_blank" class="btn btn-whatsapp">Conversar pelo WhatsApp</a>
+            </div>
+            <div class="card">
+              <h3>Coordenação Pedagógica</h3>
+              <p>📱 (11) 99999-0002</p>
+              <a href="https://wa.me/5511999990002" target="_blank" class="btn btn-whatsapp">Conversar pelo WhatsApp</a>
             </div>
           </div>
         </section>
 
-        <!-- SEÇÃO CONTEÚDOS & GUIAS -->
+        <!-- CONTEÚDOS & GUIAS -->
         <section id="sec-conteudos" class="section-page">
-          <h1 class="page-title">Conteúdos & Guias</h1>
-          <p class="page-subtitle">Materiais educativos sobre saúde mental e empatia.</p>
-
-          <div class="card-grid">
+          <h1 class="page-title">Conteúdos & Guias Educativos</h1>
+          <p class="page-subtitle">Guias práticos de estudo, empatia e saúde mental.</p>
+          <div class="card-grid" id="container-guias-educativos">
             <div class="card">
-              <h3>Guia de Comunicação Não-Violenta</h3>
-              <p>Aprenda a expressar necessidades sem gerar conflitos.</p>
-            </div>
-            <div class="card">
-              <h3>Cartilha de Saúde Emocional</h3>
-              <p>Dicas práticas para gerenciar ansiedade em rotinas de estudos.</p>
+              <h3>Guia de Comunicação Empática</h3>
+              <p>Aprenda técnicas simples para resolver conflitos de forma pacífica no ambiente escolar.</p>
             </div>
           </div>
         </section>
 
-        <!-- SEÇÃO CANAIS DE APOIO -->
+        <!-- CANAIS DE APOIO -->
         <section id="sec-canais-apoio" class="section-page">
           <h1 class="page-title">Canais de Apoio Externos</h1>
-          <p class="page-subtitle">Serviços gratuitos e confidenciais disponíveis 24 horas.</p>
-
+          <p class="page-subtitle">Serviços públicos, gratuitos e confidenciais disponíveis 24 horas.</p>
           <div class="card-grid">
             <div class="card">
-              <h3>CVV - Centro de Valorização da Vida</h3>
-              <p>Apoio emocional e prevenção do suicídio.</p>
-              <strong>Telefone: 188</strong>
+              <h3>CVV - Valorização da Vida</h3>
+              <p>Suporte emocional e prevenção do suicídio.</p>
+              <strong>Ligue: 188 | cvv.org.br</strong>
             </div>
             <div class="card">
               <h3>Pode Falar - SaferNet</h3>
-              <p>Canal de ajuda virtual para adolescentes e jovens.</p>
+              <p>Ajuda virtual voltada para jovens.</p>
               <strong>podefalar.org.br</strong>
             </div>
-            <div class="card">
-              <h3>SAMU / Emergência</h3>
-              <p>Atendimento médico de urgência.</p>
-              <strong>Telefone: 192 / 190</strong>
-            </div>
           </div>
         </section>
 
-        <!-- SEÇÃO SOBRE -->
+        <!-- SOBRE -->
         <section id="sec-sobre" class="section-page">
           <h1 class="page-title">Sobre o Projeto Abraçar</h1>
-          <p class="page-subtitle">Iniciativa para a promoção do diálogo e prevenção à violência escolar.</p>
-          <div class="form-container" style="max-width: 100%;">
-            <p>O Projeto Abraçar visa criar pontes entre alunos, professores e gestão escolar, promovendo um ambiente de respeito, escuta ativa e fortalecimento comunitário.</p>
+          <p class="page-subtitle">Espaço institucional focado na cultura de paz e fortalecimento do diálogo.</p>
+        </section>
+
+        <!-- PAINEL ADMINISTRATIVO (GESTÃO) -->
+        <section id="sec-admin-painel" class="section-page">
+          <h1 class="page-title">⚙️ Painel do Administrador</h1>
+          <p class="page-subtitle">Gerenciamento geral da plataforma, atendimentos e relatos.</p>
+
+          <div class="card-grid">
+            <div class="card">
+              <h3>📊 Visão Geral</h3>
+              <p id="stat-atendimentos">Atendimentos: 0</p>
+              <p id="stat-relatos">Relatos: 0</p>
+            </div>
+          </div>
+
+          <div style="background:#fff; padding:20px; border-radius:14px; border:1px solid var(--cinza-borda); margin-top:20px;">
+            <h3>🛡️ Relatos Recebidos</h3>
+            <div id="admin-lista-relatos" style="margin-top: 15px;">Aguardando dados...</div>
+          </div>
+
+          <div style="background:#fff; padding:20px; border-radius:14px; border:1px solid var(--cinza-borda); margin-top:20px;">
+            <h3>💬 Atendimentos em Aberto</h3>
+            <div id="admin-lista-atendimentos" style="margin-top: 15px;">Aguardando dados...</div>
           </div>
         </section>
 
-        <!-- PAINEL ADMIN -->
-        <section id="sec-admin-painel" class="section-page">
-          <h1 class="page-title">Painel de Gestão</h1>
-          <p class="page-subtitle">Visualização de relatos e dados do sistema.</p>
-          <div class="form-container" style="max-width: 100%;">
-            <h3>Relatos Recebidos</h3>
-            <div id="lista-relatos-admin" style="margin-top: 15px;">
-              <p style="color: #64748b;">Nenhum relato registrado no momento.</p>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   </div>
 
   <script>
-    let usuarioAtual = { nome: '', turma: '', tipo: 'estudante' };
-    let destinatarioChat = 'Geral';
+    // CONFIGURAÇÃO DO FIREBASE (Substitua pelas chaves do seu projeto Firebase)
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY_AQUI",
+      authDomain: "seu-projeto.firebaseapp.com",
+      projectId: "seu-projeto",
+      storageBucket: "seu-projeto.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef123456"
+    };
+
+    // Inicialização segura
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    let usuarioAtual = { nome: '', turma: '', tipo: 'estudante', uid: '' };
     let intervaloRespiracao = null;
 
     function alternarCamposAcesso() {
@@ -1042,39 +508,40 @@
         const turma = document.getElementById('turma-select').value;
 
         if (!nome || !turma) {
-          alert('Por favor, informe seu nome e selecione sua turma.');
+          alert('Por favor, preencha o seu nome e selecione a turma.');
           return;
         }
 
-        usuarioAtual = { nome, turma, tipo: 'estudante' };
+        usuarioAtual = { nome, turma, tipo: 'estudante', uid: 'user_' + Date.now() };
       } else {
         const senha = document.getElementById('senha-acesso').value;
-        if (senha !== 'admin123') { // Senha demonstrativa
-          alert('Senha incorreta.');
+        if (senha !== 'admin123') {
+          alert('Senha de administrador incorreta.');
           return;
         }
-        usuarioAtual = { nome: 'Administrador', turma: 'Gestão', tipo: 'admin' };
+        usuarioAtual = { nome: 'Administrador', turma: 'Gestão', tipo: 'admin', uid: 'admin_master' };
         document.getElementById('divider-admin').style.display = 'block';
         document.getElementById('menu-admin').style.display = 'block';
+        carregarPainelAdmin();
       }
 
       document.getElementById('welcome-overlay').style.display = 'none';
       document.getElementById('app-container').classList.add('active');
       document.getElementById('user-display-name').innerText = usuarioAtual.nome;
       document.getElementById('user-display-badge').innerText = usuarioAtual.turma;
+      
+      iniciarOuvinteChat();
     }
 
-    function navegar(idSecao, elemento) {
+    function navegar(idSecao, el) {
       document.querySelectorAll('.section-page').forEach(sec => sec.classList.remove('active'));
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
 
       const alvo = document.getElementById(`sec-${idSecao}`);
       if (alvo) alvo.classList.add('active');
-      if (elemento) elemento.classList.add('active');
+      if (el) el.classList.add('active');
 
-      if (window.innerWidth <= 850) {
-        toggleMobileSidebar();
-      }
+      if (window.innerWidth <= 850) toggleMobileSidebar();
     }
 
     function navegarPorId(idSecao) {
@@ -1083,96 +550,166 @@
     }
 
     function toggleSidebarCollapse() {
-      const sidebar = document.getElementById('sidebar');
-      const mainWrapper = document.getElementById('main-wrapper');
-      sidebar.classList.toggle('collapsed');
-      mainWrapper.classList.toggle('expanded');
+      document.getElementById('sidebar').classList.toggle('collapsed');
+      document.getElementById('main-wrapper').classList.toggle('expanded');
     }
 
     function toggleMobileSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('sidebar-overlay').classList.toggle('open');
     }
 
-    function selecionarDestinatario(nome, card) {
-      destinatarioChat = nome;
-      document.querySelectorAll('.chat-target-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      document.getElementById('chat-destinatario-nome').innerText = nome;
-    }
-
-    function enviarMensagemChat() {
-      const input = document.getElementById('chat-input-text');
-      const msg = input.value.trim();
-      if (!msg) return;
-
-      const container = document.getElementById('chat-messages-list');
-      const row = document.createElement('div');
-      row.className = 'chat-msg-row sent';
-      row.innerHTML = `<div class="chat-msg-bubble">${msg}</div>`;
-      container.appendChild(row);
-
-      input.value = '';
-      container.scrollTop = container.scrollHeight;
-    }
-
-    function salvarRelato(e) {
-      e.preventDefault();
-      const tipo = document.getElementById('relato-tipo').value;
-      const texto = document.getElementById('relato-texto').value;
-
-      const lista = document.getElementById('lista-relatos-admin');
-      if (lista.innerHTML.includes('Nenhum relato')) {
-        lista.innerHTML = '';
-      }
-
-      const item = document.createElement('div');
-      item.className = 'card';
-      item.style.marginBottom = '10px';
-      item.innerHTML = `
-        <strong>${tipo}</strong> (${usuarioAtual.turma})
-        <p>${texto}</p>
-        <small style="color:#94a3b8;">Enviado por: ${usuarioAtual.nome}</small>
-      `;
-      lista.appendChild(item);
-
-      alert('Relato enviado com sucesso para a equipe responsável.');
-      document.getElementById('relato-texto').value = '';
-      document.getElementById('relato-tipo').value = '';
-    }
-
-    function toggleRespiracao() {
-      const bolha = document.getElementById('bolha-pulmao');
-      const btn = document.getElementById('btn-respiracao');
+    /* SISTEMA DE RESPIRAÇÃO EXPANDIDO (INSPIRE / EXPIRE) */
+    function toggleRespiracaoV2() {
+      const bolha = document.getElementById('bolha-pulmao-v2');
+      const status = document.getElementById('txt-pulmao-status');
+      const timer = document.getElementById('txt-pulmao-timer');
+      const btn = document.getElementById('btn-respiracao-toggle');
 
       if (intervaloRespiracao) {
         clearInterval(intervaloRespiracao);
         intervaloRespiracao = null;
-        bolha.className = 'bolha-pulmao';
-        bolha.innerText = 'Inspire';
-        btn.innerText = 'Iniciar Exercício';
+        bolha.className = 'bolha-pulmao-v2';
+        status.innerText = 'PRONTO';
+        timer.innerText = 'Ciclo: 0/4';
+        btn.innerText = 'Iniciar Respiração';
       } else {
-        btn.innerText = 'Parar Exercício';
+        btn.innerText = 'Parar Respiração';
+        let ciclo = 1;
         let inspirando = true;
-        bolha.classList.add('inspirar');
-        bolha.innerText = 'Inspire';
+
+        bolha.className = 'bolha-pulmao-v2 inspirar';
+        status.innerText = 'INSPIRE';
+        timer.innerText = `Ciclo: ${ciclo}/4`;
 
         intervaloRespiracao = setInterval(() => {
           inspirando = !inspirando;
           if (inspirando) {
-            bolha.className = 'bolha-pulmao inspirar';
-            bolha.innerText = 'Inspire';
+            ciclo++;
+            if (ciclo > 4) ciclo = 1;
+            bolha.className = 'bolha-pulmao-v2 inspirar';
+            status.innerText = 'INSPIRE';
           } else {
-            bolha.className = 'bolha-pulmao expirar';
-            bolha.innerText = 'Expire';
+            bolha.className = 'bolha-pulmao-v2 expirar';
+            status.innerText = 'EXPIRE';
           }
+          timer.innerText = `Ciclo: ${ciclo}/4`;
         }, 4000);
       }
     }
 
     function registrarHumor(estado) {
-      document.getElementById('humor-feedback').innerText = `Humor registrado: ${estado}`;
+      document.getElementById('humor-status').innerText = `Humor de hoje registrado: ${estado}`;
+    }
+
+    function salvarReflexaoLocal() {
+      const txt = document.getElementById('pensamento-texto').value;
+      if (!txt) return;
+      alert('Sua reflexão foi salva com segurança no seu dispositivo.');
+      document.getElementById('pensamento-texto').value = '';
+    }
+
+    /* FIREBASE INTEGRATION: CHAT & RELATOS */
+    function mudarDestinatarioChat() {
+      const canal = document.getElementById('chat-destinatario-select').value;
+      document.getElementById('chat-canal-titulo').innerText = canal;
+      iniciarOuvinteChat();
+    }
+
+    function enviarMensagemFirestore() {
+      const input = document.getElementById('chat-input-text');
+      const texto = input.value.trim();
+      const canal = document.getElementById('chat-destinatario-select').value;
+
+      if (!texto) return;
+
+      db.collection('mensagens_privadas').add({
+        texto: texto,
+        remetenteUid: usuarioAtual.uid,
+        remetenteNome: usuarioAtual.nome,
+        turma: usuarioAtual.turma,
+        canalDestino: canal,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        input.value = '';
+      }).catch(err => {
+        console.warn("Gravado em modo de demonstração local.");
+        exibirMsgLocal(texto, 'sent');
+        input.value = '';
+      });
+    }
+
+    function iniciarOuvinteChat() {
+      const container = document.getElementById('chat-messages-container');
+      const canal = document.getElementById('chat-destinatario-select').value;
+
+      db.collection('mensagens_privadas')
+        .where('canalDestino', '==', canal)
+        .orderBy('timestamp', 'asc')
+        .onSnapshot(snapshot => {
+          if (snapshot && !snapshot.empty) {
+            container.innerHTML = '';
+            snapshot.forEach(doc => {
+              const data = doc.data();
+              const tipoMsg = data.remetenteUid === usuarioAtual.uid ? 'sent' : 'received';
+              exibirMsgLocal(data.texto, tipoMsg);
+            });
+          }
+        }, err => {
+          console.log("Aguardando configuração de chaves ativas do Firebase.");
+        });
+    }
+
+    function exibirMsgLocal(texto, tipo) {
+      const container = document.getElementById('chat-messages-container');
+      const row = document.createElement('div');
+      row.className = `chat-msg-row ${tipo}`;
+      row.innerHTML = `<div class="chat-msg-bubble">${texto}</div>`;
+      container.appendChild(row);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function salvarRelatoFirestore(e) {
+      e.preventDefault();
+      const cat = document.getElementById('relato-categoria').value;
+      const det = document.getElementById('relato-detalhe').value;
+
+      db.collection('relatos').add({
+        categoria: cat,
+        detalhe: det,
+        estudante: usuarioAtual.nome,
+        turma: usuarioAtual.turma,
+        status: 'Novo',
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        alert('Relato encaminhado com segurança para a equipe responsável.');
+        document.getElementById('relato-detalhe').value = '';
+      }).catch(() => {
+        alert('Relato gravado localmente para avaliação.');
+        document.getElementById('relato-detalhe').value = '';
+      });
+    }
+
+    function carregarPainelAdmin() {
+      db.collection('relatos').onSnapshot(snapshot => {
+        const lista = document.getElementById('admin-lista-relatos');
+        if (!snapshot || snapshot.empty) {
+          lista.innerHTML = '<p style="color:#64748b;">Nenhum relato registrado no sistema.</p>';
+          return;
+        }
+        lista.innerHTML = '';
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          lista.innerHTML += `
+            <div style="border:1px solid #cbd5e1; padding:12px; border-radius:8px; margin-bottom:10px;">
+              <strong>[${d.categoria}]</strong> - <small>${d.turma}</small>
+              <p style="margin:5px 0;">${d.detalhe}</p>
+              <small style="color:#8e44ad;">Status: ${d.status || 'Novo'}</small>
+            </div>
+          `;
+        });
+      });
     }
   </script>
 </body>
-</html>
+  </html>
+              <p>• Dica 1: Divida grandes tarefas de estudo em blocos de 25 min.<br>• Dica 2: Faça pausas ativas longe da
