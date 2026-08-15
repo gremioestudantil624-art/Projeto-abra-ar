@@ -70,11 +70,18 @@
 
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 8px; border: none; background: var(--degrade-abracar); color: var(--branco); font-weight: 600; font-size: 0.9rem; cursor: pointer; text-decoration: none; }
     .btn-secondary { background: var(--cinza-suave); color: var(--texto-escuro); border: 1px solid var(--cinza-borda); }
-    .btn-danger { background: #e74c3c; color: #fff; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; border: none; cursor: pointer; }
-    .btn-wsp { background: #25d366; color: #fff; }
+    .btn-wsp { background: #25d366; color: #fff; font-weight: bold; }
+    .btn-wsp:hover { background: #1ebc57; }
+
+    /* Estilos do WhatsApp por Equipe */
+    .wsp-group-title { font-size: 1.2rem; color: var(--roxo-escuro); margin: 25px 0 12px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--cinza-suave); padding-bottom: 5px; }
+    .membro-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .membro-card { background: var(--branco); border: 1px solid var(--cinza-borda); border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .membro-info strong { display: block; font-size: 0.95rem; color: var(--texto-escuro); }
+    .membro-info span { font-size: 0.82rem; color: #64748b; }
 
     .chat-select-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-    .chat-target-card { background: var(--branco); border: 2px solid var(--cinza-borda); border-radius: 12px; padding: 18px; cursor: pointer; text-align: center; }
+    .chat-target-card { background: var(--branco); border: 2px solid var(--cinza-borda); border-radius: 12px; padding: 18px; cursor: pointer; text-align: center; transition: all 0.2s ease; }
     .chat-target-card.selected { border-color: var(--roxo-principal); background: #fbf7ff; }
     .chat-window { background: var(--branco); border-radius: 14px; border: 1px solid var(--cinza-borda); height: 420px; display: flex; flex-direction: column; }
     .chat-header-info { padding: 15px 20px; border-bottom: 1px solid var(--cinza-borda); background: var(--cinza-suave); border-radius: 14px 14px 0 0; display: flex; justify-content: space-between; align-items: center; }
@@ -114,6 +121,7 @@
     </symbol>
   </svg>
 
+  <!-- overlay inicial -->
   <div class="welcome-overlay" id="welcome-overlay">
     <div class="welcome-card">
       <svg class="logo-svg" style="color: var(--roxo-principal);"><use href="#brasao-abracar"/></svg>
@@ -215,6 +223,7 @@
 
       <main class="main-content">
 
+        <!-- secao inicio -->
         <section id="inicio" class="section-page active">
           <h1 class="page-title">🤗 Bem-vindo ao Projeto Abraçar</h1>
           <p class="page-subtitle">Um espaço seguro para escuta, acolhimento e fortalecimento da comunidade escolar.</p>
@@ -225,6 +234,7 @@
           </div>
         </section>
 
+        <!-- secao conversar -->
         <section id="conversar" class="section-page">
           <h1 class="page-title">💬 Chat Privado & Anônimo</h1>
           <p class="page-subtitle">Você é identificado apenas por um código anônimo durante a conversa no chat.</p>
@@ -255,21 +265,31 @@
             </div>
             <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input-area">
-              <input type="text" id="input-chat" class="form-control" placeholder="Escreva sua mensagem anônima aqui...">
+              <input type="text" id="input-chat" class="form-control" placeholder="Escreva sua mensagem anônima aqui..." onkeypress="if(event.key==='Enter') enviarMensagemDireta()">
               <button class="btn" onclick="enviarMensagemDireta()">Enviar</button>
             </div>
           </div>
         </section>
 
+        <!-- secao whatsapp da equipe (com lista de membros por setor) -->
         <section id="whatsapp-equipe" class="section-page">
           <h1 class="page-title">📱 Contatos do WhatsApp da Equipe</h1>
-          <p class="page-subtitle">Escolha o responsável e fale diretamente pelo aplicativo.</p>
-          <div class="card-grid" id="lista-whatsapp-cards"></div>
+          <p class="page-subtitle">Escolha o integrante específico e fale diretamente no aplicativo.</p>
+
+          <div class="wsp-group-title">🎓 Grêmio Estudantil</div>
+          <div class="membro-list" id="lista-wsp-gremio"></div>
+
+          <div class="wsp-group-title">👥 Líderes de Turma</div>
+          <div class="membro-list" id="lista-wsp-lideres"></div>
+
+          <div class="wsp-group-title">🏫 Coordenação & Mediação</div>
+          <div class="membro-list" id="lista-wsp-coordenacao"></div>
         </section>
 
+        <!-- secao relatar -->
         <section id="relatar" class="section-page">
           <h1 class="page-title">🚨 Relato de Situação</h1>
-          <p class="page-subtitle">Comunique ocorrências de forma segura e confidencial.</p>
+          <p class="page-subtitle">Comunique ocorridos de forma segura e confidencial.</p>
           <div class="card">
             <form onsubmit="registrarRelato(event)">
               <div class="form-group" style="margin-bottom: 12px;">
@@ -284,7 +304,7 @@
               </div>
               <div class="form-group" style="margin-bottom: 12px;">
                 <label>Descrição do ocorrido:</label>
-                <textarea id="relato-descricao" class="form-control" rows="3" required></textarea>
+                <textarea id="relato-descricao" class="form-control" rows="3" placeholder="Conte detalhes sobre o que aconteceu..." required></textarea>
               </div>
               <div class="form-group" style="margin-bottom: 15px;">
                 <label>Local e Data:</label>
@@ -295,6 +315,7 @@
           </div>
         </section>
 
+        <!-- secao bem-estar -->
         <section id="bem-estar" class="section-page">
           <h1 class="page-title">🧠 Meu Bem-estar</h1>
           <p class="page-subtitle">Pausa guiada para respiração e autorregulação.</p>
@@ -306,6 +327,7 @@
           </div>
         </section>
 
+        <!-- secao bullying -->
         <section id="bullying" class="section-page">
           <h1 class="page-title">🛡️ Bullying & Cyberbullying</h1>
           <p class="page-subtitle">Informações importantes para identificar, prevenir e agir.</p>
@@ -321,6 +343,7 @@
           </div>
         </section>
 
+        <!-- secao gremio -->
         <section id="gremio" class="section-page">
           <h1 class="page-title">🎓 Grêmio Estudantil</h1>
           <p class="page-subtitle">Acompanhe as ações e avisos do Grêmio da sua escola.</p>
@@ -335,6 +358,7 @@
           </div>
         </section>
 
+        <!-- secao lideres -->
         <section id="líderes" class="section-page">
           <h1 class="page-title">👥 Líderes de Turma</h1>
           <p class="page-subtitle">Representantes focados na integração e mediação de conflitos.</p>
@@ -343,6 +367,7 @@
           </div>
         </section>
 
+        <!-- secao conteudos -->
         <section id="conteudos" class="section-page">
           <h1 class="page-title">📚 Conteúdos & Materiais</h1>
           <p class="page-subtitle">Guias, leituras e vídeos sobre cultura de paz e saúde emocional.</p>
@@ -352,8 +377,9 @@
           </div>
         </section>
 
+        <!-- secao canais de apoio -->
         <section id="canais-apoio" class="section-page">
-          <h1 class="page-title">📞 Canais de Apoio</h1>
+          <h1 class="page-title">📞 Canais de Apoio Externalizados</h1>
           <p class="page-subtitle">Canais públicos e gratuitos de ajuda emergencial e suporte profissional.</p>
           <div class="card-grid">
             <div class="card">
@@ -369,6 +395,7 @@
           </div>
         </section>
 
+        <!-- secao sobre -->
         <section id="sobre" class="section-page">
           <h1 class="page-title">ℹ️ Sobre o Projeto Abraçar</h1>
           <p class="page-subtitle">Iniciativa voltada ao acolhimento, escuta ativa e fortalecimento do ambiente escolar.</p>
@@ -377,6 +404,7 @@
           </div>
         </section>
 
+        <!-- secao painel admin -->
         <section id="admin-panel" class="section-page">
           <h1 class="page-title">🔒 Painel do Administrador</h1>
           <p class="page-subtitle">Gestão de relatos, registros e métricas do sistema.</p>
@@ -384,8 +412,10 @@
             <canvas id="meuGrafico"></canvas>
           </div>
           <div class="card">
-            <h3>Relatos Registrados</h3>
-            <div id="lista-relatos-admin" style="margin-top: 15px;"></div>
+            <h3>Relatos Registrados no Sistema</h3>
+            <div id="lista-relatos-admin" style="margin-top: 15px;">
+              <p style="color: #64748b; font-size: 0.9rem;">Nenhum relato registrado até o momento.</p>
+            </div>
           </div>
         </section>
 
@@ -396,9 +426,25 @@
   <script>
     let usuarioAtual = { nome: '', turma: '', tipo: 'estudante', idAnonimo: '' };
     let destinatarioChat = 'Grêmio Estudantil';
-    let historicoMensagens = [];
     let relatosSistema = [];
-    let contadorAnonimo = 1;
+
+    // Base de Dados de Integrantes para WhatsApp
+    const membrosEquipe = {
+      gremio: [
+        { nome: 'Ana Clara', cargo: 'Presidente do Grêmio', fone: '5511999990001' },
+        { nome: 'Lucas Silva', cargo: 'Diretor de Comunicação', fone: '5511999990002' },
+        { nome: 'Mariana Souza', cargo: 'Acolhimento & Bem-Estar', fone: '5511999990003' }
+      ],
+      lideres: [
+        { nome: 'Gabriel Santos', cargo: 'Líder - 1º Ano EM', fone: '5511988880001' },
+        { nome: 'Beatriz Costa', cargo: 'Líder - 2º Ano EM', fone: '5511988880002' },
+        { nome: 'Matheus Oliveira', cargo: 'Líder - 9º Ano A', fone: '5511988880003' }
+      ],
+      coordenacao: [
+        { nome: 'Profa. Regina', cargo: 'Coordenadora Pedagógica', fone: '5511977770001' },
+        { nome: 'Prof. Roberto', cargo: 'Mediador Escolar', fone: '5511977770002' }
+      ]
+    };
 
     function alternarCamposAcesso() {
       const tipo = document.getElementById('tipo-acesso').value;
@@ -422,7 +468,7 @@
           document.getElementById('admin-user-selector').style.display = 'block';
           iniciarSistema();
         } else {
-          alert('Senha incorreta!');
+          alert('Senha incorreta! Use: admin123');
         }
       } else {
         const nome = document.getElementById('nome-usuario').value.trim();
@@ -441,7 +487,8 @@
       document.getElementById('app-container').classList.add('active');
       document.getElementById('display-user-turma').innerText = `${usuarioAtual.nome} (${usuarioAtual.turma})`;
       document.getElementById('status-identificador-chat').innerText = `🔒 Seu ID: ${usuarioAtual.idAnonimo}`;
-      carregarCardsWhatsapp();
+      
+      carregarIntegrantesWhatsapp();
       renderizarGrafico();
     }
 
@@ -484,13 +531,24 @@
       if (!texto) return;
 
       const chatContainer = document.getElementById('chat-messages');
-      const msgRow = document.createElement('div');
-      msgRow.className = 'chat-msg-row sent';
-      msgRow.innerHTML = `<div class="chat-msg-bubble">${texto}</div>`;
-      chatContainer.appendChild(msgRow);
       
+      // Mensagem do Aluno
+      const msgRowSent = document.createElement('div');
+      msgRowSent.className = 'chat-msg-row sent';
+      msgRowSent.innerHTML = `<div class="chat-msg-bubble">${texto}</div>`;
+      chatContainer.appendChild(msgRowSent);
+
       input.value = '';
       chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // Resposta simulada da equipe após 1 segundo
+      setTimeout(() => {
+        const msgRowRec = document.createElement('div');
+        msgRowRec.className = 'chat-msg-row received';
+        msgRowRec.innerHTML = `<div class="chat-msg-bubble">Olá! Recebemos sua mensagem enviada para ${destinatarioChat}. Estamos aqui para te ouvir.</div>`;
+        chatContainer.appendChild(msgRowRec);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 1000);
     }
 
     function registrarRelato(e) {
@@ -507,28 +565,38 @@
 
     function atualizarListaRelatosAdmin() {
       const container = document.getElementById('lista-relatos-admin');
+      if (relatosSistema.length === 0) {
+        container.innerHTML = '<p style="color: #64748b; font-size: 0.9rem;">Nenhum relato registrado até o momento.</p>';
+        return;
+      }
       container.innerHTML = relatosSistema.map(r => `
-        <div style="padding: 10px; border-bottom: 1px solid #ddd;">
-          <strong>[${r.tipo}]</strong> - ${r.local} (${r.data})<br>
-          <small>${r.desc}</small>
+        <div style="padding: 12px; border-bottom: 1px solid var(--cinza-borda);">
+          <strong>[${r.tipo}]</strong> - <small style="color: #64748b;">${r.local} em ${r.data}</small><br>
+          <p style="margin-top: 5px; font-size: 0.9rem;">${r.desc}</p>
         </div>
       `).join('');
     }
 
-    function carregarCardsWhatsapp() {
-      const contatos = [
-        { nome: 'Grêmio Estudantil', fone: '5511999999999' },
-        { nome: 'Coordenação Pedagógica', fone: '5511888888888' },
-        { nome: 'Líder de Turma', fone: '5511777777777' }
-      ];
-      const container = document.getElementById('lista-whatsapp-cards');
-      container.innerHTML = contatos.map(c => `
-        <div class="card">
-          <h3>${c.nome}</h3>
-          <p>Clique abaixo para abrir a conversa no WhatsApp.</p>
-          <a class="btn btn-wsp" href="https://wa.me/${c.fone}" target="_blank">Abrir WhatsApp</a>
-        </div>
-      `).join('');
+    // Renderiza a lista detalhada de números no WhatsApp
+    function carregarIntegrantesWhatsapp() {
+      const renderGrupo = (membros, elementId) => {
+        const el = document.getElementById(elementId);
+        el.innerHTML = membros.map(m => `
+          <div class="membro-card">
+            <div class="membro-info">
+              <strong>${m.nome}</strong>
+              <span>${m.cargo}</span>
+            </div>
+            <a class="btn btn-wsp" href="https://wa.me/${m.fone}" target="_blank">
+              WhatsApp
+            </a>
+          </div>
+        `).join('');
+      };
+
+      renderGrupo(membrosEquipe.gremio, 'lista-wsp-gremio');
+      renderGrupo(membrosEquipe.lideres, 'lista-wsp-lideres');
+      renderGrupo(membrosEquipe.coordenacao, 'lista-wsp-coordenacao');
     }
 
     function iniciarRespiracao() {
