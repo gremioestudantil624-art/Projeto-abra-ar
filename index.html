@@ -17,10 +17,19 @@
       --degrade-abracar: linear-gradient(135deg, var(--verde-principal), var(--roxo-principal));
       --bg-claro: #f4f7f6;
       --texto-escuro: #2c3e50;
+      --card-bg: #ffffff;
       --branco: #ffffff;
       --cinza-borda: #cbd5e1;
       --cinza-suave: #f1f5f9;
       --sidebar-largura: 280px;
+    }
+
+    [data-theme="dark"] {
+      --bg-claro: #0f172a;
+      --texto-escuro: #f8fafc;
+      --card-bg: #1e293b;
+      --cinza-borda: #334155;
+      --cinza-suave: #334155;
     }
 
     * {
@@ -36,6 +45,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     /* ==========================================================================
@@ -53,7 +63,7 @@
     }
 
     .welcome-card {
-      background: var(--branco);
+      background: var(--card-bg);
       padding: 40px 30px;
       border-radius: 20px;
       max-width: 460px;
@@ -71,6 +81,10 @@
     .welcome-card h1 {
       font-size: 1.8rem;
       color: var(--roxo-escuro);
+    }
+
+    [data-theme="dark"] .welcome-card h1 {
+      color: var(--verde-principal);
     }
 
     .welcome-card p {
@@ -93,6 +107,8 @@
       border-radius: 10px;
       font-size: 0.95rem;
       outline: none;
+      background: var(--card-bg);
+      color: var(--texto-escuro);
     }
 
     .form-control:focus {
@@ -299,13 +315,32 @@
     }
 
     .user-bar {
-      background: var(--branco);
+      background: var(--card-bg);
       padding: 12px 25px;
       border-bottom: 1px solid var(--cinza-borda);
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 0.88rem;
+    }
+
+    .user-bar-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .theme-toggle-btn {
+      background: var(--cinza-suave);
+      border: 1px solid var(--cinza-borda);
+      color: var(--texto-escuro);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .badge-turma {
@@ -315,6 +350,10 @@
       font-weight: 600;
       color: var(--roxo-escuro);
       border: 1px solid var(--cinza-borda);
+    }
+
+    [data-theme="dark"] .badge-turma {
+      color: var(--verde-principal);
     }
 
     /* ==========================================================================
@@ -340,7 +379,7 @@
     }
 
     .card {
-      background: var(--branco);
+      background: var(--card-bg);
       padding: 22px;
       border-radius: 14px;
       border: 1px solid var(--cinza-borda);
@@ -428,8 +467,13 @@
       background: #1da851;
     }
 
+    .btn-success {
+      background: var(--verde-principal);
+      color: white;
+    }
+
     .form-container {
-      background: var(--branco);
+      background: var(--card-bg);
       padding: 25px;
       border-radius: 14px;
       border: 1px solid var(--cinza-borda);
@@ -458,7 +502,7 @@
     }
 
     .chat-target-card {
-      background: var(--branco);
+      background: var(--card-bg);
       border: 2px solid var(--cinza-borda);
       border-radius: 12px;
       padding: 18px;
@@ -469,11 +513,11 @@
 
     .chat-target-card:hover, .chat-target-card.selected {
       border-color: var(--roxo-principal);
-      background: #fbf7ff;
+      background: rgba(142, 68, 173, 0.05);
     }
 
     .chat-window {
-      background: var(--branco);
+      background: var(--card-bg);
       border-radius: 14px;
       border: 1px solid var(--cinza-borda);
       height: 420px;
@@ -555,11 +599,11 @@
 
     .btn-delete-msg:hover {
       color: #ef4444;
-      background: #fee2e2;
+      background: rgba(239, 68, 68, 0.1);
     }
 
     /* ==========================================================================
-       6. LISTA TELEFÔNICA / WHATSAPP E RESPIRAÇÃO
+       6. LISTA TELEFÔNICA, RESPIRAÇÃO E ADMIN TABELAS
        ========================================================================== */
     .phone-book-list {
       display: flex;
@@ -569,7 +613,7 @@
     }
 
     .phone-card {
-      background: var(--branco);
+      background: var(--card-bg);
       border: 1px solid var(--cinza-borda);
       border-radius: 10px;
       padding: 15px 20px;
@@ -583,6 +627,10 @@
       font-size: 1rem;
     }
 
+    [data-theme="dark"] .phone-info h4 {
+      color: var(--verde-principal);
+    }
+
     .phone-info p {
       font-size: 0.85rem;
       color: #64748b;
@@ -594,7 +642,7 @@
       align-items: center;
       justify-content: center;
       padding: 50px 20px;
-      background: var(--branco);
+      background: var(--card-bg);
       border-radius: 16px;
       border: 1px solid var(--cinza-borda);
       text-align: center;
@@ -625,8 +673,30 @@
       padding: 15px 0;
       border-bottom: 1px solid var(--cinza-borda);
       position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
     .aviso-item:last-child { border-bottom: none; }
+
+    .admin-list-item {
+      padding: 12px;
+      border-bottom: 1px solid var(--cinza-borda);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-list-item:last-child { border-bottom: none; }
+
+    .badge-status {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+    .status-pendente { background: #fef3c7; color: #d97706; }
+    .status-concluido { background: #dcfce7; color: #15803d; }
 
     /* ==========================================================================
        7. RESPONSIVIDADE
@@ -729,272 +799,185 @@
 
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
 
+       <!-- CONTINUAÇÃO DA SIDEBAR E ESTRUTURA DO APP -->
     <aside class="sidebar" id="sidebar">
       <div class="brand-header">
         <svg class="brand-svg" style="fill: none; stroke: currentColor;"><use href="#brasao-abracar"/></svg>
         <div class="brand-text">
           <h2>ABRAÇAR</h2>
-          <small>Escuta & Acolhimento</small>
+          <small>Cultura de Paz</small>
         </div>
-        <button class="toggle-collapse-btn" onclick="toggleSidebarCollapse()" title="Recolher/Expandir">◀</button>
+        <button class="toggle-collapse-btn" onclick="toggleSidebarCollapse()" title="Alternar visualização do menu">◄</button>
       </div>
 
       <ul class="nav-links">
         <li>
-          <a href="#" class="active" onclick="navegar('inicio', this)">
+          <a href="#" class="active" onclick="navegarPara('inicio', event)">
             <span class="nav-icon">🏠</span>
             <span class="link-text">Início</span>
           </a>
         </li>
         <li>
-          <a href="#" onclick="navegar('conversar', this)">
+          <a href="#" onclick="navegarPara('chat', event)">
             <span class="nav-icon">💬</span>
-            <span class="link-text">Conversar</span>
+            <span class="link-text">Chat e Acolhimento</span>
           </a>
         </li>
         <li>
-          <a href="#" onclick="navegar('sugestoes', this)">
-            <span class="nav-icon">💡</span>
-            <span class="link-text">Sugestões ao Grêmio</span>
+          <a href="#" onclick="navegarPara('mural', event)">
+            <span class="nav-icon">📌</span>
+            <span class="link-text">Mural de Avisos</span>
           </a>
         </li>
         <li>
-          <a href="#" onclick="navegar('relatar', this)">
-            <span class="nav-icon">🚨</span>
-            <span class="link-text">Relatar Situação</span>
+          <a href="#" onclick="navegarPara('respire', event)">
+            <span class="nav-icon">🧘</span>
+            <span class="link-text">Espaço Respire</span>
           </a>
         </li>
         <li>
-          <a href="#" onclick="navegar('bem-estar', this)">
-            <span class="nav-icon">🧠</span>
-            <span class="link-text">Meu Bem-estar</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" onclick="navegar('bullying', this)">
-            <span class="nav-icon">🛡️</span>
-            <span class="link-text">Bullying & Cyber</span>
-          </a>
-        </li>
-
-        <div class="sidebar-divider">
-          <div class="sidebar-divider-text">Apoio & Gestão</div>
-        </div>
-
-        <li>
-          <a href="#" onclick="navegar('rede-apoio', this)">
+          <a href="#" onclick="navegarPara('contatos', event)">
             <span class="nav-icon">📞</span>
             <span class="link-text">Rede de Apoio</span>
           </a>
         </li>
-        <li id="menu-admin-item" style="display: none;">
-          <a href="#" onclick="navegar('painel-admin', this)">
-            <span class="nav-icon">📊</span>
-            <span class="link-text">Painel de Gestão</span>
+
+        <li class="sidebar-divider"></li>
+        <div class="sidebar-divider-text">Gestão</div>
+
+        <li id="menu-admin-link" style="display: none;">
+          <a href="#" onclick="navegarPara('admin', event)">
+            <span class="nav-icon">⚙️</span>
+            <span class="link-text">Painel de Controle</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onclick="trocarTurmaAcesso(event)">
+            <span class="nav-icon">🔄</span>
+            <span class="link-text">Trocar Perfil</span>
           </a>
         </li>
       </ul>
     </aside>
 
     <div class="main-wrapper" id="main-wrapper">
+      
       <div class="user-bar">
-        <div>Olá, <strong id="user-display-name">Estudante</strong></div>
-        <div class="badge-turma" id="user-display-turma">Turma Não Definida</div>
+        <div>
+          <span>Usuário: <strong id="usuario-display">Carregando...</strong></span>
+        </div>
+        <div class="user-bar-controls">
+          <span class="badge-turma" id="turma-display">Turma</span>
+          <button class="theme-toggle-btn" onclick="alternarTema()">
+            <span id="theme-icon">🌙</span> <span id="theme-text">Escuro</span>
+          </button>
+        </div>
       </div>
 
-      <div class="main-content">
+      <main class="main-content">
 
         <!-- SEÇÃO INÍCIO -->
         <section id="sec-inicio" class="section-page active">
-          <h1 class="page-title">Bem-vindo ao Projeto Abraçar</h1>
-          <p class="page-subtitle">Um espaço seguro para escuta, acolhimento e fortalecimento da nossa comunidade escolar.</p>
+          <h2 class="page-title">Bem-vindo(a) ao Projeto Abraçar</h2>
+          <p class="page-subtitle">Um espaço seguro voltado para a promoção do diálogo, escuta atenta e fortalecimento do clima escolar.</p>
 
           <div class="card-grid">
             <div class="card card-destaque">
-              <div>
-                <h3>Escuta Ativa & Acolhimento</h3>
-                <p>Precisa conversar? Converse com os mediadores da escola ou envie um relato de forma segura.</p>
-              </div>
-              <button class="btn btn-secondary" onclick="navegar('conversar')">Iniciar Conversa</button>
+              <h3>Precisa conversar?</h3>
+              <p>Envie uma mensagem direta e segura para a equipe de apoio, escuta ou representação estudantil.</p>
+              <button class="btn btn-secondary" onclick="navegarPara('chat')">Abrir Chat</button>
             </div>
 
             <div class="card">
-              <div>
-                <h3>Sugestões ao Grêmio</h3>
-                <p>Envie ideias de eventos, melhorias e ações para transformar a rotina da nossa escola.</p>
-              </div>
-              <button class="btn" onclick="navegar('sugestoes')">Enviar Ideia</button>
+              <h3>Espaço Respire</h3>
+              <p>Tire um momento para desacelerar, praticar a respiração guiada e organizar seus pensamentos.</p>
+              <button class="btn" onclick="navegarPara('respire')">Acessar Exercício</button>
             </div>
 
             <div class="card">
-              <div>
-                <h3>Espaço de Calmaria</h3>
-                <p>Pratique exercícios de respiração guiada para momentos de ansiedade ou estresse.</p>
-              </div>
-              <button class="btn btn-secondary" onclick="navegar('bem-estar')">Acessar Espaço</button>
+              <h3>Mural de Avisos</h3>
+              <p>Fique por dentro das ações de conscientização, oficinas e eventos promovidos pela escola.</p>
+              <button class="btn btn-secondary" onclick="navegarPara('mural')">Ver Avisos</button>
             </div>
           </div>
 
-          <div class="card">
-            <h3>Quadro de Avisos da Comunidade</h3>
-            <div id="lista-avisos" style="margin-top: 15px;">
-              <div class="aviso-item">
-                <strong>🤝 Roda de Conversa - Cultura de Paz</strong>
-                <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Nesta sexta-feira, no auditório da escola. Todos são bem-vindos!</p>
-              </div>
-              <div class="aviso-item">
-                <strong>💡 Caixinha do Grêmio Aberta</strong>
-                <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Deixe sua sugestão para as atividades do próximo trimestre na aba 'Sugestões'.</p>
-              </div>
+          <div class="card" style="margin-top: 15px;">
+            <h3>Visão Geral das Ações de Acolhimento</h3>
+            <p>Acompanhe o engajamento e as atividades de mediação escolar ao longo do ano lectivo.</p>
+            <div style="max-height: 250px; position: relative;">
+              <canvas id="graficoAtendimentos"></canvas>
             </div>
           </div>
         </section>
 
-        <!-- SEÇÃO CONVERSAR -->
-        <section id="sec-conversar" class="section-page">
-          <h1 class="page-title">Canal de Escuta</h1>
-          <p class="page-subtitle">Escolha com quem deseja conversar. Este é um espaço seguro de acolhimento.</p>
+        <!-- SEÇÃO CHAT -->
+        <section id="sec-chat" class="section-page">
+          <h2 class="page-title">Chat de Escuta e Acolhimento</h2>
+          <p class="page-subtitle">Selecione o canal desejado para iniciar um diálogo construtivo e confidencial.</p>
 
           <div class="chat-select-grid">
-            <div class="chat-target-card selected" onclick="selecionarDestinatarioChat('Gremio Estudantil', this)">
+            <div class="chat-target-card selected" onclick="selecionarDestinatario('Grêmio Estudantil', this)">
               <h4>Grêmio Estudantil</h4>
-              <p style="font-size: 0.8rem; color: #64748b;">Representação dos alunos</p>
+              <p style="font-size: 0.8rem; color: #64748b;">Representação Estudantil</p>
             </div>
-            <div class="chat-target-card" onclick="selecionarDestinatarioChat('Orientacao Pedagogica', this)">
-              <h4>Orientação Pedagógica</h4>
-              <p style="font-size: 0.8rem; color: #64748b;">Apoio educacional e emocional</p>
+            <div class="chat-target-card" onclick="selecionarDestinatario('Equipe de Mediação', this)">
+              <h4>Equipe de Mediação</h4>
+              <p style="font-size: 0.8rem; color: #64748b;">Apoio e Diálogo Construtivo</p>
             </div>
-            <div class="chat-target-card" onclick="selecionarDestinatarioChat('Comissao de Paz', this)">
-              <h4>Comissão de Mediação</h4>
-              <p style="font-size: 0.8rem; color: #64748b;">Resolução de conflitos</p>
+            <div class="chat-target-card" onclick="selecionarDestinatario('Orientação Educacional', this)">
+              <h4>Orientação Educacional</h4>
+              <p style="font-size: 0.8rem; color: #64748b;">Suporte Pedagógico/Emocional</p>
             </div>
           </div>
 
           <div class="chat-window">
             <div class="chat-header-info">
-              <div>Conversando com: <strong id="chat-target-name">Grêmio Estudantil</strong></div>
-              <small style="color: #64748b;">Mensagens salvas localmente</small>
+              <div>
+                <strong>Canal Selecionado: </strong>
+                <span id="canal-ativo-nome" style="color: var(--roxo-principal); font-weight: bold;">Grêmio Estudantil</span>
+              </div>
+              <small style="color: #64748b;">Respostas em até 24h úteis</small>
             </div>
-            <div class="chat-messages" id="chat-messages-box">
-              <!-- Mensagens renderizadas via JS -->
+
+            <div class="chat-messages" id="chat-messages-container">
+              <!-- Mensagens renderizadas dinamicamente via JS -->
             </div>
+
             <div class="chat-input-area">
-              <input type="text" id="chat-input" class="form-control" placeholder="Digite sua mensagem aqui..." onkeypress="tratarTeclaChat(event)">
+              <input type="text" id="chat-input" class="form-control" placeholder="Digite sua mensagem aqui..." onkeydown="checarTeclaEnter(event)">
               <button class="btn" onclick="enviarMensagemChat()">Enviar</button>
             </div>
           </div>
         </section>
 
-        <!-- SEÇÃO SUGESTÕES -->
-        <section id="sec-sugestoes" class="section-page">
-          <h1 class="page-title">Sugestões ao Grêmio Estudantil</h1>
-          <p class="page-subtitle">Contribua com ideias para melhorar nossa convivência e atividades escolares.</p>
+        <!-- SEÇÃO MURAL DE AVISOS -->
+        <section id="sec-mural" class="section-page">
+          <h2 class="page-title">Mural de Avisos e Comunicados</h2>
+          <p class="page-subtitle">Acompanhe as notícias e campanhas de cultura de paz promovidas na instituição.</p>
 
-          <div class="form-container">
-            <form onsubmit="salvarSugestao(event)">
-              <div class="form-group">
-                <label for="sugestao-titulo">Título da Sugestão</label>
-                <input type="text" id="sugestao-titulo" class="form-control" placeholder="Ex: Torneio Interclasses de Xadrez" required>
-              </div>
-
-              <div class="form-group">
-                <label for="sugestao-categoria">Categoria</label>
-                <select id="sugestao-categoria" class="form-control">
-                  <option value="Eventos e Cultura">Eventos e Cultura</option>
-                  <option value="Esportes e Lazer">Esportes e Lazer</option>
-                  <option value="Infraestrutura">Infraestrutura Escolar</option>
-                  <option value="Convivencia">Convivência e Bem-estar</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="sugestao-texto">Descreva sua Ideia</label>
-                <textarea id="sugestao-texto" class="form-control" rows="5" placeholder="Detalhamento da proposta..." required></textarea>
-              </div>
-
-              <button type="submit" class="btn">Enviar Sugestão</button>
-            </form>
+          <div class="card">
+            <div id="mural-container">
+              <!-- Lista de avisos carregada via JavaScript -->
+            </div>
           </div>
         </section>
 
-        <!-- SEÇÃO RELATAR -->
-        <section id="sec-relatar" class="section-page">
-          <h1 class="page-title">Relatar Situação</h1>
-          <p class="page-subtitle">Informe conflitos, situações de vulnerabilidade ou necessidades de apoio na escola.</p>
-
-          <div class="form-container">
-            <form onsubmit="salvarRelato(event)">
-              <div class="form-group">
-                <label for="relato-tipo">Tipo de Situação</label>
-                <select id="relato-tipo" class="form-control">
-                  <option value="Conflito entre alunos">Conflito entre alunos</option>
-                  <option value="Bullying / Cyberbullying">Bullying / Cyberbullying</option>
-                  <option value="Necessidade de apoio emocional">Necessidade de apoio emocional</option>
-                  <option value="Outros assuntos">Outros assuntos</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="relato-identificacao">Opção de Identificação</label>
-                <select id="relato-identificacao" class="form-control">
-                  <option value="identificado">Identificado (A equipe poderá te dar retorno direto)</option>
-                  <option value="anonimo">Anônimo (Resguardar minha identidade)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="relato-descricao">Descrição do Ocorrido</label>
-                <textarea id="relato-descricao" class="form-control" rows="5" placeholder="Descreva os fatos de maneira clara..." required></textarea>
-              </div>
-
-              <button type="submit" class="btn btn-danger">Enviar Relato</button>
-            </form>
-          </div>
-        </section>
-
-        <!-- SEÇÃO BEM-ESTAR -->
-        <section id="sec-bem-estar" class="section-page">
-          <h1 class="page-title">Espaço de Bem-estar & Autorregulação</h1>
-          <p class="page-subtitle">Ferramenta prática de respiração guiada para momentos de tensão.</p>
+        <!-- SEÇÃO RESPIRE -->
+        <section id="sec-respire" class="section-page">
+          <h2 class="page-title">Espaço Respire</h2>
+          <p class="page-subtitle">Apoio para momentos de ansiedade ou estresse. Acompanhe o ciclo de respiração visual.</p>
 
           <div class="respiracao-box">
-            <h3>Exercício de Respiração Quadrada (4x4)</h3>
-            <p style="color: #64748b; font-size: 0.9rem; margin-top: 8px;">Acompanhe o movimento da bolha para acalmar a mente.</p>
-
-            <div class="bolha-pulmao expirar" id="bolha-respiracao">EXPIRAR</div>
-            <p id="instrucao-respiracao" style="font-weight: 600; color: var(--roxo-escuro);">Clique abaixo para iniciar</p>
-
-            <button class="btn" style="margin-top: 20px;" id="btn-timer-respiracao" onclick="toggleExercicioRespiracao()">Iniciar Exercício</button>
+            <h3 id="respiracao-instrucao">Prepare-se para começar...</h3>
+            <div class="bolha-pulmao expirar" id="bolha-pulmao">Respire</div>
+            <button class="btn" id="btn-iniciar-resp" onclick="alternarExercicioRespiracao()">Iniciar Exercício</button>
           </div>
         </section>
 
-        <!-- SEÇÃO BULLYING -->
-        <section id="sec-bullying" class="section-page">
-          <h1 class="page-title">Bullying e Cyberbullying: Prevenção & Conscientização</h1>
-          <p class="page-subtitle">Informações educativas para promover o respeito e o apoio mútuo.</p>
-
-          <div class="card-grid">
-            <div class="card">
-              <h3>O que é Bullying?</h3>
-              <p>Trata-se de comportamentos agressivos, intencionais e repetitivos, sem motivação evidente, adotados por um ou mais estudantes contra outro.</p>
-            </div>
-
-            <div class="card">
-              <h3>Cyberbullying</h3>
-              <p>É a prática do bullying no ambiente virtual (redes sociais, aplicativos de mensagem e jogos). Compartilhar ou expor alguém também configura agressão digital.</p>
-            </div>
-
-            <div class="card">
-              <h3>Como agir?</h3>
-              <p>Se você for vítima ou testemunha, não se cale. Busque a mediação escolar, fale com um professor de confiança ou utilize nosso formulário de relatos.</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- SEÇÃO REDE DE APOIO -->
-        <section id="sec-rede-apoio" class="section-page">
-          <h1 class="page-title">Rede de Apoio & Canais Emergenciais</h1>
-          <p class="page-subtitle">Contatos públicos e gratuitos para assistência emocional e garantias de direitos.</p>
+        <!-- SEÇÃO REDE DE APOIO / CONTATOS -->
+        <section id="sec-contatos" class="section-page">
+          <h2 class="page-title">Rede de Apoio e Contatos Úteis</h2>
+          <p class="page-subtitle">Serviços públicos e canais oficiais de auxílio e escuta qualificada.</p>
 
           <div class="phone-book-list">
             <div class="phone-card">
@@ -1002,77 +985,104 @@
                 <h4>CVV - Centro de Valorização da Vida</h4>
                 <p>Apoio emocional e prevenção do suicídio. Atendimento gratuito e confidencial 24h.</p>
               </div>
-              <a href="tel:188" class="btn">Ligar 188</a>
+              <div>
+                <a href="tel:188" class="btn btn-secondary">Ligar 188</a>
+              </div>
             </div>
 
             <div class="phone-card">
               <div class="phone-info">
-                <h4>Disque 100 - Direitos Humanos</h4>
-                <p>Canal para denúncias de violações de direitos de crianças e adolescentes.</p>
+                <h4>Conselho Tutelar Regional</h4>
+                <p>Garantia e proteção dos direitos da criança e do adolescente.</p>
               </div>
-              <a href="tel:100" class="btn">Ligar 100</a>
+              <div>
+                <a href="#" class="btn btn-secondary" onclick="alert('Consulte o número da sua região junto à gestão da escola.')">Informações</a>
+              </div>
             </div>
 
             <div class="phone-card">
               <div class="phone-info">
-                <h4>Pode Falar (UNICEF)</h4>
-                <p>Canal de ajuda virtual em saúde mental para jovens de 13 a 24 anos via WhatsApp.</p>
+                <h4>Disque Direitos Humanos - Disque 100</h4>
+                <p>Canal público de denúncias de violações de direitos humanos.</p>
               </div>
-              <a href="https://wa.me/555196822720" target="_blank" class="btn btn-wsp">WhatsApp Pode Falar</a>
+              <div>
+                <a href="tel:100" class="btn btn-secondary">Ligar 100</a>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- SEÇÃO PAINEL ADMIN -->
-        <section id="sec-painel-admin" class="section-page">
-          <h1 class="page-title">Painel de Gestão e Monitoramento</h1>
-          <p class="page-subtitle">Visão geral das interações e estatísticas da comunidade escolar.</p>
+        <!-- SEÇÃO ADMIN (RESTRITA) -->
+        <section id="sec-admin" class="section-page">
+          <h2 class="page-title">Painel Administrativo</h2>
+          <p class="page-subtitle">Gerenciamento de comunicados do mural e acompanhamento do sistema.</p>
 
           <div class="card-grid">
-            <div class="card">
-              <h3>Total de Mensagens</h3>
-              <p id="stat-total-msg" style="font-size: 1.8rem; font-weight: bold; color: var(--roxo-principal);">0</p>
-            </div>
-            <div class="card">
-              <h3>Sugestões Recebidas</h3>
-              <p id="stat-total-sugestoes" style="font-size: 1.8rem; font-weight: bold; color: var(--verde-principal);">0</p>
-            </div>
-            <div class="card">
-              <h3>Relatos Registrados</h3>
-              <p id="stat-total-relatos" style="font-size: 1.8rem; font-weight: bold; color: #ef4444;">0</p>
+            <div class="form-container" style="max-width: 100%;">
+              <h3>Publicar Novo Aviso no Mural</h3>
+              <div class="form-group" style="margin-top: 15px;">
+                <label for="novo-aviso-titulo">Título do Aviso:</label>
+                <input type="text" id="novo-aviso-titulo" class="form-control" placeholder="Ex: Roda de Conversa Interativa">
+              </div>
+              <div class="form-group">
+                <label for="novo-aviso-conteudo">Conteúdo:</label>
+                <textarea id="novo-aviso-conteudo" class="form-control" rows="4" placeholder="Escreva o comunicado aqui..."></textarea>
+              </div>
+              <button class="btn" onclick="publicarNovoAviso()">Publicar no Mural</button>
             </div>
           </div>
 
-          <div class="card" style="margin-bottom: 25px;">
-            <h3>Estatísticas de Engajamento por Canal</h3>
-            <div style="height: 280px; position: relative;">
-              <canvas id="graficoEngajamento"></canvas>
+          <div class="card" style="margin-top: 20px;">
+            <h3>Avisos Publicados</h3>
+            <div id="admin-avisos-lista" style="margin-top: 15px;">
+              <!-- Lista de avisos com opção de remoção -->
             </div>
           </div>
         </section>
 
-      </div>
+      </main>
     </div>
   </div>
 
-  <!-- LÓGICA EM JAVASCRIPT -->
+  <!-- SCRIPT COMPLETO DE FUNCIONALIDADES -->
   <script>
-    // ESTADO DA APLICAÇÃO
-    const AppState = {
-      usuario: {
-        nome: '',
-        turma: '',
-        tipo: 'estudante'
-      },
-      destinatarioChatAtual: 'Gremio Estudantil',
-      mensagensChat: JSON.parse(localStorage.getItem('abracar_mensagens')) || [],
-      sugestoes: JSON.parse(localStorage.getItem('abracar_sugestoes')) || [],
-      relatos: JSON.parse(localStorage.getItem('abracar_relatos')) || [],
-      timerRespiracao: null,
-      graficoInstancia: null
+    /* ==========================================================================
+       ESTADO DA APLICAÇÃO E DADOS LOCAIS
+       ========================================================================== */
+    const CONFIG = {
+      senhaAdmin: "admin123" // Senha padrão para testes no painel administrativo
     };
 
-    // CONTROLE DE ACESSO E TELA DE ENTRADA
+    let usuarioAtual = {
+      nome: "",
+      turma: "",
+      tipo: "estudante" // "estudante" ou "admin"
+    };
+
+    let canalSelecionado = "Grêmio Estudantil";
+    let respiraIntervalo = null;
+    let respiraAtivo = false;
+
+    // Inicialização do LocalStorage caso esteja vazio
+    if (!localStorage.getItem('abracar_mensagens')) {
+      const mensagensIniciais = [
+        { id: 1, canal: 'Grêmio Estudantil', autor: 'Grêmio Estudantil', texto: 'Olá! Sejam bem-vindos ao canal direto do Grêmio. Como podemos ajudar hoje?', data: '10:00', tipo: 'received' },
+        { id: 2, canal: 'Equipe de Mediação', autor: 'Equipe de Mediação', texto: 'Este é um espaço seguro para mediação de conflitos e escuta atenta.', data: '10:05', tipo: 'received' }
+      ];
+      localStorage.setItem('abracar_mensagens', JSON.stringify(mensagensIniciais));
+    }
+
+    if (!localStorage.getItem('abracar_avisos')) {
+      const avisosIniciais = [
+        { id: 1, titulo: 'Oficina de Comunicação Não-Violenta', conteudo: 'Nesta quinta-feira teremos um encontro especial no auditório sobre resolução pacífica de conflitos.', data: 'Hoje' },
+        { id: 2, titulo: 'Mês do Acolhimento', conteudo: 'Participe das atividades integrativas organizadas pelo Grêmio nos horários do intervalo.', data: 'Ontem' }
+      ];
+      localStorage.setItem('abracar_avisos', JSON.stringify(avisosIniciais));
+    }
+
+    /* ==========================================================================
+       INICIALIZAÇÃO E CONTROLE DE ACESSO
+       ========================================================================== */
     function alternarCamposAcesso() {
       const tipo = document.getElementById('tipo-acesso').value;
       const campoEstudante = document.getElementById('campo-estudante');
@@ -1092,65 +1102,88 @@
 
       if (tipo === 'admin') {
         const senha = document.getElementById('senha-acesso').value;
-        if (senha === 'admin123' || senha === '1234') { // Senha padrão demonstrativa
-          AppState.usuario = { nome: 'Gestor / Admin', turma: 'Administração', tipo: 'admin' };
-          document.getElementById('menu-admin-item').style.display = 'block';
-        } else {
-          alert('Senha incorreta! Tente novamente.');
+        if (senha !== CONFIG.senhaAdmin) {
+          alert('Senha de acesso restrito incorreta!');
           return;
         }
+        usuarioAtual = { nome: "Administrador / Gestão", turma: "Gestão", tipo: "admin" };
       } else {
         const nome = document.getElementById('nome-estudante').value.trim();
         const turma = document.getElementById('turma-select').value;
 
         if (!nome || !turma) {
-          alert('Por favor, informe seu nome/apelido e selecione sua turma.');
+          alert('Por favor, informe seu nome/apelido e selecione uma turma.');
           return;
         }
-        AppState.usuario = { nome: nome, turma: turma, tipo: 'estudante' };
-        document.getElementById('menu-admin-item').style.display = 'none';
+        usuarioAtual = { nome: nome, turma: turma, tipo: "estudante" };
       }
 
-      document.getElementById('user-display-name').innerText = AppState.usuario.nome;
-      document.getElementById('user-display-turma').innerText = AppState.usuario.turma;
+      // Atualizar interface com os dados do usuário
+      document.getElementById('usuario-display').textContent = usuarioAtual.nome;
+      document.getElementById('turma-display').textContent = usuarioAtual.turma;
 
+      if (usuarioAtual.tipo === 'admin') {
+        document.getElementById('menu-admin-link').style.display = 'block';
+      } else {
+        document.getElementById('menu-admin-link').style.display = 'none';
+      }
+
+      // Ocultar tela de entrada e exibir aplicação
       document.getElementById('welcome-overlay').style.display = 'none';
       document.getElementById('app-container').classList.add('active');
 
-      renderizarMensagensChat();
-      atualizarEstatisticasAdmin();
+      // Renderizar dados iniciais
+      renderizarMensagens();
+      renderizarAvisos();
+      inicializarGrafico();
     }
 
-    // NAVEGAÇÃO ENTRE SEÇÕES
-    function navegar(secaoId, elementoLink) {
+    function trocarTurmaAcesso(e) {
+      if(e) e.preventDefault();
+      document.getElementById('app-container').classList.remove('active');
+      document.getElementById('welcome-overlay').style.display = 'flex';
+      document.getElementById('senha-acesso').value = '';
+    }
+
+    /* ==========================================================================
+       NAVEGAÇÃO E INTERFACE (SIDEBAR & NAVEGAÇÃO)
+       ========================================================================== */
+    function navegarPara(secaoId, e) {
+      if (e) e.preventDefault();
+
       const secoes = document.querySelectorAll('.section-page');
       secoes.forEach(sec => sec.classList.remove('active'));
 
-      const secaoAlvo = document.getElementById(`sec-${secaoId}`);
-      if (secaoAlvo) {
-        secaoAlvo.classList.add('active');
+      const destino = document.getElementById('sec-' + secaoId);
+      if (destino) destino.classList.add('active');
+
+      // Atualizar classe ativa no menu
+      const links = document.querySelectorAll('.nav-links a');
+      links.forEach(link => link.classList.remove('active'));
+
+      if (e && e.currentTarget) {
+        e.currentTarget.classList.add('active');
       }
 
-      if (elementoLink) {
-        const links = document.querySelectorAll('.nav-links a');
-        links.forEach(l => l.classList.remove('active'));
-        elementoLink.classList.add('active');
-      }
-
-      // Fechar menu mobile ao clicar
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebar-overlay').classList.remove('open');
-
-      if (secaoId === 'painel-admin') {
-        renderizarGrafico();
+      // Fechar sidebar em telas menores
+      if (window.innerWidth <= 850) {
+        toggleMobileSidebar();
       }
     }
 
     function toggleSidebarCollapse() {
       const sidebar = document.getElementById('sidebar');
       const wrapper = document.getElementById('main-wrapper');
+      const btn = document.querySelector('.toggle-collapse-btn');
+
       sidebar.classList.toggle('collapsed');
       wrapper.classList.toggle('expanded');
+
+      if (sidebar.classList.contains('collapsed')) {
+        btn.textContent = '►';
+      } else {
+        btn.textContent = '◄';
+      }
     }
 
     function toggleMobileSidebar() {
@@ -1160,79 +1193,65 @@
       overlay.classList.toggle('open');
     }
 
-    // LÓGICA DO CHAT
-    function selecionarDestinatarioChat(destinatario, cardEl) {
-      AppState.destinatarioChatAtual = destinatario;
-      document.getElementById('chat-target-name').innerText = destinatario;
-
-      const cards = document.querySelectorAll('.chat-target-card');
-      cards.forEach(c => c.classList.remove('selected'));
-      if (cardEl) cardEl.classList.add('selected');
-
-      renderizarMensagensChat();
-    }
-
-    function enviarMensagemChat() {
-      const input = document.getElementById('chat-input');
-      const texto = input.value.trim();
-
-      if (!texto) return;
-
-      const novaMsg = {
-        id: Date.now(),
-        remetente: AppState.usuario.nome,
-        turma: AppState.usuario.turma,
-        destinatario: AppState.destinatarioChatAtual,
-        texto: texto,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      AppState.mensagensChat.push(novaMsg);
-      localStorage.setItem('abracar_mensagens', JSON.stringify(AppState.mensagensChat));
-
-      input.value = '';
-      renderizarMensagensChat();
-      atualizarEstatisticasAdmin();
-    }
-
-    function tratarTeclaChat(e) {
-      if (e.key === 'Enter') {
-        enviarMensagemChat();
+    function alternarTema() {
+      const currentTheme = document.body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      if (newTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        document.getElementById('theme-icon').textContent = '☀️';
+        document.getElementById('theme-text').textContent = 'Claro';
+      } else {
+        document.body.removeAttribute('data-theme');
+        document.getElementById('theme-icon').textContent = '🌙';
+        document.getElementById('theme-text').textContent = 'Escuro';
       }
     }
 
-    function deletarMensagem(id) {
-      AppState.mensagensChat = AppState.mensagensChat.filter(msg => msg.id !== id);
-      localStorage.setItem('abracar_mensagens', JSON.stringify(AppState.mensagensChat));
-      renderizarMensagensChat();
-      atualizarEstatisticasAdmin();
+    /* ==========================================================================
+       SISTEMA DE CHAT LOCAL
+       ========================================================================== */
+    function selecionarDestinatario(nomeCanal, elemento) {
+      canalSelecionado = nomeCanal;
+      document.getElementById('canal-ativo-nome').textContent = nomeCanal;
+
+      const cards = document.querySelectorAll('.chat-target-card');
+      cards.forEach(c => c.classList.remove('selected'));
+      elemento.classList.add('selected');
+
+      renderizarMensagens();
     }
 
-    function renderizarMensagensChat() {
-      const container = document.getElementById('chat-messages-box');
+    function renderizarMensagens() {
+      const container = document.getElementById('chat-messages-container');
+      const mensagens = JSON.parse(localStorage.getItem('abracar_mensagens')) || [];
+      const msgsFiltradas = mensagens.filter(m => m.canal === canalSelecionado);
+
       container.innerHTML = '';
 
-      const msgsFiltradas = AppState.mensagensChat.filter(
-        m => m.destinatario === AppState.destinatarioChatAtual
-      );
-
       if (msgsFiltradas.length === 0) {
-        container.innerHTML = `<p style="text-align: center; color: #94a3b8; margin-auto: 20px;">Nenhuma mensagem enviada ainda para ${AppState.destinatarioChatAtual}.</p>`;
+        container.innerHTML = `<p style="text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 20px;">Nenhuma mensagem registrada neste canal ainda.</p>`;
         return;
       }
 
       msgsFiltradas.forEach(msg => {
-        const eMinha = msg.remetente === AppState.usuario.nome;
         const row = document.createElement('div');
-        row.className = `chat-msg-row ${eMinha ? 'sent' : 'received'}`;
+        row.className = `chat-msg-row ${msg.tipo}`;
+
+        const hora = msg.data || '12:00';
+        
+        let botaoExcluir = '';
+        if (msg.tipo === 'sent' || usuarioAtual.tipo === 'admin') {
+          botaoExcluir = `<button class="btn-delete-msg" onclick="excluirMensagem(${msg.id})" title="Excluir mensagem">🗑️</button>`;
+        }
 
         row.innerHTML = `
-          ${eMinha ? `<button class="btn-delete-msg" onclick="deletarMensagem(${msg.id})" title="Excluir mensagem">🗑️</button>` : ''}
+          ${msg.tipo === 'sent' ? botaoExcluir : ''}
           <div class="chat-msg-bubble">
-            <div style="font-size: 0.75rem; opacity: 0.9; margin-bottom: 2px;">${msg.remetente} (${msg.turma}) • ${msg.timestamp}</div>
+            <div style="font-size: 0.75rem; opacity: 0.85; margin-bottom: 2px;">${msg.autor} • ${hora}</div>
             <div>${msg.texto}</div>
           </div>
-          ${!eMinha ? `<button class="btn-delete-msg" onclick="deletarMensagem(${msg.id})" title="Excluir mensagem">🗑️</button>` : ''}
+          ${msg.tipo === 'received' ? botaoExcluir : ''}
         `;
 
         container.appendChild(row);
@@ -1241,132 +1260,195 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    // FORMULÁRIOS
-    function salvarSugestao(e) {
-      e.preventDefault();
-      const titulo = document.getElementById('sugestao-titulo').value;
-      const categoria = document.getElementById('sugestao-categoria').value;
-      const texto = document.getElementById('sugestao-texto').value;
+    function enviarMensagemChat() {
+      const input = document.getElementById('chat-input');
+      const texto = input.value.trim();
 
-      const novaSugestao = {
+      if (!texto) return;
+
+      const mensagens = JSON.parse(localStorage.getItem('abracar_mensagens')) || [];
+      const agora = new Date();
+      const horaStr = agora.getHours().toString().padStart(2, '0') + ':' + agora.getMinutes().toString().padStart(2, '0');
+
+      const novaMensagem = {
         id: Date.now(),
-        autor: AppState.usuario.nome,
-        turma: AppState.usuario.turma,
-        titulo, categoria, texto
+        canal: canalSelecionado,
+        autor: usuarioAtual.nome,
+        texto: texto,
+        data: horaStr,
+        tipo: 'sent'
       };
 
-      AppState.sugestoes.push(novaSugestao);
-      localStorage.setItem('abracar_sugestoes', JSON.stringify(AppState.sugestoes));
+      mensagens.push(novaMensagem);
+      localStorage.setItem('abracar_mensagens', JSON.stringify(mensagens));
 
-      alert('Sugestão enviada com sucesso! Obrigado por contribuir com o Grêmio.');
-      e.target.reset();
-      atualizarEstatisticasAdmin();
+      input.value = '';
+      renderizarMensagens();
     }
 
-    function salvarRelato(e) {
-      e.preventDefault();
-      const tipo = document.getElementById('relato-tipo').value;
-      const identificacao = document.getElementById('relato-identificacao').value;
-      const descricao = document.getElementById('relato-descricao').value;
-
-      const novoRelato = {
-        id: Date.now(),
-        tipo,
-        autor: identificacao === 'anonimo' ? 'Anônimo' : `${AppState.usuario.nome} (${AppState.usuario.turma})`,
-        descricao
-      };
-
-      AppState.relatos.push(novoRelato);
-      localStorage.setItem('abracar_relatos', JSON.stringify(AppState.relatos));
-
-      alert('Relato registrado com sucesso e encaminhado com segurança.');
-      e.target.reset();
-      atualizarEstatisticasAdmin();
+    function checarTeclaEnter(e) {
+      if (e.key === 'Enter') {
+        enviarMensagemChat();
+      }
     }
 
-    // EXERCÍCIO DE RESPIRAÇÃO
-    function toggleExercicioRespiracao() {
-      const bolha = document.getElementById('bolha-respiracao');
-      const instrucao = document.getElementById('instrucao-respiracao');
-      const btn = document.getElementById('btn-timer-respiracao');
+    function excluirMensagem(id) {
+      let mensagens = JSON.parse(localStorage.getItem('abracar_mensagens')) || [];
+      mensagens = mensagens.filter(m => m.id !== id);
+      localStorage.setItem('abracar_mensagens', JSON.stringify(mensagens));
+      renderizarMensagens();
+    }
 
-      if (AppState.timerRespiracao) {
-        clearInterval(AppState.timerRespiracao);
-        AppState.timerRespiracao = null;
-        bolha.classList.remove('inspirar');
-        bolha.classList.add('expirar');
-        bolha.innerText = 'EXPIRAR';
-        instrucao.innerText = 'Exercício pausado.';
-        btn.innerText = 'Iniciar Exercício';
+    /* ==========================================================================
+       SISTEMA DE MURAL E PAINEL ADMIN
+       ========================================================================== */
+    function renderizarAvisos() {
+      const containerMural = document.getElementById('mural-container');
+      const containerAdmin = document.getElementById('admin-avisos-lista');
+      const avisos = JSON.parse(localStorage.getItem('abracar_avisos')) || [];
+
+      if (containerMural) {
+        containerMural.innerHTML = '';
+        if (avisos.length === 0) {
+          containerMural.innerHTML = '<p style="color: #64748b;">Nenhum aviso publicado no momento.</p>';
+        } else {
+          avisos.forEach(a => {
+            const item = document.createElement('div');
+            item.className = 'aviso-item';
+            item.innerHTML = `
+              <div>
+                <h4 style="color: var(--roxo-escuro); margin-bottom: 4px;">${a.titulo}</h4>
+                <p style="font-size: 0.9rem; color: #64748b; line-height: 1.4;">${a.conteudo}</p>
+                <small style="color: #94a3b8; font-size: 0.75rem;">Publicado em: ${a.data}</small>
+              </div>
+            `;
+            containerMural.appendChild(item);
+          });
+        }
+      }
+
+      if (containerAdmin) {
+        containerAdmin.innerHTML = '';
+        if (avisos.length === 0) {
+          containerAdmin.innerHTML = '<p style="color: #64748b;">Nenhum aviso para gerenciar.</p>';
+        } else {
+          avisos.forEach(a => {
+            const item = document.createElement('div');
+            item.className = 'admin-list-item';
+            item.innerHTML = `
+              <div>
+                <strong>${a.titulo}</strong>
+                <div style="font-size: 0.8rem; color: #64748b;">${a.data}</div>
+              </div>
+              <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem;" onclick="excluirAviso(${a.id})">Remover</button>
+            `;
+            containerAdmin.appendChild(item);
+          });
+        }
+      }
+    }
+
+    function publicarNovoAviso() {
+      const titulo = document.getElementById('novo-aviso-titulo').value.trim();
+      const conteudo = document.getElementById('novo-aviso-conteudo').value.trim();
+
+      if (!titulo || !conteudo) {
+        alert('Por favor, preencha o título e o conteúdo do aviso.');
         return;
       }
 
-      btn.innerText = 'Pausar Exercício';
-      let estado = 0; // 0: Inspirar, 1: Expirar
-
-      const ciclo = () => {
-        if (estado === 0) {
-          bolha.classList.remove('expirar');
-          bolha.classList.add('inspirar');
-          bolha.innerText = 'INSPIRAR';
-          instrucao.innerText = 'Inspire lentamente pelo nariz...';
-          estado = 1;
-        } else {
-          bolha.classList.remove('inspirar');
-          bolha.classList.add('expirar');
-          bolha.innerText = 'EXPIRAR';
-          instrucao.innerText = 'Solte o ar devagar pela boca...';
-          estado = 0;
-        }
+      const avisos = JSON.parse(localStorage.getItem('abracar_avisos')) || [];
+      const novoAviso = {
+        id: Date.now(),
+        titulo: titulo,
+        conteudo: conteudo,
+        data: new Date().toLocaleDateString('pt-BR')
       };
 
-      ciclo();
-      AppState.timerRespiracao = setInterval(ciclo, 4000);
+      avisos.unshift(novoAviso);
+      localStorage.setItem('abracar_avisos', JSON.stringify(avisos));
+
+      document.getElementById('novo-aviso-titulo').value = '';
+      document.getElementById('novo-aviso-conteudo').value = '';
+
+      renderizarAvisos();
+      alert('Aviso publicado com sucesso no Mural!');
     }
 
-    // ADMINISTRAÇÃO E GRÁFICOS
-    function atualizarEstatisticasAdmin() {
-      const elMsg = document.getElementById('stat-total-msg');
-      const elSug = document.getElementById('stat-total-sugestoes');
-      const elRel = document.getElementById('stat-total-relatos');
-
-      if (elMsg) elMsg.innerText = AppState.mensagensChat.length;
-      if (elSug) elSug.innerText = AppState.sugestoes.length;
-      if (elRel) elRel.innerText = AppState.relatos.length;
+    function excluirAviso(id) {
+      let avisos = JSON.parse(localStorage.getItem('abracar_avisos')) || [];
+      avisos = avisos.filter(a => a.id !== id);
+      localStorage.setItem('abracar_avisos', JSON.stringify(avisos));
+      renderizarAvisos();
     }
 
-    function renderizarGrafico() {
-      const canvas = document.getElementById('graficoEngajamento');
-      if (!canvas) return;
+    /* ==========================================================================
+       EXERCÍCIO DE RESPIRAÇÃO GUIADA
+       ========================================================================== */
+    function alternarExercicioRespiracao() {
+      const btn = document.getElementById('btn-iniciar-resp');
+      const bolha = document.getElementById('bolha-pulmao');
+      const instrucao = document.getElementById('respiracao-instrucao');
 
-      const ctx = canvas.getContext('2d');
-
-      if (AppState.graficoInstancia) {
-        AppState.graficoInstancia.destroy();
+      if (respiraAtivo) {
+        clearInterval(respiraIntervalo);
+        respiraAtivo = false;
+        btn.textContent = 'Iniciar Exercício';
+        instrucao.textContent = 'Exercício pausado.';
+        bolha.className = 'bolha-pulmao expirar';
+        bolha.textContent = 'Respire';
+      } else {
+        respiraAtivo = true;
+        btn.textContent = 'Pausar Exercício';
+        executarCicloRespiracao();
+        respiraIntervalo = setInterval(executarCicloRespiracao, 8000);
       }
+    }
 
-      AppState.graficoInstancia = new Chart(ctx, {
+    function executarCicloRespiracao() {
+      const bolha = document.getElementById('bolha-pulmao');
+      const instrucao = document.getElementById('respiracao-instrucao');
+
+      instrucao.textContent = 'Inspire profundamente...';
+      bolha.className = 'bolha-pulmao inspirar';
+      bolha.textContent = 'Inspire';
+
+      setTimeout(() => {
+        if (!respiraAtivo) return;
+        instrucao.textContent = 'Expire devagar...';
+        bolha.className = 'bolha-pulmao expirar';
+        bolha.textContent = 'Expire';
+      }, 4000);
+    }
+
+    /* ==========================================================================
+       GRÁFICO COM CHART.JS
+       ========================================================================== */
+    function inicializarGrafico() {
+      const ctx = document.getElementById('graficoAtendimentos');
+      if (!ctx) return;
+
+      new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['Mensagens no Chat', 'Sugestões de Alunos', 'Relatos Registrados'],
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
           datasets: [{
-            label: 'Total de Registros',
-            data: [
-              AppState.mensagensChat.length,
-              AppState.sugestoes.length,
-              AppState.relatos.length
-            ],
-            backgroundColor: ['#2ecc71', '#8e44ad', '#ef4444']
+            label: 'Rodas de Conversa e Atendimentos de Acolhimento',
+            data: [12, 19, 15, 22, 28, 24],
+            backgroundColor: 'rgba(46, 204, 113, 0.7)',
+            borderColor: '#2ecc71',
+            borderWidth: 1,
+            borderRadius: 6
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { display: false }
+            legend: { display: true, position: 'bottom' }
           },
           scales: {
-            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            y: { beginAtZero: true }
           }
         }
       });
