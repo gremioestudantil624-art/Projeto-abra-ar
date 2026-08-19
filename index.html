@@ -533,8 +533,8 @@
 
         <!-- 2. SEÇÃO ESPAÇO DE CONVERSA -->
         <section id="page-conversar" class="section-page">
-          <h1 class="page-title">Espaço de Conversa</h1>
-          <p class="page-subtitle">Escolha com quem deseja falar em um canal direto e restrito.</p>
+          <h1 class="page-title">Espaço de Conversa Anônimo</h1>
+          <p class="page-subtitle">Sua identidade está protegida pelo seu ID privado e exclusivo.</p>
 
           <div class="chat-select-grid">
             <div class="chat-target-card selected" onclick="selecionarDestinoChat(this, 'Equipe Abraçar')">
@@ -554,11 +554,11 @@
           <div class="chat-window">
             <div class="chat-header-info">
               <strong id="chat-canal-titulo">Conversando com: Equipe Abraçar</strong>
-              <small style="color: #64748b;">Canal de escuta ativa</small>
+              <small style="color: #64748b;" id="chat-id-exibicao">Seu ID Anônimo: --</small>
             </div>
             <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input-area">
-              <input type="text" id="chat-input" class="form-control" placeholder="Digite sua mensagem..." onkeypress="tratarTeclaEnterChat(event)">
+              <input type="text" id="chat-input" class="form-control" placeholder="Digite sua mensagem anônima..." onkeypress="tratarTeclaEnterChat(event)">
               <button class="btn" onclick="enviarMensagemChat()">Enviar</button>
             </div>
           </div>
@@ -711,11 +711,17 @@
 
         <!-- 10. SEÇÃO INTEGRANTES ADMINS -->
         <section id="page-admins" class="section-page">
-          <h1 class="page-title">Painel de Gestão e Relatos</h1>
-          <p class="page-subtitle">Visualização de relatos recebidos e administração do mural do sistema.</p>
+          <h1 class="page-title">Painel de Gestão e Registro</h1>
+          <p class="page-subtitle">Controle de relatos, avisos e integrantes cadastrados no sistema.</p>
 
           <div style="background: var(--branco); border-radius: 14px; border: 1px solid var(--cinza-borda); padding: 25px; margin-bottom: 25px;">
-            <h3>Relatos Registrados</h3>
+            <h3>👥 Registro de Integrantes e IDs</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Membros registrados que acessaram o sistema nesta sessão ou banco de dados.</p>
+            <div id="lista-integrantes-admin"></div>
+          </div>
+
+          <div style="background: var(--branco); border-radius: 14px; border: 1px solid var(--cinza-borda); padding: 25px; margin-bottom: 25px;">
+            <h3>🚨 Relatos Registrados</h3>
             <div id="lista-relatos-admin" style="margin-top: 15px;"></div>
           </div>
         </section>
@@ -724,7 +730,7 @@
     </div>
   </div>
 
-  <!-- FIREBASE E LÓGICA DO SISTEMA -->
+  <!-- FIREBASE E LÓGICA DO SISTEMA COMPLETA -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -744,15 +750,12 @@
     const db = getDatabase(app);
 
     window.estado = {
-      usuario: { nome: '', turma: '', tipo: 'estudante' },
+      usuario: { nome: '', turma: '', tipo: 'estudante', userId: '' },
       canalChatAtual: 'Equipe Abraçar',
-      mensagensChat: {
-        'Equipe Abraçar': [],
-        'Grêmio Estudantil': [],
-        'Coordenação': []
-      },
+      mensagensChat: [],
       relatos: [],
       avisosMural: [],
+      integrantes: [],
       textosPersonalizados: {},
       intervaloRespiracao: null
     };
@@ -760,22 +763,20 @@
     // ESCUTADORES EM TEMPO REAL
     onValue(ref(db, 'avisos'), (snapshot) => {
       const dados = snapshot.val();
-      if (dados) {
-        window.estado.avisosMural = Object.keys(dados).map(key => ({ id: key, ...dados[key] }));
-      } else {
-        window.estado.avisosMural = [];
-      }
+      window.estado.avisosMural = dados ? Object.keys(dados).map(key => ({ id: key, ...dados[key] })) : [];
       renderizarMuralAvisos();
     });
 
     onValue(ref(db, 'relatos'), (snapshot) => {
       const dados = snapshot.val();
-      if (dados) {
-        window.estado.relatos = Object.keys(dados).map(key => ({ id: key, ...dados[key] }));
-      } else {
-        window.estado.relatos = [];
-      }
+      window.estado.relatos = dados ? Object.keys(dados).map(key => ({ id: key, ...dados[key] })) : [];
       renderizarRelatosAdmin();
+    });
+
+    onValue(ref(db, 'integrantes'), (snapshot) => {
+      const dados = snapshot.val();
+      window.estado.integrantes = dados ? Object.keys(dados).map(key => ({ id: key, ...dados[key] })) : [];
+      renderizarIntegrantesAdmin();
     });
 
     onValue(ref(db, 'textos'), (snapshot) => {
@@ -794,25 +795,12 @@
       }
     });
 
-    onValue(ref(db, 'mensagens'), (snapshot) => {
+    onValue(ref(db, 'mensagens_privadas'), (snapshot) => {
       const dados = snapshot.val();
-      window.estado.mensagensChat = {
-        'Equipe Abraçar': [],
-        'Grêmio Estudantil': [],
-        'Coordenação': []
-      };
-      if (dados) {
-        Object.keys(dados).forEach(key => {
-          const msg = dados[key];
-          if (window.estado.mensagensChat[msg.canal]) {
-            window.estado.mensagensChat[msg.canal].push({ id: key, ...msg });
-          }
-        });
-      }
+      window.estado.mensagensChat = dados ? Object.keys(dados).map(key => ({ id: key, ...dados[key] })) : [];
       renderizarMensagensChat();
     });
 
-    // FUNÇÕES DE ACESSO E INTERFACE
     window.alternarCamposAcesso = function() {
       const tipo = document.getElementById('tipo-acesso').value;
       document.getElementById('campo-estudante').style.display = tipo === 'estudante' ? 'block' : 'none';
@@ -821,6 +809,7 @@
 
     window.confirmarEntrada = function() {
       const tipo = document.getElementById('tipo-acesso').value;
+      let novoUserId = 'User#' + Math.floor(1000 + Math.random() * 9000);
 
       if (tipo === 'estudante') {
         const nome = document.getElementById('nome-estudante').value.trim();
@@ -830,7 +819,7 @@
           alert('Por favor, preencha seu nome/apelido e selecione a turma.');
           return;
         }
-        window.estado.usuario = { nome, turma, tipo: 'estudante' };
+        window.estado.usuario = { nome, turma, tipo: 'estudante', userId: novoUserId };
       } else {
         const nomeAdmin = document.getElementById('nome-admin').value.trim();
         const senha = document.getElementById('senha-acesso').value;
@@ -844,8 +833,16 @@
           alert('Senha de acesso incorreta!');
           return;
         }
-        window.estado.usuario = { nome: nomeAdmin, turma: 'Gestão/Coordenação', tipo: 'admin' };
+        window.estado.usuario = { nome: nomeAdmin, turma: 'Gestão/Coordenação', tipo: 'admin', userId: 'ADMIN' };
       }
+
+      push(ref(db, 'integrantes'), {
+        nome: window.estado.usuario.nome,
+        turma: window.estado.usuario.turma,
+        tipo: window.estado.usuario.tipo,
+        userId: window.estado.usuario.userId,
+        dataAcesso: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR')
+      });
 
       iniciarAplicacao();
     };
@@ -856,9 +853,10 @@
 
       const rotuloUsuario = window.estado.usuario.tipo === 'admin' 
         ? `${window.estado.usuario.nome} (${window.estado.usuario.turma})`
-        : `${window.estado.usuario.nome} - ${window.estado.usuario.turma}`;
+        : `Anônimo (${window.estado.usuario.userId}) - ${window.estado.usuario.turma}`;
       
       document.getElementById('user-display').innerText = rotuloUsuario;
+      document.getElementById('chat-id-exibicao').innerText = `Seu ID Anônimo: ${window.estado.usuario.userId}`;
 
       const botoesAdmin = document.querySelectorAll('.btn-admin-only');
       const menuItemAdmins = document.getElementById('menu-item-admins');
@@ -873,6 +871,7 @@
 
       renderizarMuralAvisos();
       renderizarRelatosAdmin();
+      renderizarIntegrantesAdmin();
       renderizarMensagensChat();
     }
 
@@ -905,7 +904,114 @@
       document.getElementById('sidebar').classList.toggle('open');
     };
 
-    // OPERAÇÕES DO FIREBASE
+    // GERENCIAMENTO DE MENSAGENS E CHAT
+    window.selecionarDestinoChat = function(cardElemento, nomeCanal) {
+      document.querySelectorAll('.chat-target-card').forEach(c => c.classList.remove('selected'));
+      cardElemento.classList.add('selected');
+      window.estado.canalChatAtual = nomeCanal;
+      document.getElementById('chat-canal-titulo').innerText = `Conversando com: ${nomeCanal}`;
+      renderizarMensagensChat();
+    };
+
+    window.tratarTeclaEnterChat = function(evento) {
+      if (evento.key === 'Enter') window.enviarMensagemChat();
+    };
+
+    window.enviarMensagemChat = function() {
+      const input = document.getElementById('chat-input');
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      push(ref(db, 'mensagens_privadas'), {
+        canal: window.estado.canalChatAtual,
+        userId: window.estado.usuario.userId,
+        tipoRemetente: window.estado.usuario.tipo,
+        texto: texto,
+        timestamp: Date.now()
+      });
+
+      input.value = '';
+    };
+
+    window.apagarMensagem = function(msgId) {
+      if (confirm('Deseja realmente apagar esta mensagem?')) {
+        remove(ref(db, `mensagens_privadas/${msgId}`));
+      }
+    };
+
+    function renderizarMensagensChat() {
+      const conteinerChat = document.getElementById('chat-messages');
+      if (!conteinerChat) return;
+
+      const eAdmin = window.estado.usuario.tipo === 'admin';
+      const meuId = window.estado.usuario.userId;
+
+      const mensagensFiltradas = window.estado.mensagensChat.filter(m => {
+        const mesmoCanal = m.canal === window.estado.canalChatAtual;
+        return mesmoCanal && (eAdmin || m.userId === meuId);
+      });
+
+      if (mensagensFiltradas.length === 0) {
+        conteinerChat.innerHTML = '<p style="text-align:center; color:#64748b; margin-top:20px;">Nenhuma mensagem enviada ainda neste canal.</p>';
+        return;
+      }
+
+      conteinerChat.innerHTML = mensagensFiltradas.map(m => {
+        const envieiEu = m.tipoRemetente === window.estado.usuario.tipo;
+        const classeRow = envieiEu ? 'sent' : 'received';
+
+        return `
+          <div class="chat-msg-row ${classeRow}">
+            <div class="chat-msg-bubble">
+              <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 10px;">
+                <span>${eAdmin ? m.userId : (envieiEu ? 'Você' : m.canal)}</span>
+                <span onclick="apagarMensagem('${m.id}')" style="cursor:pointer; color:#fff; font-weight:bold;" title="Apagar mensagem">🗑️</span>
+              </div>
+              <div>${m.texto}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      conteinerChat.scrollTop = conteinerChat.scrollHeight;
+    }
+
+    // GESTÃO DE INTEGRANTES E RELATOS (ADMIN)
+    function renderizarIntegrantesAdmin() {
+      const conteiner = document.getElementById('lista-integrantes-admin');
+      if (!conteiner) return;
+
+      if (window.estado.integrantes.length === 0) {
+        conteiner.innerHTML = '<p style="color:#64748b;">Nenhum integrante registrado no histórico.</p>';
+        return;
+      }
+
+      conteiner.innerHTML = `
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+          <thead>
+            <tr style="background: var(--cinza-suave); text-align: left;">
+              <th style="padding: 8px; border: 1px solid var(--cinza-borda);">Nome / Registro</th>
+              <th style="padding: 8px; border: 1px solid var(--cinza-borda);">Turma</th>
+              <th style="padding: 8px; border: 1px solid var(--cinza-borda);">Tipo</th>
+              <th style="padding: 8px; border: 1px solid var(--cinza-borda);">ID Gerado</th>
+              <th style="padding: 8px; border: 1px solid var(--cinza-borda);">Data/Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${window.estado.integrantes.map(i => `
+              <tr>
+                <td style="padding: 8px; border: 1px solid var(--cinza-borda);">${i.nome}</td>
+                <td style="padding: 8px; border: 1px solid var(--cinza-borda);">${i.turma}</td>
+                <td style="padding: 8px; border: 1px solid var(--cinza-borda);">${i.tipo}</td>
+                <td style="padding: 8px; border: 1px solid var(--cinza-borda); font-weight: bold; color: var(--roxo-escuro);">${i.userId}</td>
+                <td style="padding: 8px; border: 1px solid var(--cinza-borda); color: #64748b; font-size: 0.8rem;">${i.dataAcesso}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
     function renderizarMuralAvisos() {
       const conteiner = document.getElementById('mural-avisos');
       if (!conteiner) return;
@@ -934,61 +1040,6 @@
       remove(ref(db, `avisos/${id}`));
     };
 
-    window.selecionarDestinoChat = function(cardElemento, nomeCanal) {
-      document.querySelectorAll('.chat-target-card').forEach(c => c.classList.remove('selected'));
-      cardElemento.classList.add('selected');
-      window.estado.canalChatAtual = nomeCanal;
-      document.getElementById('chat-canal-titulo').innerText = `Conversando com: ${nomeCanal}`;
-      renderizarMensagensChat();
-    };
-
-    window.tratarTeclaEnterChat = function(evento) {
-      if (evento.key === 'Enter') window.enviarMensagemChat();
-    };
-
-    window.enviarMensagemChat = function() {
-      const input = document.getElementById('chat-input');
-      const texto = input.value.trim();
-      if (!texto) return;
-
-      push(ref(db, 'mensagens'), {
-        canal: window.estado.canalChatAtual,
-        remetente: window.estado.usuario.nome,
-        turma: window.estado.usuario.turma,
-        texto: texto,
-        timestamp: Date.now()
-      });
-
-      input.value = '';
-    };
-
-    function renderizarMensagensChat() {
-      const conteinerChat = document.getElementById('chat-messages');
-      if (!conteinerChat) return;
-
-      const mensagens = window.estado.mensagensChat[window.estado.canalChatAtual];
-
-      if (!mensagens || mensagens.length === 0) {
-        conteinerChat.innerHTML = '<p style="text-align:center; color:#64748b; margin-top:20px;">Inicie a conversa com respeito e acolhimento.</p>';
-        return;
-      }
-
-      conteinerChat.innerHTML = mensagens.map(m => {
-        const eMeu = m.remetente === window.estado.usuario.nome;
-        const classeRow = eMeu ? 'sent' : 'received';
-        return `
-          <div class="chat-msg-row ${classeRow}">
-            <div class="chat-msg-bubble">
-              <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 2px;">${m.remetente} (${m.turma})</div>
-              <div>${m.texto}</div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      conteinerChat.scrollTop = conteinerChat.scrollHeight;
-    }
-
     window.salvarRelato = function() {
       const tipo = document.getElementById('relato-tipo').value;
       const anonimo = document.getElementById('relato-anonimo').value;
@@ -1001,7 +1052,7 @@
 
       push(ref(db, 'relatos'), {
         tipo: tipo,
-        autor: anonimo === 'anonimo' ? 'Anônimo' : `${window.estado.usuario.nome} (${window.estado.usuario.turma})`,
+        autor: anonimo === 'anonimo' ? `Anônimo (${window.estado.usuario.userId})` : `${window.estado.usuario.nome} (${window.estado.usuario.turma})`,
         texto: texto,
         data: new Date().toLocaleDateString('pt-BR')
       });
@@ -1031,54 +1082,75 @@
           <p style="margin-top: 5px; font-size: 0.9rem; color: var(--texto-escuro);">${r.texto}</p>
         </div>
       `).join('');
-    }
-
+    }    // EXERCÍCIO DE RESPIRAÇÃO GUIADA
     window.iniciarExercicioRespiracao = function() {
       const bolha = document.getElementById('bolha-pulmao');
       const instrucao = document.getElementById('respira-instrucao');
       const btn = document.getElementById('btn-iniciar-respira');
 
-      btn.disabled = true;
-      let estadoFase = 0;
+      if (window.estado.intervaloRespiracao) {
+        clearInterval(window.estado.intervaloRespiracao);
+        window.estado.intervaloRespiracao = null;
+        bolha.className = 'bolha-pulmao';
+        bolha.innerText = 'PAUSA';
+        instrucao.innerText = 'Exercício interrompido.';
+        btn.innerText = 'Iniciar Respiração (4x4)';
+        return;
+      }
 
-      const ciclo = () => {
-        if (estadoFase === 0) {
-          instrucao.innerText = "Inspire devagar pelo nariz...";
-          bolha.innerText = "INSPIRE";
-          bolha.className = "bolha-pulmao inspirar";
-          estadoFase = 1;
-        } else if (estadoFase === 1) {
-          instrucao.innerText = "Segure o ar com calma...";
-          bolha.innerText = "SEGURE";
-          estadoFase = 2;
-        } else if (estadoFase === 2) {
-          instrucao.innerText = "Expire soltando todo o ar pela boca...";
-          bolha.innerText = "EXPIRE";
-          bolha.className = "bolha-pulmao expirar";
-          estadoFase = 3;
+      btn.innerText = 'Parar Exercício';
+      let fase = 0;
+
+      const executarCiclo = () => {
+        if (fase === 0) {
+          instrucao.innerText = 'Inspire devagar pelo nariz...';
+          bolha.innerText = 'INSPIRE';
+          bolha.className = 'bolha-pulmao inspirar';
+          fase = 1;
+        } else if (fase === 1) {
+          instrucao.innerText = 'Segure o ar...';
+          bolha.innerText = 'SEGURE';
+          fase = 2;
+        } else if (fase === 2) {
+          instrucao.innerText = 'Expire suavemente pela boca...';
+          bolha.innerText = 'EXPIRE';
+          bolha.className = 'bolha-pulmao expirar';
+          fase = 3;
         } else {
-          instrucao.innerText = "Mantenha o corpo relaxado...";
-          bolha.innerText = "PAUSA";
-          bolha.className = "bolha-pulmao";
-          estadoFase = 0;
+          instrucao.innerText = 'Aguarde um momento...';
+          bolha.innerText = 'PAUSA';
+          bolha.className = 'bolha-pulmao';
+          fase = 0;
         }
       };
 
-      ciclo();
-      if (window.estado.intervaloRespiracao) clearInterval(window.estado.intervaloRespiracao);
-      window.estado.intervaloRespiracao = setInterval(ciclo, 4000);
+      executarCiclo();
+      window.estado.intervaloRespiracao = setInterval(executarCiclo, 4000);
     };
 
+    // EDIÇÃO DE CONTEÚDO PARA ADMINS
     window.editarConteudoAba = function(secao) {
+      if (window.estado.usuario.tipo !== 'admin') return;
+
+      let chave = '';
+      let mensagem = '';
+
       if (secao === 'gremio') {
-        const texto = prompt("Atualizar texto do Grêmio Estudantil:", document.getElementById('texto-gremio-principal').innerText);
-        if (texto) set(ref(db, 'textos/gremio'), texto);
+        chave = 'gremio';
+        mensagem = 'Digite o novo texto institucional do Grêmio Estudantil:';
       } else if (secao === 'lideres') {
-        const texto = prompt("Atualizar texto dos Líderes de Turma:", document.getElementById('texto-lideres-principal').innerText);
-        if (texto) set(ref(db, 'textos/lideres'), texto);
+        chave = 'lideres';
+        mensagem = 'Digite o novo texto sobre os Líderes de Turma:';
       } else if (secao === 'bullying') {
-        const t1 = prompt("Atualizar texto 'O que é Bullying':", document.getElementById('texto-bullying-1').innerText);
-        if (t1) set(ref(db, 'textos/bullying1'), t1);
+        chave = 'bullying1';
+        mensagem = 'Digite a nova definição de Bullying:';
+      }
+
+      if (!chave) return;
+
+      const novoTexto = prompt(mensagem);
+      if (novoTexto && novoTexto.trim() !== '') {
+        set(ref(db, `textos/${chave}`), novoTexto.trim());
       }
     };
   </script>
