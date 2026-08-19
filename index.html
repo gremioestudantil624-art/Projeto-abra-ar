@@ -497,7 +497,7 @@
 
       <main class="main-content">
 
-        <!-- 1. SEÇÃO INÍCIO (BOAS-VINDAS ATIVAS) -->
+        <!-- 1. SEÇÃO INÍCIO -->
         <section id="page-inicio" class="section-page active">
           <h1 class="page-title">Bem-vindo(a) ao Projeto Abraçar</h1>
           <p class="page-subtitle">Um espaço seguro de escuta ativa, apoio mútuo e construção de uma comunidade escolar em paz.</p>
@@ -554,11 +554,11 @@
           <div class="chat-window">
             <div class="chat-header-info">
               <strong id="chat-canal-titulo">Conversando com: Equipe Abraçar</strong>
-              <small style="color: #64748b;">Suas mensagens são enviadas de forma anônima no grupo</small>
+              <small style="color: #64748b;">Canal de escuta ativa</small>
             </div>
             <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input-area">
-              <input type="text" id="chat-input" class="form-control" placeholder="Digite sua mensagem com respeito e carinho..." onkeypress="tratarTeclaEnterChat(event)">
+              <input type="text" id="chat-input" class="form-control" placeholder="Digite sua mensagem..." onkeypress="tratarTeclaEnterChat(event)">
               <button class="btn" onclick="enviarMensagemChat()">Enviar</button>
             </div>
           </div>
@@ -591,7 +591,7 @@
 
             <div class="form-group" style="margin-bottom: 15px;">
               <label for="relato-texto" style="font-weight: 600; display: block; margin-bottom: 5px;">Descreva o ocorrido:</label>
-              <textarea id="relato-texto" class="form-control" rows="5" placeholder="Forneça detalhes relevantes para podermos atuar com sabedoria..."></textarea>
+              <textarea id="relato-texto" class="form-control" rows="5" placeholder="Forneça detalhes relevantes..."></textarea>
             </div>
 
             <button class="btn" onclick="salvarRelato()">Enviar Relato com Segurança</button>
@@ -624,7 +624,7 @@
               <p id="texto-bullying-1">Ações repetitivas de intimidação, agressão interpessoal ou exclusão deliberada que ferem a dignidade de um colega.</p>
             </div>
             <div class="card">
-              <h3>O que é Cyberbullying?</<h3>O que é Cyberbullying?</h3>
+              <h3>O que é Cyberbullying?</h3>
               <p id="texto-bullying-2">Intimidação, xingamentos ou difamação realizados no ambiente digital, como redes sociais e grupos de mensagens.</p>
             </div>
             <div class="card">
@@ -709,7 +709,7 @@
           </div>
         </section>
 
-        <!-- 10. SEÇÃO INTEGRANTES ADMINS (EXCLUSIVO GESTÃO) -->
+        <!-- 10. SEÇÃO INTEGRANTES ADMINS -->
         <section id="page-admins" class="section-page">
           <h1 class="page-title">Painel de Gestão e Relatos</h1>
           <p class="page-subtitle">Visualização de relatos recebidos e administração do mural do sistema.</p>
@@ -724,9 +724,26 @@
     </div>
   </div>
 
-  <script>
-    // ESTADO DA APLICAÇÃO
-    const estado = {
+  <!-- FIREBASE E LÓGICA DO SISTEMA -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtB1C4L2gGNfhD0CgbpaC520wi2uGX6LI",
+      authDomain: "projetoabracar-882d3.firebaseapp.com",
+      databaseURL: "https://projetoabracar-882d3-default-rtdb.firebaseio.com",
+      projectId: "projetoabracar-882d3",
+      storageBucket: "projetoabracar-882d3.firebasestorage.app",
+      messagingSenderId: "69624370402",
+      appId: "1:69624370402:web:09eb52613d7485b6bf7abb",
+      measurementId: "G-WCC468V9KE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.estado = {
       usuario: { nome: '', turma: '', tipo: 'estudante' },
       canalChatAtual: 'Equipe Abraçar',
       mensagensChat: {
@@ -735,21 +752,74 @@
         'Coordenação': []
       },
       relatos: [],
-      avisosMural: [
-        { id: 1, texto: "Boas-vindas ao Projeto Abraçar! Nosso espaço de acolhimento já está aberto." },
-        { id: 2, texto: "Roda de conversa sobre empatia nesta quinta-feira no intervalo." }
-      ],
+      avisosMural: [],
+      textosPersonalizados: {},
       intervaloRespiracao: null
     };
 
-    // ACESSO E AUTENTICAÇÃO
-    function alternarCamposAcesso() {
+    // ESCUTADORES EM TEMPO REAL
+    onValue(ref(db, 'avisos'), (snapshot) => {
+      const dados = snapshot.val();
+      if (dados) {
+        window.estado.avisosMural = Object.keys(dados).map(key => ({ id: key, ...dados[key] }));
+      } else {
+        window.estado.avisosMural = [];
+      }
+      renderizarMuralAvisos();
+    });
+
+    onValue(ref(db, 'relatos'), (snapshot) => {
+      const dados = snapshot.val();
+      if (dados) {
+        window.estado.relatos = Object.keys(dados).map(key => ({ id: key, ...dados[key] }));
+      } else {
+        window.estado.relatos = [];
+      }
+      renderizarRelatosAdmin();
+    });
+
+    onValue(ref(db, 'textos'), (snapshot) => {
+      const dados = snapshot.val();
+      if (dados) {
+        window.estado.textosPersonalizados = dados;
+        if (dados.gremio && document.getElementById('texto-gremio-principal')) {
+          document.getElementById('texto-gremio-principal').innerText = dados.gremio;
+        }
+        if (dados.lideres && document.getElementById('texto-lideres-principal')) {
+          document.getElementById('texto-lideres-principal').innerText = dados.lideres;
+        }
+        if (dados.bullying1 && document.getElementById('texto-bullying-1')) {
+          document.getElementById('texto-bullying-1').innerText = dados.bullying1;
+        }
+      }
+    });
+
+    onValue(ref(db, 'mensagens'), (snapshot) => {
+      const dados = snapshot.val();
+      window.estado.mensagensChat = {
+        'Equipe Abraçar': [],
+        'Grêmio Estudantil': [],
+        'Coordenação': []
+      };
+      if (dados) {
+        Object.keys(dados).forEach(key => {
+          const msg = dados[key];
+          if (window.estado.mensagensChat[msg.canal]) {
+            window.estado.mensagensChat[msg.canal].push({ id: key, ...msg });
+          }
+        });
+      }
+      renderizarMensagensChat();
+    });
+
+    // FUNÇÕES DE ACESSO E INTERFACE
+    window.alternarCamposAcesso = function() {
       const tipo = document.getElementById('tipo-acesso').value;
       document.getElementById('campo-estudante').style.display = tipo === 'estudante' ? 'block' : 'none';
       document.getElementById('campo-admin').style.display = tipo === 'admin' ? 'block' : 'none';
-    }
+    };
 
-    function confirmarEntrada() {
+    window.confirmarEntrada = function() {
       const tipo = document.getElementById('tipo-acesso').value;
 
       if (tipo === 'estudante') {
@@ -760,8 +830,7 @@
           alert('Por favor, preencha seu nome/apelido e selecione a turma.');
           return;
         }
-
-        estado.usuario = { nome, turma, tipo: 'estudante' };
+        window.estado.usuario = { nome, turma, tipo: 'estudante' };
       } else {
         const nomeAdmin = document.getElementById('nome-admin').value.trim();
         const senha = document.getElementById('senha-acesso').value;
@@ -771,32 +840,30 @@
           return;
         }
 
-        if (senha !== 'admin123') { // Senha simples para fins de demonstração
+        if (senha !== 'admin123') {
           alert('Senha de acesso incorreta!');
           return;
         }
-
-        estado.usuario = { nome: nomeAdmin, turma: 'Gestão/Coordenação', tipo: 'admin' };
+        window.estado.usuario = { nome: nomeAdmin, turma: 'Gestão/Coordenação', tipo: 'admin' };
       }
 
       iniciarAplicacao();
-    }
+    };
 
     function iniciarAplicacao() {
       document.getElementById('welcome-overlay').style.display = 'none';
       document.getElementById('app-container').classList.add('active');
 
-      const rotuloUsuario = estado.usuario.tipo === 'admin' 
-        ? `${estado.usuario.nome} (${estado.usuario.turma})`
-        : `${estado.usuario.nome} - ${estado.usuario.turma}`;
+      const rotuloUsuario = window.estado.usuario.tipo === 'admin' 
+        ? `${window.estado.usuario.nome} (${window.estado.usuario.turma})`
+        : `${window.estado.usuario.nome} - ${window.estado.usuario.turma}`;
       
       document.getElementById('user-display').innerText = rotuloUsuario;
 
-      // Exibir elementos restritos a administradores
       const botoesAdmin = document.querySelectorAll('.btn-admin-only');
       const menuItemAdmins = document.getElementById('menu-item-admins');
 
-      if (estado.usuario.tipo === 'admin') {
+      if (window.estado.usuario.tipo === 'admin') {
         botoesAdmin.forEach(btn => btn.style.display = 'inline-flex');
         menuItemAdmins.style.display = 'block';
       } else {
@@ -809,120 +876,120 @@
       renderizarMensagensChat();
     }
 
-    function sair() {
-      if (estado.intervaloRespiracao) clearInterval(estado.intervaloRespiracao);
+    window.sair = function() {
+      if (window.estado.intervaloRespiracao) clearInterval(window.estado.intervaloRespiracao);
       document.getElementById('app-container').classList.remove('active');
       document.getElementById('welcome-overlay').style.display = 'flex';
       document.getElementById('nome-estudante').value = '';
       document.getElementById('senha-acesso').value = '';
-    }
+    };
 
-    // NAVEGAÇÃO
-    function navegar(idPagina, elementoLink) {
+    window.navegar = function(idPagina, elementoLink) {
       document.querySelectorAll('.section-page').forEach(sec => sec.classList.remove('active'));
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
 
       document.getElementById(`page-${idPagina}`).classList.add('active');
       if (elementoLink) elementoLink.classList.add('active');
 
-      // Fechar menu mobile se aberto
       document.getElementById('sidebar').classList.remove('open');
-    }
+    };
 
-    function navegarPorId(idPagina) {
+    window.navegarPorId = function(idPagina) {
       const link = Array.from(document.querySelectorAll('.nav-links a')).find(a => 
         a.getAttribute('onclick').includes(`'${idPagina}'`)
       );
-      navegar(idPagina, link);
-    }
+      window.navegar(idPagina, link);
+    };
 
-    function toggleMobileSidebar() {
+    window.toggleMobileSidebar = function() {
       document.getElementById('sidebar').classList.toggle('open');
-    }
+    };
 
-    // MURAL DE AVISOS
+    // OPERAÇÕES DO FIREBASE
     function renderizarMuralAvisos() {
       const conteiner = document.getElementById('mural-avisos');
-      if (estado.avisosMural.length === 0) {
+      if (!conteiner) return;
+
+      if (window.estado.avisosMural.length === 0) {
         conteiner.innerHTML = '<p style="color:#64748b;">Nenhum aviso publicado no momento.</p>';
         return;
       }
 
-      conteiner.innerHTML = estado.avisosMural.map(a => `
+      conteiner.innerHTML = window.estado.avisosMural.map(a => `
         <div class="aviso-item">
           <span>📢 ${a.texto}</span>
-          ${estado.usuario.tipo === 'admin' ? `<button class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.75rem;" onclick="removerAviso(${a.id})">Excluir</button>` : ''}
+          ${window.estado.usuario.tipo === 'admin' ? `<button class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.75rem;" onclick="removerAviso('${a.id}')">Excluir</button>` : ''}
         </div>
       `).join('');
     }
 
-    function adicionarAvisoMural() {
+    window.adicionarAvisoMural = function() {
       const texto = prompt('Digite o texto do novo aviso:');
       if (texto && texto.trim() !== '') {
-        estado.avisosMural.push({ id: Date.now(), texto: texto.trim() });
-        renderizarMuralAvisos();
+        push(ref(db, 'avisos'), { texto: texto.trim(), data: Date.now() });
       }
-    }
+    };
 
-    function removerAviso(id) {
-      estado.avisosMural = estado.avisosMural.filter(a => a.id !== id);
-      renderizarMuralAvisos();
-    }
+    window.removerAviso = function(id) {
+      remove(ref(db, `avisos/${id}`));
+    };
 
-    // ESPAÇO DE CONVERSA (CHAT)
-    function selecionarDestinoChat(cardElemento, nomeCanal) {
+    window.selecionarDestinoChat = function(cardElemento, nomeCanal) {
       document.querySelectorAll('.chat-target-card').forEach(c => c.classList.remove('selected'));
       cardElemento.classList.add('selected');
-      estado.canalChatAtual = nomeCanal;
+      window.estado.canalChatAtual = nomeCanal;
       document.getElementById('chat-canal-titulo').innerText = `Conversando com: ${nomeCanal}`;
       renderizarMensagensChat();
-    }
+    };
 
-    function tratarTeclaEnterChat(evento) {
-      if (evento.key === 'Enter') enviarMensagemChat();
-    }
+    window.tratarTeclaEnterChat = function(evento) {
+      if (evento.key === 'Enter') window.enviarMensagemChat();
+    };
 
-    function enviarMensagemChat() {
+    window.enviarMensagemChat = function() {
       const input = document.getElementById('chat-input');
       const texto = input.value.trim();
       if (!texto) return;
 
-      const novaMensagem = {
-        id: Date.now(),
-        remetente: estado.usuario.nome,
-        turma: estado.usuario.turma,
+      push(ref(db, 'mensagens'), {
+        canal: window.estado.canalChatAtual,
+        remetente: window.estado.usuario.nome,
+        turma: window.estado.usuario.turma,
         texto: texto,
-        origem: 'sent'
-      };
+        timestamp: Date.now()
+      });
 
-      estado.mensagensChat[estado.canalChatAtual].push(novaMensagem);
       input.value = '';
-      renderizarMensagensChat();
-    }
+    };
 
     function renderizarMensagensChat() {
       const conteinerChat = document.getElementById('chat-messages');
-      const mensagens = estado.mensagensChat[estado.canalChatAtual];
+      if (!conteinerChat) return;
 
-      if (mensagens.length === 0) {
+      const mensagens = window.estado.mensagensChat[window.estado.canalChatAtual];
+
+      if (!mensagens || mensagens.length === 0) {
         conteinerChat.innerHTML = '<p style="text-align:center; color:#64748b; margin-top:20px;">Inicie a conversa com respeito e acolhimento.</p>';
         return;
       }
 
-      conteinerChat.innerHTML = mensagens.map(m => `
-        <div class="chat-msg-row ${m.origem}">
-          <div class="chat-msg-bubble">
-            <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 2px;">${m.remetente} (${m.turma})</div>
-            <div>${m.texto}</div>
+      conteinerChat.innerHTML = mensagens.map(m => {
+        const eMeu = m.remetente === window.estado.usuario.nome;
+        const classeRow = eMeu ? 'sent' : 'received';
+        return `
+          <div class="chat-msg-row ${classeRow}">
+            <div class="chat-msg-bubble">
+              <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 2px;">${m.remetente} (${m.turma})</div>
+              <div>${m.texto}</div>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
       conteinerChat.scrollTop = conteinerChat.scrollHeight;
     }
 
-    // RELATOS
-    function salvarRelato() {
+    window.salvarRelato = function() {
       const tipo = document.getElementById('relato-tipo').value;
       const anonimo = document.getElementById('relato-anonimo').value;
       const texto = document.getElementById('relato-texto').value.trim();
@@ -932,35 +999,32 @@
         return;
       }
 
-      const novoRelato = {
-        id: Date.now(),
+      push(ref(db, 'relatos'), {
         tipo: tipo,
-        autor: anonimo === 'anonimo' ? 'Anônimo' : `${estado.usuario.nome} (${estado.usuario.turma})`,
+        autor: anonimo === 'anonimo' ? 'Anônimo' : `${window.estado.usuario.nome} (${window.estado.usuario.turma})`,
         texto: texto,
         data: new Date().toLocaleDateString('pt-BR')
-      };
+      });
 
-      estado.relatos.push(novoRelato);
       document.getElementById('relato-tipo').value = '';
       document.getElementById('relato-texto').value = '';
 
-      alert('Relato enviado com sucesso e com toda a segurança.');
-      renderizarRelatosAdmin();
-      navegarPorId('inicio');
-    }
+      alert('Relato enviado e registrado com sucesso.');
+      window.navegarPorId('inicio');
+    };
 
     function renderizarRelatosAdmin() {
       const conteiner = document.getElementById('lista-relatos-admin');
       if (!conteiner) return;
 
-      if (estado.relatos.length === 0) {
+      if (window.estado.relatos.length === 0) {
         conteiner.innerHTML = '<p style="color:#64748b;">Nenhum relato registrado até o momento.</p>';
         return;
       }
 
-      conteiner.innerHTML = estado.relatos.map(r => `
+      conteiner.innerHTML = window.estado.relatos.map(r => `
         <div style="border-bottom: 1px solid var(--cinza-borda); padding: 12px 0;">
-          <div style="display:flex; justify-between; font-weight: bold; font-size: 0.9rem;">
+          <div style="display:flex; justify-content:space-between; font-weight: bold; font-size: 0.9rem;">
             <span>[${r.tipo}] - Autor: ${r.autor}</span>
             <span style="color:#64748b; font-size: 0.8rem;">${r.data}</span>
           </div>
@@ -969,14 +1033,13 @@
       `).join('');
     }
 
-    // EXERCÍCIO DE RESPIRAÇÃO
-    function iniciarExercicioRespiracao() {
+    window.iniciarExercicioRespiracao = function() {
       const bolha = document.getElementById('bolha-pulmao');
       const instrucao = document.getElementById('respira-instrucao');
       const btn = document.getElementById('btn-iniciar-respira');
 
       btn.disabled = true;
-      let estadoFase = 0; // 0: inspirar, 1: reter, 2: expirar, 3: pausa
+      let estadoFase = 0;
 
       const ciclo = () => {
         if (estadoFase === 0) {
@@ -1002,23 +1065,22 @@
       };
 
       ciclo();
-      if (estado.intervaloRespiracao) clearInterval(estado.intervaloRespiracao);
-      estado.intervaloRespiracao = setInterval(ciclo, 4000);
-    }
+      if (window.estado.intervaloRespiracao) clearInterval(window.estado.intervaloRespiracao);
+      window.estado.intervaloRespiracao = setInterval(ciclo, 4000);
+    };
 
-    // EDIÇÃO RÁPIDA DE CONTEÚDO (ADMIN)
-    function editarConteudoAba(secao) {
+    window.editarConteudoAba = function(secao) {
       if (secao === 'gremio') {
         const texto = prompt("Atualizar texto do Grêmio Estudantil:", document.getElementById('texto-gremio-principal').innerText);
-        if (texto) document.getElementById('texto-gremio-principal').innerText = texto;
+        if (texto) set(ref(db, 'textos/gremio'), texto);
       } else if (secao === 'lideres') {
         const texto = prompt("Atualizar texto dos Líderes de Turma:", document.getElementById('texto-lideres-principal').innerText);
-        if (texto) document.getElementById('texto-lideres-principal').innerText = texto;
+        if (texto) set(ref(db, 'textos/lideres'), texto);
       } else if (secao === 'bullying') {
         const t1 = prompt("Atualizar texto 'O que é Bullying':", document.getElementById('texto-bullying-1').innerText);
-        if (t1) document.getElementById('texto-bullying-1').innerText = t1;
+        if (t1) set(ref(db, 'textos/bullying1'), t1);
       }
-    }
+    };
   </script>
 </body>
 </html>
