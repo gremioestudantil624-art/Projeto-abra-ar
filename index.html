@@ -40,13 +40,13 @@
     .app-container { display: none; flex: 1; min-height: 100vh; }
     .app-container.active { display: flex; }
 
-    .sidebar { width: var(--sidebar-largura); background: var(--degrade-abracar); color: var(--branco); padding: 20px 15px; display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 1001; }
-    .brand-header { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); margin-bottom: 15px; }
+    .sidebar { width: var(--sidebar-largura); background: var(--degrade-abracar); color: var(--branco); padding: 20px 15px; display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 1001; transition: transform 0.3s ease; }
+    .brand-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); margin-bottom: 15px; }
     .nav-links { list-style: none; display: flex; flex-direction: column; gap: 4px; }
     .nav-links a { color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 10px 14px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-size: 0.92rem; }
     .nav-links a:hover, .nav-links a.active { background: rgba(255, 255, 255, 0.22); color: var(--branco); font-weight: 600; }
 
-    .main-wrapper { flex: 1; margin-left: var(--sidebar-largura); display: flex; flex-direction: column; min-width: 0; }
+    .main-wrapper { flex: 1; margin-left: var(--sidebar-largura); display: flex; flex-direction: column; min-width: 0; transition: margin-left 0.3s ease; }
     .main-content { padding: 35px; max-width: 1100px; width: 100%; margin: 0 auto; }
     .user-bar { background: var(--branco); padding: 12px 25px; border-bottom: 1px solid var(--cinza-borda); display: flex; justify-content: space-between; align-items: center; }
     .badge-turma { background: var(--cinza-suave); padding: 4px 12px; border-radius: 20px; font-weight: 600; color: var(--roxo-escuro); border: 1px solid var(--cinza-borda); }
@@ -83,6 +83,23 @@
     .status-recebido { background: #fef08a; color: #854d0e; }
     .status-analise { background: #bfdbfe; color: #1e40af; }
     .status-concluido { background: #bbf7d0; color: #166534; }
+
+    /* Botão Hambúrguer Mobile */
+    .menu-toggle { display: none; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: var(--texto-escuro); }
+    .sidebar-close { display: none; background: transparent; border: none; font-size: 1.5rem; color: var(--branco); cursor: pointer; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; }
+
+    /* Ajustes Responsivos */
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+      .sidebar-close { display: block; }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.active { display: block; }
+      .main-wrapper { margin-left: 0; }
+      .main-content { padding: 20px 15px; }
+      .user-bar { padding: 10px 15px; }
+    }
   </style>
 </head>
 <body>
@@ -125,10 +142,13 @@
     </div>
   </div>
 
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="fecharSidebar()"></div>
+
   <div class="app-container" id="app-container">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="brand-header">
         <h2>ABRAÇAR</h2>
+        <button class="sidebar-close" onclick="fecharSidebar()">✕</button>
       </div>
 
       <ul class="nav-links">
@@ -148,10 +168,13 @@
 
     <div class="main-wrapper">
       <header class="user-bar">
-        <div>
-          <span>Identificação: </span>
-          <span class="badge-turma" id="display-user-turma">Estudante</span>
-          <small style="margin-left: 10px; color: #64748b;">ID: <span id="display-user-id" class="protocolo-tag">...</span></small>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="menu-toggle" onclick="abrirSidebar()">☰</button>
+          <div>
+            <span>Identificação: </span>
+            <span class="badge-turma" id="display-user-turma">Estudante</span>
+            <small style="margin-left: 10px; color: #64748b;">ID: <span id="display-user-id" class="protocolo-tag">...</span></small>
+          </div>
         </div>
         <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="trocarPerfil()">Sair</button>
       </header>
@@ -176,7 +199,7 @@
           </div>
         </section>
 
-        <!-- Chat Restrito ao Grêmio e Mediação de Conflitos -->
+        <!-- Chat Restrito -->
         <section id="conversar" class="section-page">
           <h1 class="page-title">💬 Canal de Escuta Protegido</h1>
           <p class="page-subtitle">Selecione a equipe com quem deseja conversar:</p>
@@ -317,6 +340,17 @@
 
     document.getElementById('display-user-id').innerText = userId;
 
+    // Lógica do Menu Responsivo
+    window.abrirSidebar = function() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('sidebar-overlay').classList.add('active');
+    };
+
+    window.fecharSidebar = function() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebar-overlay').classList.remove('active');
+    };
+
     window.alternarCamposAcesso = function() {
       const tipo = document.getElementById('tipo-acesso').value;
       document.getElementById('campo-estudante').style.display = (tipo === 'estudante') ? 'block' : 'none';
@@ -349,103 +383,89 @@
       document.querySelectorAll('.section-page').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
       
-      document.getElementById(paginaId).classList.add('active');
-      if (el) el.classList.add('active');
-      
+      document.getElementById(paginaId).classList.add('active');      if (el) el.classList.add('active');
+
       estadoApp.paginaAtual = paginaId;
+      fecharSidebar();
 
       if (paginaId === 'conversar') {
         estadoApp.mensagensNaoLidas = 0;
-        atualizarBadge();
+        atualizarBadgeChat();
       }
-      if (paginaId === 'admin-panel') renderizarGrafico();
     };
 
-    window.navegarDireto = function(id) { window.navegar(id, null); };
-    window.trocarPerfil = function() { location.reload(); };
+    window.navegarDireto = function(paginaId) {
+      const link = document.querySelector(`.nav-links a[onclick*="${paginaId}"]`);
+      window.navegar(paginaId, link);
+    };
 
-    // Chat Restrito + Lixeira de Mensagens 🗑️
-    window.selecionarDestinatario = function(nome, cardEl) {
+    window.trocarPerfil = function() {
+      location.reload();
+    };
+
+    window.selecionarDestinatario = function(dest, el) {
+      estadoApp.destinatarioChat = dest;
       document.querySelectorAll('.destinatario-card').forEach(c => c.classList.remove('selected'));
-      cardEl.classList.add('selected');
-      estadoApp.destinatarioChat = nome;
+      el.classList.add('selected');
       ouvirChatIndividual();
     };
 
-    window.enviarMensagem = function() {
-      const input = document.getElementById('input-chat');
-      const text = input.value.trim();
-      if (!text) return;
-
-      const destSanitizado = estadoApp.destinatarioChat.replace(/[^a-zA-Z0-9]/g, "_");
-      push(ref(db, `chats_privados/${estadoApp.userId}/${destSanitizado}`), {
-        autor: estadoApp.usuarioTipo,
-        texto: text,
-        timestamp: Date.now()
-      });
-      input.value = '';
-    };
-
+    // --- MÓDULO DE CHAT PRIVADO ---
     function ouvirChatIndividual() {
-      const destSanitizado = estadoApp.destinatarioChat.replace(/[^a-zA-Z0-9]/g, "_");
-      onValue(ref(db, `chats_privados/${estadoApp.userId}/${destSanitizado}`), (snapshot) => {
-        const chatBox = document.getElementById('chat-messages');
-        chatBox.innerHTML = '';
+      const chatRef = ref(db, `chats/${estadoApp.userId}/${estadoApp.destinatarioChat.replace(/\s+/g, '_')}`);
+      
+      onValue(chatRef, (snapshot) => {
+        const container = document.getElementById('chat-messages');
+        container.innerHTML = '';
         const data = snapshot.val();
-        let totalMsgs = 0;
 
-        if (data) {
-          Object.keys(data).forEach(k => {
-                        totalMsgs++;
-            const msg = data[k];
-            const isSent = (msg.autor === estadoApp.usuarioTipo);
-            
-            const row = document.createElement('div');
-            row.className = `chat-msg-row ${isSent ? 'sent' : 'received'}`;
-            
-            // Botão de deletar mensagem (lixeira)
+        if (!data) {
+          container.innerHTML = `
+            <div class="chat-msg-row received">
+              <div class="chat-msg-bubble">
+                Olá! Este é um canal seguro de escuta com: <strong>${estadoApp.destinatarioChat}</strong>. Como podemos ajudar?
+              </div>
+            </div>`;
+          return;
+        }
+
+        const mensagens = Object.entries(data);
+        
+        if (estadoApp.paginaAtual !== 'conversar' && mensagens.length > estadoApp.totalMsgsAnterior) {
+          estadoApp.mensagensNaoLidas += (mensagens.length - estadoApp.totalMsgsAnterior);
+          atualizarBadgeChat();
+        }
+        estadoApp.totalMsgsAnterior = mensagens.length;
+
+        mensagens.forEach(([key, msg]) => {
+          const eMinha = msg.remetenteId === estadoApp.userId;
+          const row = document.createElement('div');
+          row.className = `chat-msg-row ${eMinha ? 'sent' : 'received'}`;
+
+          const bubble = document.createElement('div');
+          bubble.className = 'chat-msg-bubble';
+          bubble.innerText = msg.texto;
+
+          row.appendChild(bubble);
+
+          // Permite apagar mensagem se for do próprio usuário ou se for admin
+          if (eMinha || estadoApp.usuarioTipo === 'admin') {
             const btnDelete = document.createElement('button');
             btnDelete.className = 'btn-delete-msg';
             btnDelete.innerHTML = '🗑️';
-            btnDelete.title = 'Apagar mensagem';
-            btnDelete.onclick = () => deletarMensagem(k);
+            btnDelete.title = 'Excluir mensagem';
+            btnDelete.onclick = () => deletarMensagem(key);
+            row.appendChild(btnDelete);
+          }
 
-            const bubble = document.createElement('div');
-            bubble.className = 'chat-msg-bubble';
-            bubble.innerText = msg.texto;
+          container.appendChild(row);
+        });
 
-            if (isSent) {
-              row.appendChild(btnDelete);
-              row.appendChild(bubble);
-            } else {
-              row.appendChild(bubble);
-              row.appendChild(btnDelete);
-            }
-
-            chatBox.appendChild(row);
-          });
-          chatBox.scrollTop = chatBox.scrollHeight;
-        } else {
-          chatBox.innerHTML = '<div class="chat-msg-row received"><div class="chat-msg-bubble">Inicie a conversa com a equipe enviando uma mensagem abaixo.</div></div>';
-        }
-
-        // Lógica de notificações ativas
-        if (estadoApp.paginaAtual !== 'conversar' && totalMsgs > estadoApp.totalMsgsAnterior) {
-          estadoApp.mensagensNaoLidas += (totalMsgs - estadoApp.totalMsgsAnterior);
-          atualizarBadge();
-        }
-        estadoApp.totalMsgsAnterior = totalMsgs;
+        container.scrollTop = container.scrollHeight;
       });
     }
 
-    window.deletarMensagem = function(msgKey) {
-      if (confirm('Deseja realmente apagar esta mensagem?')) {
-        const destSanitizado = estadoApp.destinatarioChat.replace(/[^a-zA-Z0-9]/g, "_");
-        remove(ref(db, `chats_privados/${estadoApp.userId}/${destSanitizado}/${msgKey}`));
-      }
-    };
-
-    function atualizarBadge() {
+    function atualizarBadgeChat() {
       const badge = document.getElementById('badge-chat');
       if (estadoApp.mensagensNaoLidas > 0) {
         badge.innerText = estadoApp.mensagensNaoLidas;
@@ -455,151 +475,186 @@
       }
     }
 
-    // Sistema de Relatos e Protocolos
+    window.enviarMensagem = function() {
+      const input = document.getElementById('input-chat');
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      const path = `chats/${estadoApp.userId}/${estadoApp.destinatarioChat.replace(/\s+/g, '_')}`;
+      const chatRef = ref(db, path);
+
+      push(chatRef, {
+        remetenteId: estadoApp.userId,
+        turma: estadoApp.turma,
+        texto: texto,
+        timestamp: Date.now()
+      });
+
+      input.value = '';
+    };
+
+    window.deletarMensagem = function(msgKey) {
+      if (confirm("Deseja realmente apagar esta mensagem?")) {
+        const path = `chats/${estadoApp.userId}/${estadoApp.destinatarioChat.replace(/\s+/g, '_')}/${msgKey}`;
+        remove(ref(db, path));
+      }
+    };
+
+    // Enter para enviar mensagem no Chat
+    document.getElementById('input-chat')?.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        enviarMensagem();
+      }
+    });
+
+    // --- MÓDULO DE RELATOS DE OCORRÊNCIA ---
     window.registrarRelato = function(e) {
       e.preventDefault();
       const tipo = document.getElementById('relato-tipo').value;
       const descricao = document.getElementById('relato-descricao').value.trim();
+
+      if (!descricao) return alert('Por favor, descreva a situação.');
+
       const protocolo = '#ABR-' + Math.floor(1000 + Math.random() * 9000);
+      const relatosRef = ref(db, 'relatos/' + protocolo.replace('#', ''));
 
       const novoRelato = {
         protocolo: protocolo,
         tipo: tipo,
         descricao: descricao,
+        turma: estadoApp.turma,
         status: 'Recebido',
         data: new Date().toLocaleDateString('pt-BR'),
-        userId: estadoApp.userId
+        timestamp: Date.now()
       };
 
-      push(ref(db, 'relatos_anonimos'), novoRelato)
-        .then(() => {
-          alert(`Relato registrado com sucesso!\n\nGuarde seu número de Protocolo: ${protocolo}`);
-          document.getElementById('relato-descricao').value = '';
-          window.navegarDireto('consultar-relato');
-          document.getElementById('input-protocolo').value = protocolo;
-          window.buscarProtocolo();
-        });
+      update(relatosRef, novoRelato).then(() => {
+        alert(`Relato registrado com sucesso!\n\nSeu Protocolo é: ${protocolo}\nGuarde este código para consultar o status.`);
+        document.getElementById('relato-descricao').value = '';
+        navegarDireto('consultar-relato');
+        document.getElementById('input-protocolo').value = protocolo;
+        buscarProtocolo();
+      });
     };
 
     window.buscarProtocolo = function() {
-      const termo = document.getElementById('input-protocolo').value.trim().toUpperCase();
-      const painel = document.getElementById('resultado-protocolo');
-      
-      if (!termo) return alert('Digite um código de protocolo válido.');
+      const prot = document.getElementById('input-protocolo').value.trim().toUpperCase().replace('#', '');
+      const resContainer = document.getElementById('resultado-protocolo');
 
-      onValue(ref(db, 'relatos_anonimos'), (snapshot) => {
+      if (!prot) return alert('Informe o protocolo.');
+
+      onValue(ref(db, 'relatos/' + prot), (snapshot) => {
         const data = snapshot.val();
-        let encontrado = null;
+        resContainer.style.display = 'block';
 
-        if (data) {
-          Object.values(data).forEach(r => {
-            if (r.protocolo === termo) encontrado = r;
-          });
+        if (!data) {
+          resContainer.innerHTML = `<p style="color: #e74c3c;">Protocolo não encontrado. Verifique o código digitado.</p>`;
+          return;
         }
 
-        if (encontrado) {
-          let classeStatus = 'status-recebido';
-          if (encontrado.status === 'Em Análise') classeStatus = 'status-analise';
-          if (encontrado.status === 'Concluído') classeStatus = 'status-concluido';
+        let classStatus = 'status-recebido';
+        if (data.status === 'Em Análise') classStatus = 'status-analise';
+        if (data.status === 'Concluído') classStatus = 'status-concluido';
 
-          painel.style.display = 'block';
-          painel.innerHTML = `
-            <h3>Protocolo: <span class="protocolo-tag">${encontrado.protocolo}</span></h3>
-            <p style="margin: 10px 0;"><strong>Categoria:</strong> ${encontrado.tipo}</p>
-            <p style="margin: 10px 0;"><strong>Data de Registro:</strong> ${encontrado.data}</p>
-            <p style="margin: 10px 0;"><strong>Status Atual:</strong> <span class="status-pill ${classeStatus}">${encontrado.status}</span></p>
-            <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--cinza-borda);">
-            <p style="font-size: 0.9rem; color: #64748b;">Suas informações permanecem totalmente anônimas. A equipe escolar está trabalhando no acompanhamento desta demanda.</p>
-          `;
-        } else {
-          painel.style.display = 'block';
-          painel.innerHTML = '<p style="color: #ef4444;">Nenhum relato encontrado com este protocolo. Verifique o código e tente novamente.</p>';
-        }
+        resContainer.innerHTML = `
+          <h3>Protocolo: <span class="protocolo-tag">${data.protocolo}</span></h3>
+          <p style="margin: 8px 0;"><strong>Tipo:</strong> ${data.tipo}</p>
+          <p style="margin: 8px 0;"><strong>Data de Envio:</strong> ${data.data}</p>
+          <p style="margin: 8px 0;"><strong>Status Atual:</strong> <span class="status-pill ${classStatus}">${data.status}</span></p>
+          <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--cinza-borda);">
+          <p style="color: #64748b; font-size: 0.9rem;"><strong>Descrição enviada:</strong> ${data.descricao}</p>
+        `;
       }, { onlyOnce: true });
     };
 
-    // Filtro de Conteúdos
+    // --- MÓDULO DE MATERIAIS / BUSCA ---
     window.filtrarConteudos = function() {
-      const busca = document.getElementById('busca-conteudo').value.toLowerCase();
-      const cards = document.querySelectorAll('#lista-conteudos .item-conteudo');
+      const termo = document.getElementById('busca-conteudo').value.toLowerCase();
+      const cards = document.querySelectorAll('.item-conteudo');
 
       cards.forEach(card => {
         const texto = card.innerText.toLowerCase();
-        card.style.display = texto.includes(busca) ? 'block' : 'none';
+        card.style.display = texto.includes(termo) ? 'block' : 'none';
       });
     };
 
-    // Painel Administrativo / Escola
+    // --- MÓDULO DE PAINEL ADMINISTRATIVO ---
+    let meuGrafico = null;
+
     function ouvirRelatosAdmin() {
-      onValue(ref(db, 'relatos_anonimos'), (snapshot) => {
+      onValue(ref(db, 'relatos'), (snapshot) => {
+        const data = snapshot.val();
         const container = document.getElementById('lista-relatos-admin');
         container.innerHTML = '';
-        const data = snapshot.val();
 
-        if (data) {
-          Object.keys(data).forEach(key => {
-            const item = data[key];
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.style.marginBottom = '10px';
-            div.innerHTML = `
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <strong>Protocolo: <span class="protocolo-tag">${item.protocolo}</span></strong>
-                <select class="form-control" style="width: auto; padding: 4px 8px;" onchange="atualizarStatusRelato('${key}', this.value)">
-                  <option value="Recebido" ${item.status === 'Recebido' ? 'selected' : ''}>Recebido</option>
-                  <option value="Em Análise" ${item.status === 'Em Análise' ? 'selected' : ''}>Em Análise</option>
-                  <option value="Concluído" ${item.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
-                </select>
-              </div>
-              <p><strong>Tipo:</strong> ${item.tipo}</p>
-              <p style="margin-top: 6px; color: #475569;">${item.descricao}</p>
-            `;
-            container.appendChild(div);
-          });
-        } else {
-          container.innerHTML = '<p>Nenhum relato registrado no sistema até o momento.</p>';
+        if (!data) {
+          container.innerHTML = '<p>Nenhum relato registrado no sistema.</p>';
+          atualizarGraficoAdmin(0, 0, 0);
+          return;
         }
+
+        let contRecebido = 0;
+        let contAnalise = 0;
+        let contConcluido = 0;
+
+        Object.entries(data).forEach(([key, relato]) => {
+          if (relato.status === 'Recebido') contRecebido++;
+          if (relato.status === 'Em Análise') contAnalise++;
+          if (relato.status === 'Concluído') contConcluido++;
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.style.background = '#f8fafc';
+          card.style.marginBottom = '10px';
+
+          card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong>${relato.protocolo} - ${relato.tipo} (${relato.turma || 'Anônimo'})</strong>
+              <small style="color: #64748b;">${relato.data}</small>
+            </div>
+            <p style="font-size: 0.9rem; margin-bottom: 10px; color: #334155;">${relato.descricao}</p>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <small>Alterar Status:</small>
+              <select onchange="alterarStatusRelato('${key}', this.value)" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--cinza-borda);">
+                <option value="Recebido" ${relato.status === 'Recebido' ? 'selected' : ''}>Recebido</option>
+                <option value="Em Análise" ${relato.status === 'Em Análise' ? 'selected' : ''}>Em Análise</option>
+                <option value="Concluído" ${relato.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
+              </select>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+
+        atualizarGraficoAdmin(contRecebido, contAnalise, contConcluido);
       });
     }
 
-    window.atualizarStatusRelato = function(key, novoStatus) {
-      update(ref(db, `relatos_anonimos/${key}`), { status: novoStatus });
+    window.alterarStatusRelato = function(key, novoStatus) {
+      update(ref(db, `relatos/${key}`), { status: novoStatus });
     };
 
-    // Gráfico de Indicadores no Painel Admin
-    let meuGrafico = null;
-    function renderizarGrafico() {
-      onValue(ref(db, 'relatos_anonimos'), (snapshot) => {
-        const data = snapshot.val();
-        const contagem = { Bullying: 0, Cyberbullying: 0, Exclusão: 0, Outro: 0 };
+    function atualizarGraficoAdmin(recebidos, analise, concluidos) {
+      const ctx = document.getElementById('graficoAdmin')?.getContext('2d');
+      if (!ctx) return;
 
-        if (data) {
-          Object.values(data).forEach(r => {
-            if (contagem[r.tipo] !== undefined) contagem[r.tipo]++;
-            else contagem['Outro']++;
-          });
+      if (meuGrafico) meuGrafico.destroy();
+
+      meuGrafico = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Recebidos', 'Em Análise', 'Concluídos'],
+          datasets: [{
+            data: [recebidos, analise, concluidos],
+            backgroundColor: ['#fef08a', '#bfdbfe', '#bbf7d0'],
+            borderColor: ['#854d0e', '#1e40af', '#166534'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
         }
-
-        const ctx = document.getElementById('graficoAdmin').getContext('2d');
-        if (meuGrafico) meuGrafico.destroy();
-
-        meuGrafico = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Bullying', 'Cyberbullying', 'Exclusão', 'Outros'],
-            datasets: [{
-              label: 'Quantidade de Ocorrências',
-              data: [contagem.Bullying, contagem.Cyberbullying, contagem.Exclusão, contagem.Outro],
-              backgroundColor: ['#2ecc71', '#1abc9c', '#8e44ad', '#3498db']
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-          }
-        });
-      }, { onlyOnce: true });
+      });
     }
   </script>
 </body>
