@@ -13,38 +13,43 @@
     }
 
     body {
-      background-color: #f8fafc;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8eefd 100%);
       color: #334155;
+      min-height: 100vh;
     }
 
     /* ESTILOS DE BOTÕES E FORMULÁRIOS */
     .btn {
-      background: #6366f1;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
       color: white;
       border: none;
       padding: 10px 16px;
-      border-radius: 6px;
+      border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
     }
 
     .btn:hover {
-      background: #4f46e5;
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
     }
 
     .btn-danger {
-      background: #fee2e2;
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
       color: #991b1b;
       border: none;
       padding: 8px 12px;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      transition: all 0.2s;
     }
 
     .btn-danger:hover {
-      background: #fecaca;
+      background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
     }
 
     /* OVERLAY DE LOGIN */
@@ -54,7 +59,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(15, 23, 42, 0.8);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 27, 75, 0.9) 100%);
       z-index: 999;
       display: flex;
       align-items: center;
@@ -65,11 +70,12 @@
     .login-card {
       background: white;
       padding: 30px;
-      border-radius: 12px;
+      border-radius: 16px;
       max-width: 400px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     /* LAYOUT PRINCIPAL */
@@ -85,6 +91,7 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
+      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.02);
     }
 
     .nav-links {
@@ -97,15 +104,16 @@
     .nav-links a {
       text-decoration: none;
       color: #64748b;
-      padding: 10px 12px;
-      border-radius: 6px;
+      padding: 12px 14px;
+      border-radius: 8px;
       font-weight: 500;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
 
     .nav-links a:hover, .nav-links a.active {
-      background: #e0e7ff;
+      background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
       color: #4338ca;
+      font-weight: 600;
     }
 
     .content {
@@ -117,6 +125,7 @@
     .page-title {
       color: #1e293b;
       margin-bottom: 5px;
+      font-size: 1.8rem;
     }
 
     .page-subtitle {
@@ -129,17 +138,25 @@
     .chat-target-card {
       padding: 10px 16px;
       border: 1px solid #cbd5e1;
-      border-radius: 6px;
+      border-radius: 8px;
       background: #ffffff;
       cursor: pointer;
       color: #475569;
       font-weight: 500;
+      transition: all 0.2s;
     }
 
     .chat-target-card.selected {
-      background: #6366f1;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
       color: white;
-      border-color: #6366f1;
+      border-color: transparent;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.25);
+    }
+
+    /* BOLA DE RESPIRAÇÃO */
+    #bolha-pulmao {
+      background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%) !important;
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
     }
   </style>
 </head>
@@ -272,7 +289,7 @@
         <p class="page-subtitle">Técnica de respiração quadrada (4x4) para alívio de estresse e ansiedade.</p>
         
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 40px;">
-          <div id="bolha-pulmao" style="width: 150px; height: 150px; border-radius: 50%; background: #818cf8; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; transition: transform 4s ease-in-out;">
+          <div id="bolha-pulmao" style="width: 150px; height: 150px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; transition: transform 4s ease-in-out;">
             PAUSA
           </div>
           <p id="respira-instrucao" style="color: #475569; margin-bottom: 20px; font-weight: 500;">Clique abaixo para começar.</p>
@@ -460,11 +477,6 @@
       if (secDestino) secDestino.style.display = 'block';
     };
 
-    window.navegarPorId = function(paginaId) {
-      const link = document.querySelector(`.nav-links a[onclick*="'${paginaId}'"]`);
-      window.navegar(paginaId, link);
-    };
-
     window.sair = function() {
       localStorage.removeItem('abracar_sessao_usuario');
       location.reload();
@@ -495,103 +507,88 @@
       }
 
       container.innerHTML = window.estado.avisosMural.map(a => `
-        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #6366f1;">
+        <div style="background: #ffffff; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #6366f1; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
           <div style="display: flex; justify-content: space-between;">
             <strong>${a.titulo}</strong>
             <small style="color: #64748b;">${a.data || ''}</small>
           </div>
           <p style="margin-top: 5px; color: #334155;">${a.texto}</p>
           <small style="color: #94a3b8;">Postado por: ${a.autor}</small>
-          ${window.estado.usuario.tipo === 'admin' ? `<br><button onclick="removerAviso('${a.id}')" style="color: red; background: none; border: none; cursor: pointer; font-size: 0.8rem; margin-top: 5px;">Excluir</button>` : ''}
+          ${window.estado.usuario.tipo === 'admin' ? `<br><button onclick="removerAviso('${a.id}')" style="color: red; background: none; border: none; cursor: pointer; font-size: 0.8rem; margin-top: 5px;">Excluir Excluir</button>` : ''}
         </div>
       `).join('');
     }
 
     window.removerAviso = function(id) {
-      if (confirm('Deseja excluir este aviso?')) {
+      if (confirm("Deseja realmente remover este aviso?")) {
         remove(ref(db, `avisos/${id}`));
       }
     };
 
-    // CHAT
-    window.selecionarDestinoChat = function(el, destino) {
-      document.querySelectorAll('.chat-target-card').forEach(c => c.classList.remove('selected'));
+    // CHAT DE ACOLHIMENTO
+    window.selecionarDestinoChat = function(el, canal) {
+      document.querySelectorAll('.chat-target-card').forEach(card => card.classList.remove('selected'));
       el.classList.add('selected');
-      window.estado.canalChatAtual = destino;
-      document.getElementById('chat-canal-titulo').innerText = 'Conversando com: ' + destino;
+      
+      window.estado.canalChatAtual = canal;
+      document.getElementById('chat-canal-titulo').innerText = 'Conversando com: ' + canal;
       renderizarMensagensChat();
     };
 
     window.tratarTeclaEnterChat = function(e) {
-      if (e.key === 'Enter') window.enviarMensagemChat();
+      if (e.key === 'Enter') {
+        enviarMensagemChat();
+      }
     };
 
     window.enviarMensagemChat = function() {
-      const input = document.getElementById('chat-input');      const texto = input.value.trim();
+      const input = document.getElementById('chat-input');
+      const texto = input.value.trim();
+      
       if (!texto) return;
 
-      const user = window.estado.usuario;
-
-      push(ref(db, 'mensagens_privadas'), {
-        autor: user.nome,
-        turma: user.turma || 'Sem turma',
+      const novaMensagem = {
+        autor: window.estado.usuario.nome,
         texto: texto,
-        destino: window.estado.canalChatAtual,
-        userId: user.userId,
-        tipoAutor: user.tipo,
-        dataHora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-      });
+        canal: window.estado.canalChatAtual,
+        userId: window.estado.usuario.userId,
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+      };
 
+      push(ref(db, 'mensagens_privadas'), novaMensagem);
       input.value = '';
     };
 
     function renderizarMensagensChat() {
       const container = document.getElementById('chat-messages');
-      const chatExibicao = document.getElementById('chat-id-exibicao');
       if (!container) return;
 
-      const user = window.estado.usuario;
-      if (!user) return;
-
-      // Exibe informação visual no topo do chat
-      chatExibicao.innerText = `Seu ID no chat: #${user.userId}`;
-
-      // Filtra mensagens pelo canal atual (Geral ou Psicopedagogia)
-      const mensagensFiltradas = window.estado.mensagensChat.filter(msg => {
-        return msg.destino === window.estado.canalChatAtual;
-      });
+      const mensagensFiltradas = window.estado.mensagensChat.filter(
+        m => m.canal === window.estado.canalChatAtual
+      );
 
       if (mensagensFiltradas.length === 0) {
-        container.innerHTML = '<p style="color: #94a3b8; font-size: 0.9rem; text-align: center; margin-top: 20px;">Nenhuma mensagem neste canal ainda. Comece a conversa!</p>';
+        container.innerHTML = '<p style="color: #94a3b8; text-align: center; margin-top: 20px;">Nenhuma mensagem neste canal ainda. Comece a conversa!</p>';
         return;
       }
 
-      container.innerHTML = mensagensFiltradas.map(msg => {
-        const ehMinha = msg.userId === user.userId;
-        const alinhamento = ehMinha ? 'flex-end' : 'flex-start';
-        const corFundo = ehMinha ? '#6366f1' : '#f1f5f9';
-        const corTexto = ehMinha ? '#ffffff' : '#1e293b';
-
+      container.innerHTML = mensagensFiltradas.map(m => {
+        const eMeu = m.userId === window.estado.usuario.userId;
         return `
-          <div style="display: flex; flex-direction: column; align-items: ${alinhamento}; margin-bottom: 10px;">
-            <div style="max-width: 70%; background: ${corFundo}; color: ${corTexto}; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem;">
-              <div style="font-size: 0.75rem; font-weight: bold; opacity: 0.8; margin-bottom: 2px;">
-                ${msg.autor} (${msg.turma})
-              </div>
-              <div>${msg.texto}</div>
-              <div style="font-size: 0.65rem; text-align: right; opacity: 0.7; margin-top: 4px;">
-                ${msg.dataHora || ''}
-              </div>
+          <div style="display: flex; flex-direction: column; align-items: ${eMeu ? 'flex-end' : 'flex-start'}; margin-bottom: 10px;">
+            <div style="max-width: 70%; background: ${eMeu ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : '#f1f5f9'}; color: ${eMeu ? '#ffffff' : '#1e293b'}; padding: 8px 12px; border-radius: 12px; border-${eMeu ? 'bottom-right' : 'bottom-left'}-radius: 2px;">
+              <small style="display: block; font-size: 0.7rem; color: ${eMeu ? '#c7d2fe' : '#64748b'}; font-weight: 600;">${m.autor}</small>
+              <span style="font-size: 0.95rem;">${m.texto}</span>
+              <small style="display: block; font-size: 0.65rem; color: ${eMeu ? '#e0e7ff' : '#94a3b8'}; text-align: right; margin-top: 2px;">${m.hora || ''}</small>
             </div>
           </div>
         `;
       }).join('');
 
-      // Rola automaticamente para o fim do chat
       container.scrollTop = container.scrollHeight;
     }
 
-    // RELATOS
+    // REGISTRO DE RELATOS
     window.salvarRelato = function() {
       const tipo = document.getElementById('relato-tipo').value;
       const anonimo = document.getElementById('relato-anonimo').value;
@@ -601,93 +598,27 @@
         alert('Por favor, selecione o tipo de ocorrência.');
         return;
       }
-
       if (!texto) {
-        alert('Por favor, descreva o seu relato.');
+        alert('Por favor, escreva o detalhamento do seu relato.');
         return;
       }
 
-      const user = window.estado.usuario;
+      const nomeAutor = anonimo === 'anonimo' ? 'Anônimo' : window.estado.usuario.nome;
 
       push(ref(db, 'relatos'), {
         tipo: tipo,
+        autor: nomeAutor,
+        turma: anonimo === 'anonimo' ? 'N/A' : (window.estado.usuario.turma || 'Não informada'),
         texto: texto,
-        autor: anonimo === 'anonimo' ? 'Anônimo' : user.nome,
-        turma: anonimo === 'anonimo' ? 'Não informada' : user.turma,
-        data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+        data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
       });
 
-      alert('Seu relato foi enviado com sucesso e será analisado pela equipe de suporte.');
-      
-      // Limpa os campos após o envio
+      alert('Seu relato foi enviado com sucesso e com total segurança.');
       document.getElementById('relato-tipo').value = '';
       document.getElementById('relato-texto').value = '';
     };
 
-    function renderizarRelatosAdmin() {
-      const container = document.getElementById('lista-relatos-admin');
-      if (!container) return;
-
-      if (window.estado.relatos.length === 0) {
-        container.innerHTML = '<p style="color: #64748b;">Nenhum relato recebido até o momento.</p>';
-        return;
-      }
-
-      container.innerHTML = window.estado.relatos.map(r => `
-        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 12px; border-left: 4px solid #ef4444;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8rem;">
-              ${r.tipo}
-            </span>
-            <small style="color: #64748b;">${r.data || ''}</small>
-          </div>
-          <p style="color: #334155; margin-bottom: 10px;">${r.texto}</p>
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #64748b;">
-            <span>Enviado por: <strong>${r.autor}</strong> (${r.turma})</span>
-            <button onclick="excluirRelato('${r.id}')" style="color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 600;">Excluir</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    window.excluirRelato = function(id) {
-      if (confirm('Deseja excluir este relato do painel?')) {
-        remove(ref(db, `relatos/${id}`));
-      }
-    };
-
-    function renderizarIntegrantesAdmin() {
-      const container = document.getElementById('lista-integrantes-admin');
-      if (!container) return;
-
-      if (window.estado.integrantes.length === 0) {
-        container.innerHTML = '<p style="color: #64748b;">Nenhum registro de acesso gestor.</p>';
-        return;
-      }
-
-      container.innerHTML = `
-        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
-          <thead>
-            <tr style="border-bottom: 2px solid #e2e8f0; color: #475569;">
-              <th style="padding: 8px;">Nome</th>
-              <th style="padding: 8px;">Cargo / Função</th>
-              <th style="padding: 8px;">Data de Acesso</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${window.estado.integrantes.map(i => `
-              <tr style="border-bottom: 1px solid #f1f5f9;">
-                <td style="padding: 8px; color: #1e293b;"><strong>${i.nome}</strong></td>
-                <td style="padding: 8px; color: #64748b;">${i.cargo || 'Gestor'}</td>
-                <td style="padding: 8px; color: #64748b;">${i.dataAcesso || '-'}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
-    }
-
-    // EXERCÍCIO DE RESPIRAÇÃO (4x4)
+    // EXERCÍCIO DE RESPIRAÇÃO (TÉCNICA 4x4)
     window.iniciarExercicioRespiracao = function() {
       const bolha = document.getElementById('bolha-pulmao');
       const instrucao = document.getElementById('respira-instrucao');
@@ -698,42 +629,85 @@
         window.estado.intervaloRespiracao = null;
         bolha.style.transform = 'scale(1)';
         bolha.innerText = 'PAUSA';
-        instrucao.innerText = 'Exercício pausado. Clique para iniciar novamente.';
+        instrucao.innerText = 'Clique abaixo para começar.';
         btn.innerText = 'Iniciar Respiração (4x4)';
         return;
       }
 
       btn.innerText = 'Parar Exercício';
+      let fase = 0; // 0: Inspire, 1: Segure, 2: Expire, 3: Segure
 
-      let fase = 0; // 0: Inspira, 1: Segura, 2: Expira, 3: Segura
-      
       const ciclo = () => {
-        switch(fase) {
-          case 0:
-            bolha.style.transform = 'scale(1.5)';
-            bolha.innerText = 'INSPIRA';
-            instrucao.innerText = 'Puxe o ar lentamente pelo nariz... (4s)';
-            break;
-          case 1:
-            bolha.innerText = 'SEGURA';
-            instrucao.innerText = 'Mantenha o ar nos pulmões... (4s)';
-            break;
-          case 2:
-            bolha.style.transform = 'scale(1)';
-            bolha.innerText = 'EXPIRA';
-            instrucao.innerText = 'Solte o ar devagar pela boca... (4s)';
-            break;
-          case 3:
-            bolha.innerText = 'SEGURA';
-            instrucao.innerText = 'Aguarde antes de puxar o ar novamente... (4s)';
-            break;
+        if (fase === 0) {
+          bolha.style.transform = 'scale(1.5)';
+          bolha.innerText = 'INSPIRE';
+          instrucao.innerText = 'Puxe o ar devagar pelo nariz...';
+        } else if (fase === 1) {
+          bolha.innerText = 'SEGURE';
+          instrucao.innerText = 'Mantenha o ar nos pulmões...';
+        } else if (fase === 2) {
+          bolha.style.transform = 'scale(1)';
+          bolha.innerText = 'EXPIRE';
+          instrucao.innerText = 'Solte o ar devagar pela boca...';
+        } else if (fase === 3) {
+          bolha.innerText = 'SEGURE';
+          instrucao.innerText = 'Aguarde um momento antes de inspirar novamente...';
         }
+
         fase = (fase + 1) % 4;
       };
 
       ciclo();
       window.estado.intervaloRespiracao = setInterval(ciclo, 4000);
     };
+
+    // PAINEL DE GESTÃO (ADMIN)
+    function renderizarRelatosAdmin() {
+      const container = document.getElementById('lista-relatos-admin');
+      if (!container) return;
+
+      if (window.estado.relatos.length === 0) {
+        container.innerHTML = '<p style="color: #64748b;">Nenhum relato registrado até o momento.</p>';
+        return;
+      }
+
+      container.innerHTML = window.estado.relatos.map(r => `
+        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 12px; border-left: 4px solid #ef4444;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">${r.tipo}</span>
+            <small style="color: #64748b;">${r.data || ''}</small>
+          </div>
+          <p style="color: #334155; margin-bottom: 10px;">${r.texto}</p>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <small style="color: #64748b;"><strong>Autor:</strong> ${r.autor} (${r.turma})</small>
+            <button onclick="removerRelato('${r.id}')" class="btn-danger" style="font-size: 0.75rem;">Concluir / Apagar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.removerRelato = function(id) {
+      if (confirm("Marcar este relato como resolvido e excluí-lo?")) {
+        remove(ref(db, `relatos/${id}`));
+      }
+    };
+
+    function renderizarIntegrantesAdmin() {
+      const container = document.getElementById('lista-integrantes-admin');
+      if (!container) return;
+
+      if (window.estado.integrantes.length === 0) {
+        container.innerHTML = '<p style="color: #64748b;">Nenhum gestor registrado.</p>';
+        return;
+      }
+
+      container.innerHTML = window.estado.integrantes.map(i => `
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+          <span style="color: #334155; font-weight: 500;">${i.nome}</span>
+          <small style="color: #64748b;">${i.cargo} - Acesso em: ${i.dataAcesso || 'N/A'}</small>
+        </div>
+      `).join('');
+    }
   </script>
 </body>
 </html>
