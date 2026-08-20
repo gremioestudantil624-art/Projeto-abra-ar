@@ -809,7 +809,12 @@
 
     window.confirmarEntrada = function() {
       const tipo = document.getElementById('tipo-acesso').value;
-      let novoUserId = 'User#' + Math.floor(1000 + Math.random() * 9000);
+      
+      let novoUserId = localStorage.getItem('abracar_user_id');
+      if (!novoUserId) {
+        novoUserId = 'User#' + Math.floor(1000 + Math.random() * 9000);
+        localStorage.setItem('abracar_user_id', novoUserId);
+      }
 
       if (tipo === 'estudante') {
         const nome = document.getElementById('nome-estudante').value.trim();
@@ -947,8 +952,7 @@
       const meuId = window.estado.usuario.userId;
 
       const mensagensFiltradas = window.estado.mensagensChat.filter(m => {
-        const mesmoCanal = m.canal === window.estado.canalChatAtual;
-        return mesmoCanal && (eAdmin || m.userId === meuId);
+        return m.canal === window.estado.canalChatAtual;
       });
 
       if (mensagensFiltradas.length === 0) {
@@ -957,14 +961,14 @@
       }
 
       conteinerChat.innerHTML = mensagensFiltradas.map(m => {
-        const envieiEu = m.tipoRemetente === window.estado.usuario.tipo;
+        const envieiEu = m.userId === meuId;
         const classeRow = envieiEu ? 'sent' : 'received';
 
         return `
           <div class="chat-msg-row ${classeRow}">
             <div class="chat-msg-bubble">
               <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 10px;">
-                <span>${eAdmin ? m.userId : (envieiEu ? 'Você' : m.canal)}</span>
+                <span>${m.tipoRemetente === 'admin' ? 'Administração' : m.userId}</span>
                 <span onclick="apagarMensagem('${m.id}')" style="cursor:pointer; color:#fff; font-weight:bold;" title="Apagar mensagem">🗑️</span>
               </div>
               <div>${m.texto}</div>
@@ -1082,7 +1086,9 @@
           <p style="margin-top: 5px; font-size: 0.9rem; color: var(--texto-escuro);">${r.texto}</p>
         </div>
       `).join('');
-    }    // EXERCÍCIO DE RESPIRAÇÃO GUIADA
+    }
+
+    // EXERCÍCIO DE RESPIRAÇÃO GUIADA
     window.iniciarExercicioRespiracao = function() {
       const bolha = document.getElementById('bolha-pulmao');
       const instrucao = document.getElementById('respira-instrucao');
