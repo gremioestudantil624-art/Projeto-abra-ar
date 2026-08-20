@@ -4,12 +4,150 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Projeto Abraçar</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: #334155;
+    }
+
+    /* ESTILOS DE BOTÕES E FORMULÁRIOS */
+    .btn {
+      background: #6366f1;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #4f46e5;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #991b1b;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    /* OVERLAY DE LOGIN */
+    .welcome-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.8);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    /* LAYOUT PRINCIPAL */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      border-right: 1px solid #e2e8f0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #64748b;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      background: #e0e7ff;
+      color: #4338ca;
+    }
+
+    .content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .page-title {
+      color: #1e293b;
+      margin-bottom: 5px;
+    }
+
+    .page-subtitle {
+      color: #64748b;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    /* CHAT DE CARDS */
+    .chat-target-card {
+      padding: 10px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #ffffff;
+      cursor: pointer;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .chat-target-card.selected {
+      background: #6366f1;
+      color: white;
+      border-color: #6366f1;
+    }
+  </style>
 </head>
 <body>
 
   <!-- OVERLAY DE BOAS-VINDAS / LOGIN -->
-  <div id="welcome-overlay" class="welcome-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.8); z-index: 999; display: flex; align-items: center; justify-content: center; padding: 20px;">
-    <div style="background: white; padding: 30px; border-radius: 12px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+  <div id="welcome-overlay" class="welcome-overlay">
+    <div class="login-card">
       <h2 style="color: #6366f1; margin-bottom: 10px;">Bem-vindo ao Abraçar</h2>
       <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Selecione como deseja acessar a plataforma:</p>
       
@@ -38,21 +176,21 @@
         <input type="password" id="senha-acesso" placeholder="Senha de Gestão" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 6px;">
       </div>
 
-      <button onclick="realizarLogin()" style="width: 100%; padding: 12px; background: #6366f1; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Entrar no Sistema</button>
+      <button onclick="realizarLogin()" class="btn" style="width: 100%;">Entrar no Sistema</button>
     </div>
   </div>
 
   <!-- CONTAINER PRINCIPAL DA APLICAÇÃO -->
-  <div class="app-container" style="display: flex; min-height: 100vh;">
+  <div class="app-container">
     
     <!-- BARRA LATERAL (SIDEBAR) -->
-    <div class="sidebar" style="width: 260px; background: #fff; border-right: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column;">
+    <div class="sidebar">
       <h2 style="color: #6366f1; margin-bottom: 5px;">Abraçar</h2>
       <div id="user-display" style="font-size: 0.85rem; color: #64748b; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9;">
         Carregando perfil...
       </div>
 
-      <nav class="nav-links" style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+      <nav class="nav-links">
         <a href="#" class="active" onclick="navegar('mural', this)">📢 Mural de Avisos</a>
         <a href="#" onclick="navegar('chat', this)">💬 Chat de Acolhimento</a>
         <a href="#" onclick="navegar('relatos', this)">📝 Registrar Relato</a>
@@ -60,11 +198,11 @@
         <a href="#" id="menu-item-admins" class="btn-admin-only" style="display: none;" onclick="navegar('admin-panel', this)">🔒 Painel de Gestão</a>
       </nav>
 
-      <button onclick="sair()" style="margin-top: 20px; padding: 10px; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Sair da Conta</button>
+      <button onclick="sair()" class="btn-danger" style="margin-top: 20px;">Sair da Conta</button>
     </div>
 
     <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
-    <div class="content" style="flex: 1; padding: 30px; overflow-y: auto;">
+    <div class="content">
       
       <!-- PÁGINA: MURAL DE AVISOS -->
       <section id="page-mural" class="section-page active">
@@ -160,9 +298,8 @@
   <!-- SCRIPT FIREBASE E LÓGICA DO APP -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // ATENÇÃO: Substitua os dados abaixo com as credenciais do seu projeto Firebase
     const firebaseConfig = {
       apiKey: "SUA_API_KEY",
       authDomain: "SEU_PROJETO.firebaseapp.com",
@@ -273,7 +410,7 @@
           return;
         }
 
-        if (senha !== 'admin123') { // Defina sua senha de administrador aqui
+        if (senha !== 'admin123') {
           alert('Senha de gestão incorreta!');
           return;
         }
@@ -285,7 +422,6 @@
           userId: 'ADMIN-' + novoUserId
         };
 
-        // Salva gestor na lista de integrantes admin do Firebase
         push(ref(db, 'integrantes'), {
           nome: nome,
           cargo: 'Gestão Escolar',
@@ -293,7 +429,6 @@
         });
       }
 
-      // Salva sessão no navegador
       localStorage.setItem('abracar_sessao_usuario', JSON.stringify(window.estado.usuario));
       iniciarAplicacao();
     };
@@ -378,7 +513,7 @@
       }
     };
 
-    // CHAT E MENSAGENS COM BOTÃO DE EXCLUSÃO (LIXEIRA)
+    // CHAT
     window.selecionarDestinoChat = function(el, destino) {
       document.querySelectorAll('.chat-target-card').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
@@ -392,71 +527,67 @@
     };
 
     window.enviarMensagemChat = function() {
-      const input = document.getElementById('chat-input');
-      const texto = input.value.trim();
+      const input = document.getElementById('chat-input');      const texto = input.value.trim();
       if (!texto) return;
 
-      const msgData = {
-        remetente: window.estado.usuario.nome,
-        userId: window.estado.usuario.userId,
-        canal: window.estado.canalChatAtual,
+      const user = window.estado.usuario;
+
+      push(ref(db, 'mensagens_privadas'), {
+        autor: user.nome,
+        turma: user.turma || 'Sem turma',
         texto: texto,
-        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-      };
+        destino: window.estado.canalChatAtual,
+        userId: user.userId,
+        tipoAutor: user.tipo,
+        dataHora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+      });
 
-      push(ref(db, 'mensagens_privadas'), msgData);
       input.value = '';
-    };
-
-    // Função para excluir mensagem do chat
-    window.deletarMensagemChat = function(idMsg) {
-      if (confirm('Deseja apagar esta mensagem?')) {
-        remove(ref(db, `mensagens_privadas/${idMsg}`));
-      }
     };
 
     function renderizarMensagensChat() {
       const container = document.getElementById('chat-messages');
+      const chatExibicao = document.getElementById('chat-id-exibicao');
       if (!container) return;
 
-      document.getElementById('chat-id-exibicao').innerText = `Seu ID no chat: ${window.estado.usuario.userId}`;
+      const user = window.estado.usuario;
+      if (!user) return;
 
-      const mensagensFiltradas = window.estado.mensagensChat.filter(
-        m => m.canal === window.estado.canalChatAtual
-      );
+      // Exibe informação visual no topo do chat
+      chatExibicao.innerText = `Seu ID no chat: #${user.userId}`;
+
+      // Filtra mensagens pelo canal atual (Geral ou Psicopedagogia)
+      const mensagensFiltradas = window.estado.mensagensChat.filter(msg => {
+        return msg.destino === window.estado.canalChatAtual;
+      });
 
       if (mensagensFiltradas.length === 0) {
-        container.innerHTML = '<p style="color: #94a3b8; text-align: center;">Nenhuma mensagem neste canal ainda.</p>';
+        container.innerHTML = '<p style="color: #94a3b8; font-size: 0.9rem; text-align: center; margin-top: 20px;">Nenhuma mensagem neste canal ainda. Comece a conversa!</p>';
         return;
       }
 
-      container.innerHTML = mensagensFiltradas.map(m => {
-        const ehMinha = m.userId === window.estado.usuario.userId;
-        const eAdmin = window.estado.usuario.tipo === 'admin';
-        
-        // Exibe o botão de lixeira se for a própria mensagem do usuário         // ou se o usuário for um Administrador/Gestor
-        const podeExcluir = ehMinha || eAdmin;
+      container.innerHTML = mensagensFiltradas.map(msg => {
+        const ehMinha = msg.userId === user.userId;
+        const alinhamento = ehMinha ? 'flex-end' : 'flex-start';
+        const corFundo = ehMinha ? '#6366f1' : '#f1f5f9';
+        const corTexto = ehMinha ? '#ffffff' : '#1e293b';
 
         return `
-          <div style="display: flex; flex-direction: column; align-items: ${ehMinha ? 'flex-end' : 'flex-start'}; margin-bottom: 12px;">
-            <div style="max-width: 75%; background: ${ehMinha ? '#6366f1' : '#f1f5f9'}; color: ${ehMinha ? '#ffffff' : '#1e293b'}; padding: 10px 14px; border-radius: 12px; border-bottom-${ehMinha ? 'right' : 'left'}-radius: 2px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-              <div style="font-size: 0.75rem; font-weight: bold; margin-bottom: 2px; color: ${ehMinha ? '#e0e7ff' : '#64748b'};">
-                ${m.remetente} ${ehMinha ? '(Você)' : ''}
+          <div style="display: flex; flex-direction: column; align-items: ${alinhamento}; margin-bottom: 10px;">
+            <div style="max-width: 70%; background: ${corFundo}; color: ${corTexto}; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem;">
+              <div style="font-size: 0.75rem; font-weight: bold; opacity: 0.8; margin-bottom: 2px;">
+                ${msg.autor} (${msg.turma})
               </div>
-              <div style="font-size: 0.95rem; word-break: break-word;">${m.texto}</div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.7rem; color: ${ehMinha ? '#c7d2fe' : '#94a3b8'};">
-                <span>${m.hora || ''}</span>
-                ${podeExcluir ? `
-                  <button onclick="deletarMensagemChat('${m.id}')" title="Excluir mensagem" style="background: none; border: none; color: ${ehMinha ? '#fca5a5' : '#ef4444'}; cursor: pointer; font-size: 0.8rem; margin-left: 8px; padding: 0 2px;">
-                    🗑️
-                  </button>
-                ` : ''}
+              <div>${msg.texto}</div>
+              <div style="font-size: 0.65rem; text-align: right; opacity: 0.7; margin-top: 4px;">
+                ${msg.dataHora || ''}
               </div>
             </div>
           </div>
         `;
       }).join('');
 
+      // Rola automaticamente para o fim do chat
       container.scrollTop = container.scrollHeight;
     }
 
@@ -467,29 +598,30 @@
       const texto = document.getElementById('relato-texto').value.trim();
 
       if (!tipo) {
-        alert('Selecione o tipo de ocorrência.');
+        alert('Por favor, selecione o tipo de ocorrência.');
         return;
       }
 
       if (!texto) {
-        alert('Escreva a descrição do relato antes de enviar.');
+        alert('Por favor, descreva o seu relato.');
         return;
       }
 
-      const nomeAutor = anonimo === 'anonimo' ? 'Anônimo' : window.estado.usuario.nome;
+      const user = window.estado.usuario;
 
       push(ref(db, 'relatos'), {
-        autor: nomeAutor,
         tipo: tipo,
-        descricao: texto,
-        data: new Date().toLocaleDateString('pt-BR') + ' - ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        turma: anonimo === 'anonimo' ? 'Não informada' : (window.estado.usuario.turma || 'Não informada')
-      }).then(() => {
-        alert('Relato enviado com sucesso! A equipe de acolhimento irá analisar.');
-        document.getElementById('relato-tipo').value = '';
-        document.getElementById('relato-texto').value = '';
-        window.navegarPorId('mural');
+        texto: texto,
+        autor: anonimo === 'anonimo' ? 'Anônimo' : user.nome,
+        turma: anonimo === 'anonimo' ? 'Não informada' : user.turma,
+        data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
       });
+
+      alert('Seu relato foi enviado com sucesso e será analisado pela equipe de suporte.');
+      
+      // Limpa os campos após o envio
+      document.getElementById('relato-tipo').value = '';
+      document.getElementById('relato-texto').value = '';
     };
 
     function renderizarRelatosAdmin() {
@@ -497,27 +629,29 @@
       if (!container) return;
 
       if (window.estado.relatos.length === 0) {
-        container.innerHTML = '<p style="color: #64748b;">Nenhum relato registrado no sistema.</p>';
+        container.innerHTML = '<p style="color: #64748b;">Nenhum relato recebido até o momento.</p>';
         return;
       }
 
       container.innerHTML = window.estado.relatos.map(r => `
-        <div style="background: white; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #ef4444;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <strong style="color: #991b1b; font-size: 1rem;">${r.tipo}</strong>
+        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 12px; border-left: 4px solid #ef4444;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8rem;">
+              ${r.tipo}
+            </span>
             <small style="color: #64748b;">${r.data || ''}</small>
           </div>
-          <p style="color: #334155; margin-bottom: 10px; line-height: 1.4;">${r.descricao}</p>
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #64748b; border-top: 1px solid #f1f5f9; padding-top: 8px;">
-            <span>Enviado por: <strong>${r.autor}</strong> (${r.turma || 'Sem informação'})</span>
-            <button onclick="removerRelato('${r.id}')" style="background: #fee2e2; color: #991b1b; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Excluir Relato</button>
+          <p style="color: #334155; margin-bottom: 10px;">${r.texto}</p>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #64748b;">
+            <span>Enviado por: <strong>${r.autor}</strong> (${r.turma})</span>
+            <button onclick="excluirRelato('${r.id}')" style="color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 600;">Excluir</button>
           </div>
         </div>
       `).join('');
     }
 
-    window.removerRelato = function(id) {
-      if (confirm('Tem certeza que deseja apagar este relato registrado?')) {
+    window.excluirRelato = function(id) {
+      if (confirm('Deseja excluir este relato do painel?')) {
         remove(ref(db, `relatos/${id}`));
       }
     };
@@ -527,65 +661,74 @@
       if (!container) return;
 
       if (window.estado.integrantes.length === 0) {
-        container.innerHTML = '<p style="color: #64748b;">Nenhum integrante administrativo registrado.</p>';
+        container.innerHTML = '<p style="color: #64748b;">Nenhum registro de acesso gestor.</p>';
         return;
       }
 
-      container.innerHTML = window.estado.integrantes.map(i => `
-        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem;">
-          <div>
-            <strong style="color: #334155;">${i.nome}</strong>
-            <span style="color: #64748b; margin-left: 8px;">(${i.cargo || 'Gestão'})</span>
-          </div>
-          <small style="color: #94a3b8;">Acesso em: ${i.dataAcesso || 'N/A'}</small>
-        </div>
-      `).join('');
+      container.innerHTML = `
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+          <thead>
+            <tr style="border-bottom: 2px solid #e2e8f0; color: #475569;">
+              <th style="padding: 8px;">Nome</th>
+              <th style="padding: 8px;">Cargo / Função</th>
+              <th style="padding: 8px;">Data de Acesso</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${window.estado.integrantes.map(i => `
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 8px; color: #1e293b;"><strong>${i.nome}</strong></td>
+                <td style="padding: 8px; color: #64748b;">${i.cargo || 'Gestor'}</td>
+                <td style="padding: 8px; color: #64748b;">${i.dataAcesso || '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
     }
 
-    // EXERCÍCIO DE RESPIRAÇÃO GUIADA
+    // EXERCÍCIO DE RESPIRAÇÃO (4x4)
     window.iniciarExercicioRespiracao = function() {
       const bolha = document.getElementById('bolha-pulmao');
-      const texto = document.getElementById('respira-instrucao');
+      const instrucao = document.getElementById('respira-instrucao');
       const btn = document.getElementById('btn-iniciar-respira');
 
       if (window.estado.intervaloRespiracao) {
         clearInterval(window.estado.intervaloRespiracao);
         window.estado.intervaloRespiracao = null;
-        btn.innerText = 'Iniciar Respiração (4x4)';
-        texto.innerText = 'Exercício interrompido. Clique para recomeçar.';
         bolha.style.transform = 'scale(1)';
         bolha.innerText = 'PAUSA';
+        instrucao.innerText = 'Exercício pausado. Clique para iniciar novamente.';
+        btn.innerText = 'Iniciar Respiração (4x4)';
         return;
       }
 
       btn.innerText = 'Parar Exercício';
-      let fase = 0; // 0: Inspire, 1: Segure, 2: Inspire/Expire, 3: Segure
 
+      let fase = 0; // 0: Inspira, 1: Segura, 2: Expira, 3: Segura
+      
       const ciclo = () => {
-        switch (fase) {
+        switch(fase) {
           case 0:
             bolha.style.transform = 'scale(1.5)';
-            bolha.innerText = 'INSPIRE';
-            texto.innerText = 'Puxe o ar lentamente pelo nariz... (4s)';
-            fase = 1;
+            bolha.innerText = 'INSPIRA';
+            instrucao.innerText = 'Puxe o ar lentamente pelo nariz... (4s)';
             break;
           case 1:
-            bolha.innerText = 'SEGURE';
-            texto.innerText = 'Mantenha o ar nos pulmões... (4s)';
-            fase = 2;
+            bolha.innerText = 'SEGURA';
+            instrucao.innerText = 'Mantenha o ar nos pulmões... (4s)';
             break;
           case 2:
             bolha.style.transform = 'scale(1)';
-            bolha.innerText = 'EXPIRE';
-            texto.innerText = 'Solte o ar devagar pela boca... (4s)';
-            fase = 3;
+            bolha.innerText = 'EXPIRA';
+            instrucao.innerText = 'Solte o ar devagar pela boca... (4s)';
             break;
           case 3:
-            bolha.innerText = 'PAUSA';
-            texto.innerText = 'Aguarde um momento antes do próximo ciclo... (4s)';
-            fase = 0;
+            bolha.innerText = 'SEGURA';
+            instrucao.innerText = 'Aguarde antes de puxar o ar novamente... (4s)';
             break;
         }
+        fase = (fase + 1) % 4;
       };
 
       ciclo();
